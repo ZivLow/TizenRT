@@ -1,5 +1,8 @@
 /* == "version" + "Realtek git version" + "compile date" + "compile time" == */
 
+== version 5f6c372a31 2024/11/25-23:12:27 ==
+1. Optimize probe response frequency in wifi driver
+
 == version 74011d7a50 2024/11/25-12:27:56 ==
 1. fix broken log issue during sleep/wakeup for loguart bps 115200
 
