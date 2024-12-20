@@ -537,14 +537,16 @@ trwifi_result_e wifi_netmgr_utils_scan_multi_ap(struct netdev *dev, trwifi_scan_
 			scan_param.channel_list_num = 0;
 		}
 		else {
-			channel_list = (char *)malloc(config->scan_ap_config_count);
-			if (!channel_list) {
-				RTW_API_INFO("ERROR: Can't malloc memory for channel list\n\r");
-				TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
-				return TRWIFI_FAIL;
+			if (config->scan_ap_config_count) {
+				channel_list = (char *)malloc(config->scan_ap_config_count);
+				if (!channel_list) {
+					RTW_API_INFO("ERROR: Can't malloc memory for channel list\n\r");
+					TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
+					return TRWIFI_FAIL;
+				}
+				scan_param.channel_list = (unsigned char *)channel_list;
+				scan_param.channel_list_num = config->scan_ap_config_count;
 			}
-			scan_param.channel_list = (unsigned char *)channel_list;
-			scan_param.channel_list_num = config->scan_ap_config_count;
 		}
 
 		/* Prepare scan param */
@@ -558,6 +560,13 @@ trwifi_result_e wifi_netmgr_utils_scan_multi_ap(struct netdev *dev, trwifi_scan_
 		/* If scan_all is set, set scan option to RTW_SCAN_ALL to scan for specific AP + other APs responding to NULL probe req */
 		if (config->scan_all) {
 			scan_param.options = RTW_SCAN_ALL;
+		} else {
+			if (!(config->scan_ap_config_count)) {
+				/* do not scan if scan_all is false and scan_ap_config_count is 0 */
+				RTW_API_INFO("[RTK][WARN] scan_ap_config_count is 0. Do not scan. \n\r");
+				TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
+				return TRWIFI_INVALID_ARGS;
+			}
 		}
 		if (wifi_scan_networks(&scan_param, 0) != RTW_SUCCESS) {
 			if (channel_list) {
