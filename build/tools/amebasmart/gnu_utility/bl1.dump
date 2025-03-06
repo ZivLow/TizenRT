@@ -1,6 +1,6 @@
 
-../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/bl1.elf:     file format elf32-littlearm
-../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/bl1.elf
+../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/bl1.elf:     file format elf32-littlearm
+../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/bl1.elf
 architecture: armv8-a, flags 0x00000112:
 EXEC_P, HAS_SYMS, D_PAGED
 start address 0x70017020
@@ -30,7 +30,7 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   4 .data         00000089  70037000  7001a680  00037000  2**4
                   CONTENTS, ALLOC, LOAD, DATA
-  5 stacks        00001037  70037089  70037089  00037089  2**6
+  5 stacks        00001037  70037089  70037089  00037089  2**0
                   ALLOC
   6 .bss          00000420  700380c0  700380c0  00037089  2**5
                   ALLOC
@@ -38,25 +38,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
   8 coherent_ram  00000000  70043000  70043000  00038000  2**12
                   CONTENTS
-  9 .debug_info   0000bfbb  00000000  00000000  00038000  2**0
+  9 .debug_info   0000bf32  00000000  00000000  00038000  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 10 .debug_abbrev 00003739  00000000  00000000  00043fbb  2**0
+ 10 .debug_abbrev 00003710  00000000  00000000  00043f32  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 11 .debug_loc    00007959  00000000  00000000  000476f4  2**0
+ 11 .debug_loc    0000793f  00000000  00000000  00047642  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 12 .debug_aranges 00000c10  00000000  00000000  0004f050  2**3
+ 12 .debug_aranges 00000c10  00000000  00000000  0004ef88  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_ranges 00001018  00000000  00000000  0004fc60  2**3
+ 13 .debug_ranges 00001018  00000000  00000000  0004fb98  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_line   00006583  00000000  00000000  00050c78  2**0
+ 14 .debug_line   00006558  00000000  00000000  00050bb0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_str    0000284e  00000000  00000000  000571fb  2**0
+ 15 .debug_str    0000282a  00000000  00000000  00057108  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .comment      0000002d  00000000  00000000  00059a49  2**0
+ 16 .comment      00000037  00000000  00000000  00059932  2**0
                   CONTENTS, READONLY
- 17 .ARM.attributes 00000035  00000000  00000000  00059a76  2**0
+ 17 .ARM.attributes 00000035  00000000  00000000  00059969  2**0
                   CONTENTS, READONLY
- 18 .debug_frame  000018a4  00000000  00000000  00059aac  2**2
+ 18 .debug_frame  0000189c  00000000  00000000  000599a0  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 SYMBOL TABLE:
 00000000 l    d  .boot_rom	00000000 .boot_rom
@@ -78,9 +78,9 @@ SYMBOL TABLE:
 00000000 l    d  .comment	00000000 .comment
 00000000 l    d  .ARM.attributes	00000000 .ARM.attributes
 00000000 l    d  .debug_frame	00000000 .debug_frame
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/bl1_entrypoint_rom.o
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/bl1_entrypoint_sram.o
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/bl1_entrypoint.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/bl1_entrypoint_rom.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/bl1_entrypoint_sram.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/bl1_entrypoint.o
 70017174 l       .text	00000000 ttb_setup
 70017254 l       .text	00000000 do_primary_cold_boot
 700172b8 l       .text	00000000 skip_mmu_off
@@ -183,8 +183,8 @@ SYMBOL TABLE:
 00000000 l    df *ABS*	00000000 xlat_tables_core.c
 70019596 l     F .text	0000001a xlat_clean_dcache_range
 7001965e l     F .text	0000016a xlat_tables_map_region
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/semihosting_call.o
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/aem_generic.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/semihosting_call.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/aem_generic.o
 00000004 l       *ABS*	00000000 CPU_MIDR_SIZE
 00000004 l       *ABS*	00000000 CPU_RESET_FUNC_SIZE
 00000000 l       *ABS*	00000000 CPU_PWR_DWN_OPS_SIZE
@@ -199,7 +199,7 @@ SYMBOL TABLE:
 0000000c l       *ABS*	00000000 CPU_ERRATA_PRINTED
 0000000c l       *ABS*	00000000 CPU_OPS_SIZE
 700182f8 l     F .text	00000004 aem_generic_errata_report
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/cortex_a7.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/cortex_a7.o
 00000004 l       *ABS*	00000000 CPU_MIDR_SIZE
 00000004 l       *ABS*	00000000 CPU_RESET_FUNC_SIZE
 00000000 l       *ABS*	00000000 CPU_PWR_DWN_OPS_SIZE
@@ -216,7 +216,7 @@ SYMBOL TABLE:
 700182fc l     F .text	00000014 cortex_a7_enable_smp
 70018310 l     F .text	00000004 cortex_a7_reset_func
 70018314 l     F .text	00000004 cortex_a7_errata_report
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/cortex_a32.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/cortex_a32.o
 00000004 l       *ABS*	00000000 CPU_MIDR_SIZE
 00000004 l       *ABS*	00000000 CPU_RESET_FUNC_SIZE
 00000000 l       *ABS*	00000000 CPU_PWR_DWN_OPS_SIZE
@@ -232,14 +232,14 @@ SYMBOL TABLE:
 0000000c l       *ABS*	00000000 CPU_OPS_SIZE
 70018318 l     F .text	00000014 cortex_a32_reset_func
 7001832c l     F .text	00000004 cortex_a32_errata_report
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/bl1_exceptions.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/bl1_exceptions.o
 70018398 l     F .text	0000019c smc_handler
 70018460 l       .text	00000000 skip_mmu_on
 70018498 l       .text	00000000 skip_mmu_off
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/platform_up_stack.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/platform_up_stack.o
 700370c0 l       stacks	00000000 platform_normal_stacks
 00000006 l       *ABS*	00000000 TZ_COUNT
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/cpu_helpers.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/cpu_helpers.o
 00000004 l       *ABS*	00000000 CPU_MIDR_SIZE
 00000004 l       *ABS*	00000000 CPU_RESET_FUNC_SIZE
 00000000 l       *ABS*	00000000 CPU_PWR_DWN_OPS_SIZE
@@ -254,25 +254,25 @@ SYMBOL TABLE:
 0000000c l       *ABS*	00000000 CPU_ERRATA_PRINTED
 0000000c l       *ABS*	00000000 CPU_OPS_SIZE
 700185b0 l       .text	00000000 error_exit
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/debug.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/debug.o
 7001a529 l       .rodata	00000000 panic_msg
 7001a53a l       .rodata	00000000 panic_end
 7001a53d l       .rodata	00000000 assert_msg1
 7001a54b l       .rodata	00000000 assert_msg2
 700186c8 l       .text	00000000 dec_print_loop
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/cache_helpers.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/cache_helpers.o
 7001878c l       .text	00000000 exit_loop_cimvac
 70018778 l       .text	00000000 loop_cimvac
 700187c8 l       .text	00000000 exit_loop_cmvac
 700187b4 l       .text	00000000 loop_cmvac
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/misc_helpers.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/misc_helpers.o
 70018848 l       .text	00000000 m_loop4
 70018860 l       .text	00000000 m_loop1
 70018878 l       .text	00000000 m_end
 70018884 l       .text	00000000 do_disable_mmu
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/platform_helpers.o
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/aeabi_uldivmod.o
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/plat_helpers.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/platform_helpers.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/aeabi_uldivmod.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/plat_helpers.o
 70018900 l       .text	00000000 other_exception_lbl
 7001a595 l       .rodata	00000000 undefined_str
 70018920 l       .text	00000000 print_exception_info
@@ -286,12 +286,12 @@ SYMBOL TABLE:
 7001a5cb l       .rodata	00000000 dfsr_str
 7001a5d5 l       .rodata	00000000 dfar_str
 70018a34 l       .text	00000000 poll_mailbox
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/sheipa_console.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/sheipa_console.o
 70018b1c l       .text	00000000 core_register_fail
 70018b70 l       .text	00000000 register_fail
 70018bd0 l       .text	00000000 putc_error
 70018c00 l       .text	00000000 getc_error
-00000000 l    df *ABS*	00000000 ../../../../project/realtek_amebaD2_va0_example/GCC-RELEASE/project_ap/asdk/build/atf/bl1/enable_mmu.o
+00000000 l    df *ABS*	00000000 ../../../../amebasmart_gcc_project/project_ap/asdk/build/atf/bl1/enable_mmu.o
 00000000 l    df *ABS*	00000000 printf.c
 7001984c l     F .text	00000080 unsigned_num_print
 00000000 l    df *ABS*	00000000 semihosting.c
@@ -307,11 +307,11 @@ SYMBOL TABLE:
 00000000 l    df *ABS*	00000000 memmove.c
 00000000 l    df *ABS*	00000000 putchar.c
 00000000 l    df *ABS*	00000000 strlen.c
-70019920 l     F .text	00000008 __flush_dcache_range_from_thumb
-70019928 l     F .text	00000008 __console_putc_from_arm
-70019930 l     F .text	00000008 __enable_mmu_direct_svc_mon_from_thumb
+70019920 l     F .text	00000008 __console_register_from_arm
+70019928 l     F .text	00000008 __enable_mmu_direct_svc_mon_from_thumb
+70019930 l     F .text	00000008 __flush_dcache_range_from_thumb
 70019938 l     F .text	00000008 __clean_dcache_range_from_thumb
-70019940 l     F .text	00000008 __console_register_from_arm
+70019940 l     F .text	00000008 __console_putc_from_arm
 00000008 l     F .boot_rom	00000008 __bl1_boot_sram_veneer
 2001fe08 l     F .boot_sram	00000008 __bl1_entrypoint_veneer
 700198cc g     F .text	0000001a putchar
@@ -1373,7 +1373,7 @@ Disassembly of section .text:
 7001796c:	605a      	str	r2, [r3, #4]
 7001796e:	2108      	movs	r1, #8
 70017970:	e8bd 4008 	ldmia.w	sp!, {r3, lr}
-70017974:	f001 bfd4 	b.w	70019920 <__flush_dcache_range_from_thumb>
+70017974:	f001 bfdc 	b.w	70019930 <__flush_dcache_range_from_thumb>
 70017978:	70037000 	.word	0x70037000
 
 7001797c <bl1_main>:
@@ -2031,7 +2031,7 @@ Disassembly of section .text:
 70017ff0:	4620      	mov	r0, r4
 70017ff2:	b004      	add	sp, #16
 70017ff4:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
-70017ff8:	f001 bc9a 	b.w	70019930 <__enable_mmu_direct_svc_mon_from_thumb>
+70017ff8:	f001 bc96 	b.w	70019928 <__enable_mmu_direct_svc_mon_from_thumb>
 70017ffc:	70037000 	.word	0x70037000
 70018000:	70038268 	.word	0x70038268
 
@@ -2933,7 +2933,7 @@ Disassembly of section .text:
 70018ac4 <plat_crash_console_putc>:
 70018ac4:	e30c1000 	movw	r1, #49152	; 0xc000
 70018ac8:	e3441200 	movt	r1, #16896	; 0x4200
-70018acc:	ea000395 	b	70019928 <__console_putc_from_arm>
+70018acc:	ea00039b 	b	70019940 <__console_putc_from_arm>
 
 70018ad0 <plat_crash_console_flush>:
 70018ad0:	e30c0000 	movw	r0, #49152	; 0xc000
@@ -2983,7 +2983,7 @@ Disassembly of section .text:
 70018b60:	e5801010 	str	r1, [r0, #16]
 70018b64:	e3a01005 	mov	r1, #5
 70018b68:	e5801004 	str	r1, [r0, #4]
-70018b6c:	ea000373 	b	70019940 <__console_register_from_arm>
+70018b6c:	ea00036b 	b	70019920 <__console_register_from_arm>
 
 70018b70 <register_fail>:
 70018b70:	e8bd8010 	pop	{r4, pc}
@@ -4453,26 +4453,26 @@ Disassembly of section .text:
 70019918:	eafffb41 	b	70018624 <report_exception>
 7001991c:	eafffb40 	b	70018624 <report_exception>
 
-70019920 <__flush_dcache_range_from_thumb>:
-70019920:	4778      	bx	pc
-70019922:	e7fd      	b.n	70019920 <__flush_dcache_range_from_thumb>
-70019924:	eafffb8a 	b	70018754 <flush_dcache_range>
+70019920 <__console_register_from_arm>:
+70019920:	e51ff004 	ldr	pc, [pc, #-4]	; 70019924 <__console_register_from_arm+0x4>
+70019924:	70017d49 	.word	0x70017d49
 
-70019928 <__console_putc_from_arm>:
-70019928:	e51ff004 	ldr	pc, [pc, #-4]	; 7001992c <__console_putc_from_arm+0x4>
-7001992c:	70017d81 	.word	0x70017d81
+70019928 <__enable_mmu_direct_svc_mon_from_thumb>:
+70019928:	4778      	bx	pc
+7001992a:	e7fd      	b.n	70019928 <__enable_mmu_direct_svc_mon_from_thumb>
+7001992c:	eafffcb8 	b	70018c14 <enable_mmu_direct_svc_mon>
 
-70019930 <__enable_mmu_direct_svc_mon_from_thumb>:
+70019930 <__flush_dcache_range_from_thumb>:
 70019930:	4778      	bx	pc
-70019932:	e7fd      	b.n	70019930 <__enable_mmu_direct_svc_mon_from_thumb>
-70019934:	eafffcb6 	b	70018c14 <enable_mmu_direct_svc_mon>
+70019932:	e7fd      	b.n	70019930 <__flush_dcache_range_from_thumb>
+70019934:	eafffb86 	b	70018754 <flush_dcache_range>
 
 70019938 <__clean_dcache_range_from_thumb>:
 70019938:	4778      	bx	pc
 7001993a:	e7fd      	b.n	70019938 <__clean_dcache_range_from_thumb>
 7001993c:	eafffb93 	b	70018790 <clean_dcache_range>
 
-70019940 <__console_register_from_arm>:
-70019940:	e51ff004 	ldr	pc, [pc, #-4]	; 70019944 <__console_register_from_arm+0x4>
-70019944:	70017d49 	.word	0x70017d49
+70019940 <__console_putc_from_arm>:
+70019940:	e51ff004 	ldr	pc, [pc, #-4]	; 70019944 <__console_putc_from_arm+0x4>
+70019944:	70017d81 	.word	0x70017d81
 	...
