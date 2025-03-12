@@ -17,12 +17,13 @@
 #include <lwip_intf_tizenrt.h>
 #include <lwip/init.h>
 #include <lwip/netif.h>
-#include <osdep_service.h>
+#include <os_wrapper.h>
 #include "rtw_autoconf.h"
 //#include "rtw_adapter.h"
 
 #include <tinyara/netmgr/netdev_mgr.h>
 #include <sys/socket.h>
+#include <ifaddrs.h>
 #include <netdev_mgr_internal.h>
 #include "rtw_wifi_constants.h"
 #include <net/if.h>
