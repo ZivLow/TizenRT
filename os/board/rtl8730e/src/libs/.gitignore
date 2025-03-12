@@ -5,3 +5,5 @@
 !./lib_wifi_common.a
 !./lib_wpa_lite.a
 !./sysm.a
+!./lib_wifi_com_sec.a
+!./lib_wps.a
