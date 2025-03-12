@@ -94,6 +94,7 @@ include component/wifi/common/Make.defs
 include component/mbed/targets/hal/rtl8730e/Make.defs
 include component/os_dep/Make.defs
 include component/os/tizenrt/Make.defs
+include component/os/os_wrapper/Make.defs
 
 ifeq ($(CONFIG_AMEBASMART_WIFI),y)
 include component/wifi/api/Make.defs
@@ -171,6 +172,7 @@ CFLAGS += -I$(COMPONENT_DIR)/wifi/inic
 CFLAGS += -I$(COMPONENT_DIR)/wifi/wpa_supplicant/src/crypto
 CFLAGS += -I$(COMPONENT_DIR)/lwip/api
 
+CFLAGS += -I$(COMPONENT_DIR)/os/os_wrapper/include
 CFLAGS += -I$(COMPONENT_DIR)/os/tizenrt
 CFLAGS += -I$(DIR_MBED)
 CFLAGS += -I$(DIR_OSDEP)/include
