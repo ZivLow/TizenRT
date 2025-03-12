@@ -1,5 +1,9 @@
 /* == "version" + "Realtek git version" + "compile date" + "compile time" == */
 
+== version 584d85c0 2025/06/03-18:20:18 ==
+1. Sync to version v1.0 SDK
+2. Add support for multi-sta CSI
+
 == version 3c37d0cb58 2025/04/24-11:10:27 ==
 1. Implement recovery mechanism for PG wakeup flow
 

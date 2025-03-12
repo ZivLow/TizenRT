@@ -1,0 +1,6 @@
+/* == "version" + "Realtek git version" + "compile date" + "compile time" == */
+
+== version 584d85c0 2025/06/03-18:20:18 ==
+1.	Sync lib_wps.a from ameba-rtos-v1.0 SDK
+2.	Change optimization flags from "-O2" to "-Os"
+3.	Change instruction set build "-marm" to "-mthumb"
