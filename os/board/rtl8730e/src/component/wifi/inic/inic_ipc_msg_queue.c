@@ -1,15 +1,28 @@
-/******************************************************************************
- *
- * Copyright(c) 2020 - 2021 Realtek Corporation. All rights reserved.
- *
- ******************************************************************************/
-/******************************************************************************
- * history *
-******************************************************************************/
+/**
+  ******************************************************************************
+  * @file    inic_ipc_msg_queue.c
+  * @author
+  * @version
+  * @date
+  * @brief
+  ******************************************************************************
+  * @attention
+  *
+  * This module is a confidential and proprietary property of RealTek and
+  * possession or use of this module requires written permission of RealTek.
+  *
+  * Copyright(c) 2024, Realtek Semiconductor Corporation. All rights reserved.
+  ******************************************************************************
+  */
+
 #define __INIC_IPC_MSG_QUEUE_C__
 
 /* -------------------------------- Includes -------------------------------- */
 /* external head files */
+
+#include "platform_autoconf.h"
+#include "rtw_skbuff.h"
+
 
 /* internal head files */
 #include "inic_ipc_msg_queue.h"
@@ -18,47 +31,22 @@
 
 extern struct wifi_user_conf wifi_user_config;
 #endif
-/* -------------------------------- Defines --------------------------------- */
-#define IPC_MSG_QUEUE_DEPTH (20)
-#define IPC_MSG_QUEUE_WARNING_DEPTH (4)
-
-/* -------------------------------- Macros ---------------------------------- */
-
-/* ------------------------------- Data Types ------------------------------- */
-/* node to store the message to the queue. */
-struct ipc_msg_node {
-	_list list;
-	inic_ipc_ex_msg_t ipc_msg; /* to store ipc message */
-	u8 is_used; /* sign whether to be used */
-};
-
-/* message queue priv */
-struct ipc_msg_q_priv {
-	_queue msg_queue; /* msg queue */
-	_sema msg_q_sema;
-	_sema msg_send_sema;
-	void (*task_hdl)(inic_ipc_ex_msg_t *); /* the haddle function of task */
-	u8 b_queue_working; /* flag to notice the queue is working */
-	struct ipc_msg_node ipc_msg_pool[IPC_MSG_QUEUE_DEPTH]; /* static pool for queue node */
-	u8 queue_free; /* the free size of queue */
-	u8 rsvd[40]; /* keep total size 64B alignment */
-};
-
-/* -------------------------- Function declaration -------------------------- */
+extern void inic_host_trx_event_hdl(u8 event_num, u32 msg_addr, u8 wlan_idx);
+extern void inic_dev_trx_event_hdl(u8 event_num, u32 msg_addr, u8 wlan_idx);
 
 /* ---------------------------- Global Variables ---------------------------- */
 
 /* --------------------------- Private Variables ---------------------------- */
 
-static struct ipc_msg_q_priv g_ipc_msg_q_priv __attribute__((aligned(64)));
+static struct ipc_msg_q_priv g_ipc_msg_q_priv;
 #ifdef IPC_DIR_MSG_TX
-inic_ipc_ex_msg_t g_inic_ipc_ex_msg __attribute__((aligned(64)));
+struct inic_ipc_ex_msg g_inic_ipc_ex_msg __attribute__((aligned(64)));
 #else
-static inic_ipc_ex_msg_t g_inic_ipc_ex_msg = {0};
+static struct inic_ipc_ex_msg g_inic_ipc_ex_msg = {0};
 #endif
-#ifdef CONFIG_PLATFORM_TIZENRT_OS
-struct task_struct ipc_msgQ_wlan_task;
-#endif
+
+rtos_task_t inic_msg_q_task_handler;
+
 /* ---------------------------- Private Functions --------------------------- */
 /**
  * @brief  put the ipc message to queue.
@@ -67,21 +55,23 @@ struct task_struct ipc_msgQ_wlan_task;
  * @param  p_queue[in]: the queue used to store the p_node.
  * @return status, always _SUCCESS.
  */
-static sint enqueue_ipc_msg_node(struct ipc_msg_node *p_node, _queue *p_queue)
+static sint enqueue_ipc_msg_node(struct ipc_msg_node *p_node, struct __queue *p_queue)
 {
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-	irqstate_t flags = enter_critical_section();
+	irqstate_t flags = tizenrt_critical_enter();
 #else
-	_irqL irqL;
-	rtw_enter_critical(&(p_queue->lock), &irqL);
-#endif
+	rtos_critical_enter();
+#endif //CONFIG_PLATFORM_TIZENRT_OS
+
 	/* put the ipc message to the tail of the queue */
 	rtw_list_insert_tail(&(p_node->list), get_list_head(p_queue));
+
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-	leave_critical_section(flags);
+	tizenrt_critical_exit(flags);
 #else
-	rtw_exit_critical(&(p_queue->lock), &irqL);
-#endif
+	rtos_critical_exit();
+#endif //CONFIG_PLATFORM_TIZENRT_OS
+
 	return _SUCCESS;
 }
 
@@ -90,17 +80,16 @@ static sint enqueue_ipc_msg_node(struct ipc_msg_node *p_node, _queue *p_queue)
  * @param  p_ipc_msg[in]: the queue used to store the p_node.
  * @return the ipc_msg_node got from message queue.
  */
-static struct ipc_msg_node *dequeue_ipc_msg_node(_queue *p_queue)
+static struct ipc_msg_node *dequeue_ipc_msg_node(struct __queue *p_queue)
 {
 	struct ipc_msg_node *p_node;
-	_list *plist, *phead;
+	struct list_head *plist, *phead;
 
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-	irqstate_t flags = enter_critical_section();
+	irqstate_t flags = tizenrt_critical_enter();
 #else
-	_irqL irqL;
-	rtw_enter_critical(&(p_queue->lock), &irqL);
-#endif
+	rtos_critical_enter();
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 
 	if (rtw_queue_empty(p_queue) == _TRUE) {
 		p_node = NULL;
@@ -112,10 +101,10 @@ static struct ipc_msg_node *dequeue_ipc_msg_node(_queue *p_queue)
 	}
 
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-	leave_critical_section(flags);
+	tizenrt_critical_exit(flags);
 #else
-	rtw_exit_critical(&(p_queue->lock), &irqL);
-#endif
+	rtos_critical_exit();
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 
 	return p_node;
 }
@@ -125,41 +114,69 @@ static struct ipc_msg_node *dequeue_ipc_msg_node(_queue *p_queue)
  * @param  none
  * @return none
  */
-static void inic_ipc_msg_q_task(void)
+void inic_msg_q_task(void)
 {
 	struct ipc_msg_node *p_node = NULL;
-	_queue *p_queue = NULL;
+	struct __queue *p_queue = NULL;
+	static u8  continus_handle = 0;
+	u32	msg_addr;
+	u8	wlan_idx;
+	u8	event_num;
 
 	p_queue = &g_ipc_msg_q_priv.msg_queue;
+#ifndef INIC_SKIP_NP_MSG_TASK
 	do {
-		//xSemaphoreTake(g_ipc_msg_q_priv.msg_q_sema, 0xFFFFFFFF);
-		rtw_down_sema(&g_ipc_msg_q_priv.msg_q_sema);
+		//rtos_sema_take(g_ipc_msg_q_priv.msg_q_sema, RTOS_MAX_TIMEOUT);
+		rtos_sema_take(g_ipc_msg_q_priv.msg_q_sema, RTOS_MAX_TIMEOUT);
+		UNUSED(continus_handle);
+#else
+	continus_handle = 0;
+#endif
 		/* get the data from tx queue. */
 		while (1) {
+#ifdef INIC_SKIP_NP_MSG_TASK
+			continus_handle++;
+			if (continus_handle == 50) {
+				// Prevent from blocking other processes due to Continuous handle
+				rtw_single_thread_wakeup();
+				break;
+			}
+#endif
 			p_node = dequeue_ipc_msg_node(p_queue);
 			if (p_node == NULL) {
 				break;
 			}
-			/* haddle the message */
-			if (g_ipc_msg_q_priv.task_hdl) {
-				g_ipc_msg_q_priv.task_hdl(&(p_node->ipc_msg));
-			}
+
+			event_num = p_node->event_num;
+			msg_addr = p_node->msg_addr;
+			wlan_idx = p_node->wlan_idx;
+
 			/* release the memory for this ipc message. */
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-			irqstate_t flags = enter_critical_section();
+			irqstate_t flags = tizenrt_critical_enter();
 #else
-			rtw_enter_critical(NULL, NULL);
-#endif
+			rtos_critical_enter();
+#endif //CONFIG_PLATFORM_TIZENRT_OS
+
 			p_node->is_used = 0;
-			g_ipc_msg_q_priv.queue_free++;
+
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-			leave_critical_section(flags);
+			tizenrt_critical_exit(flags);
 #else
-			rtw_exit_critical(NULL, NULL);
+			rtos_critical_exit();
+#endif //CONFIG_PLATFORM_TIZENRT_OS
+
+			/* haddle the message */
+#ifdef CONFIG_AS_INIC_NP
+			inic_dev_trx_event_hdl(event_num, msg_addr, wlan_idx);
+#elif CONFIG_AS_INIC_AP
+			inic_host_trx_event_hdl(event_num, msg_addr, wlan_idx);
 #endif
 		}
+#ifndef INIC_SKIP_NP_MSG_TASK
 	} while (g_ipc_msg_q_priv.b_queue_working);
-	rtw_delete_task(&ipc_msgQ_wlan_task);
+	rtos_task_delete(NULL);
+#endif
 }
 
 /* ---------------------------- Public Functions ---------------------------- */
@@ -169,34 +186,43 @@ static void inic_ipc_msg_q_task(void)
  * 	queue.
  * @return none
  */
-void inic_ipc_msg_q_init(void (*task_hdl)(inic_ipc_ex_msg_t *))
+void inic_msg_q_init(void)
 {
 	int i = 0;
 
-	rtw_memset(&g_ipc_msg_q_priv, 0, sizeof(struct ipc_msg_q_priv));
-	rtw_memset(&g_inic_ipc_ex_msg, 0, sizeof(inic_ipc_ex_msg_t));
+	if (g_ipc_msg_q_priv.ipc_msg_pool) {/*https://jira.realtek.com/browse/RSWLANDIOT-10146*/
+		return;
+	}
+
+	memset(&g_ipc_msg_q_priv, 0, sizeof(struct ipc_msg_q_priv));
+	memset(&g_inic_ipc_ex_msg, 0, sizeof(struct inic_ipc_ex_msg));
 
 	/* initialize queue. */
 	rtw_init_queue(&(g_ipc_msg_q_priv.msg_queue));
 
-	/* assign the haddle function for the task */
-	g_ipc_msg_q_priv.task_hdl = task_hdl;
-
 	/* initialize the sema to wakeup the message queue task */
-	rtw_init_sema(&g_ipc_msg_q_priv.msg_q_sema, 0);
-	rtw_init_sema(&g_ipc_msg_q_priv.msg_send_sema, 0);
-	rtw_up_sema(&g_ipc_msg_q_priv.msg_send_sema);
+	rtos_sema_create_static(&g_ipc_msg_q_priv.msg_q_sema, 0, RTOS_MAX_TIMEOUT);
+	rtos_sema_create_static(&g_ipc_msg_q_priv.msg_send_sema, 0, RTOS_MAX_TIMEOUT);
+	rtos_sema_give(g_ipc_msg_q_priv.msg_send_sema);
 
-	for (i = 0; i < IPC_MSG_QUEUE_DEPTH; i++) {
+
+#ifdef CONFIG_AS_INIC_NP
+	g_ipc_msg_q_priv.ipc_msg_node_max = wifi_user_config.skb_num_np + wifi_user_config.skb_num_ap;
+#else
+	g_ipc_msg_q_priv.ipc_msg_node_max = wifi_user_config.skb_num_np;
+#endif
+	g_ipc_msg_q_priv.ipc_msg_pool = (struct ipc_msg_node *)rtos_mem_zmalloc(g_ipc_msg_q_priv.ipc_msg_node_max * sizeof(struct ipc_msg_node));
+	for (i = 0; i < g_ipc_msg_q_priv.ipc_msg_node_max; i++) {
 		g_ipc_msg_q_priv.ipc_msg_pool[i].is_used = 0;
 	}
-	g_ipc_msg_q_priv.queue_free = IPC_MSG_QUEUE_DEPTH;
 
+#ifndef INIC_SKIP_NP_MSG_TASK
 	/* Initialize the queue task */
-	if (rtw_create_task(&ipc_msgQ_wlan_task, (const char *const)"inic_msg_q_task", 1024, (0 + CONFIG_INIC_IPC_MSG_Q_PRI), (void*)inic_ipc_msg_q_task, NULL) != 1) {
-		DBG_8195A("Create inic_ipc_msg_q_task Err!!\n");
+	if (SUCCESS != rtos_task_create(&inic_msg_q_task_handler, (const char *const)"inic_msg_q_task", (rtos_task_function_t)inic_msg_q_task, NULL, WIFI_STACK_SIZE_INIC_MSG_Q,
+									CONFIG_INIC_IPC_MSG_Q_PRI)) {
+		RTK_LOGE(TAG_WLAN_INIC, "Create msg_q_task Err!\n");
 	}
-
+#endif
 	/* sign the queue is working */
 	g_ipc_msg_q_priv.b_queue_working = 1;
 }
@@ -207,58 +233,56 @@ void inic_ipc_msg_q_init(void (*task_hdl)(inic_ipc_ex_msg_t *))
  * 	pushed into the queue.
  * @return status, always _SUCCESS.
  */
-sint inic_ipc_msg_enqueue(inic_ipc_ex_msg_t *p_ipc_msg)
+sint inic_msg_enqueue(struct inic_ipc_ex_msg *p_ipc_msg)
 {
 	struct ipc_msg_node *p_node = NULL;
-	_queue *p_queue = &(g_ipc_msg_q_priv.msg_queue);
+	struct __queue *p_queue = &(g_ipc_msg_q_priv.msg_queue);
 	sint ret = FAIL;
 	int i = 0;
 
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-	irqstate_t flags = enter_critical_section();
+	irqstate_t flags = tizenrt_critical_enter();
 #else
-	_irqL irqL;
-	rtw_enter_critical(&(p_queue->lock), &irqL);
-#endif
+	rtos_critical_enter();
+#endif //CONFIG_PLATFORM_TIZENRT_OS
+
 	/* allocate memory for message node */
-	for (i = 0; i < IPC_MSG_QUEUE_DEPTH; i++) {
+	for (i = 0; i < g_ipc_msg_q_priv.ipc_msg_node_max; i++) {
 		if (g_ipc_msg_q_priv.ipc_msg_pool[i].is_used == 0) {
 			p_node = &(g_ipc_msg_q_priv.ipc_msg_pool[i]);
 			/* a node is used, the free node will decrease */
 			p_node->is_used = 1;
-			g_ipc_msg_q_priv.queue_free--;
 			break;
 		}
 	}
+
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-	leave_critical_section(flags);
+	tizenrt_critical_exit(flags);
 #else
-	rtw_exit_critical(&(p_queue->lock), &irqL);
-#endif
+	rtos_critical_exit();
+#endif //CONFIG_PLATFORM_TIZENRT_OS
+
 	if (p_node == NULL) {
-		DBG_8195A("[CA32] %s NO buffer for new nodes, waiting!\n\r",__FUNCTION__);
+		RTK_LOGE(TAG_WLAN_INIC, "NO buf for new nodes!\n");
 		goto func_out;
 	}
 
 	/* To store the ipc message to queue's node. */
-	p_node->ipc_msg.event_num = p_ipc_msg->event_num;
-	p_node->ipc_msg.msg_addr = p_ipc_msg->msg_addr;
-	p_node->ipc_msg.msg_queue_status = p_ipc_msg->msg_queue_status;
-	p_node->ipc_msg.wlan_idx = p_ipc_msg->wlan_idx;
+	p_node->event_num = p_ipc_msg->event_num;
+	p_node->msg_addr = p_ipc_msg->msg_addr;
+	p_node->wlan_idx = p_ipc_msg->wlan_idx;
 
 	/* put the ipc message to the queue */
 	ret = enqueue_ipc_msg_node(p_node, p_queue);
 
-	/* the free number of nodes is smaller than the warning depth. */
-	if (g_ipc_msg_q_priv.queue_free <= IPC_MSG_QUEUE_WARNING_DEPTH) {
-		/* ask peer to wait */
-		ret = FAIL;
-	}
 
 func_out:
 	/* wakeup task */
-	rtw_up_sema_from_isr(&g_ipc_msg_q_priv.msg_q_sema);
-
+#ifdef INIC_SKIP_NP_MSG_TASK
+	rtw_single_thread_wakeup();
+#else
+	rtos_sema_give(g_ipc_msg_q_priv.msg_q_sema);
+#endif
 	return ret;
 }
 
@@ -267,16 +291,13 @@ func_out:
  * @param  none.
  * @return none
  */
-void inic_ipc_msg_q_deinit(void)
+void inic_msg_q_deinit(void)
 {
 	/* sign the queue is stop */
 	g_ipc_msg_q_priv.b_queue_working = 0;
 
-	/* assign the haddle function to NULL */
-	g_ipc_msg_q_priv.task_hdl = NULL;
-
 	/* free sema to wakeup the message queue task */
-	rtw_free_sema(&g_ipc_msg_q_priv.msg_q_sema);
+	rtos_sema_delete_static(g_ipc_msg_q_priv.msg_q_sema);
 	/* de initialize queue, todo */
 }
 
@@ -285,7 +306,7 @@ void inic_ipc_msg_q_deinit(void)
  * @param  none.
  * @return the status of queue, 1 means working, 0 means stop.
  */
-u8 inic_ipc_msg_get_queue_status(void)
+u8 inic_msg_get_queue_status(void)
 {
 	return g_ipc_msg_q_priv.b_queue_working;
 }
@@ -296,52 +317,52 @@ u8 inic_ipc_msg_get_queue_status(void)
  * @param  p_ipc_msg[inout]: the message to send.
  * @return none.
  */
-void inic_ipc_ipc_send_msg(inic_ipc_ex_msg_t *p_ipc_msg)
+void inic_ipc_send_msg(u32 event_num, u32 msg_addr, u32 msg_queue_status, u32 wlan_idx)
 {
 	IPC_MSG_STRUCT g_inic_ipc_msg = {0};
 
 	u32 cnt = 100000;
 
-	/* wifi_hal_interrupt_handle(little_thread) will call rtw_enter_critical(close cpu scheduling), before call this func.
+	/* wifi_hal_interrupt_handle(little_thread) will call rtos_critical_enter(close cpu scheduling), before call this func.
 	if another thread(single_thread) hasn't up_sema, little_thread and single_thread will deadlock */
 	/* LINUX_TODO: better method? */
 #ifdef CONFIG_AS_INIC_NP
 	if (wifi_user_config.cfg80211) {
-		save_and_cli();
+		rtos_critical_enter();
 	} else {
-		rtw_down_sema(&g_ipc_msg_q_priv.msg_send_sema);
+		rtos_sema_take(g_ipc_msg_q_priv.msg_send_sema, RTOS_MAX_TIMEOUT);
 	}
 #else
-	rtw_down_sema(&g_ipc_msg_q_priv.msg_send_sema);
+	rtos_sema_take(g_ipc_msg_q_priv.msg_send_sema, RTOS_MAX_TIMEOUT);
 #endif
 
 	/* Wait for another port ack acknowledgement last message sending */
 	while (g_inic_ipc_ex_msg.event_num != IPC_WIFI_MSG_READ_DONE) {
 		DelayUs(2);
-		DCache_Invalidate((u32)&g_inic_ipc_ex_msg, sizeof(inic_ipc_ex_msg_t));
+		DCache_Invalidate((u32)&g_inic_ipc_ex_msg, sizeof(struct inic_ipc_ex_msg));
 		cnt--;
 		if (cnt == 0) {
-			DBG_8195A("[CA32] %s inic ipc wait timeout\n",__FUNCTION__);
+			RTK_LOGS(TAG_WLAN_INIC, "inic ipc wait timeout\n");
 			break;
 		}
 	}
 	/* Get the warning of queue's depth not enough after recv MSG_READ_DONE,
 	delay send the next message */
 	if (g_inic_ipc_ex_msg.msg_queue_status == IPC_WIFI_MSG_MEMORY_NOT_ENOUGH) {
-		rtw_mdelay_os(1);
+		rtos_time_delay_ms(1);
 	}
 
 	/* Send the new message after last one acknowledgement */
-	g_inic_ipc_ex_msg.event_num = p_ipc_msg->event_num;
-	g_inic_ipc_ex_msg.msg_addr = p_ipc_msg->msg_addr;
-	g_inic_ipc_ex_msg.msg_queue_status = p_ipc_msg->msg_queue_status;
-	g_inic_ipc_ex_msg.wlan_idx = p_ipc_msg->wlan_idx;
-	DCache_Clean((u32)&g_inic_ipc_ex_msg, sizeof(inic_ipc_ex_msg_t));
+	g_inic_ipc_ex_msg.event_num = event_num;
+	g_inic_ipc_ex_msg.msg_addr = msg_addr;
+	g_inic_ipc_ex_msg.msg_queue_status = msg_queue_status;
+	g_inic_ipc_ex_msg.wlan_idx = wlan_idx;
+	DCache_Clean((u32)&g_inic_ipc_ex_msg, sizeof(struct inic_ipc_ex_msg));
 
 #ifdef IPC_DIR_MSG_TX
 	g_inic_ipc_msg.msg_type = IPC_USER_POINT;
 	g_inic_ipc_msg.msg = (u32)&g_inic_ipc_ex_msg;
-	g_inic_ipc_msg.msg_len = sizeof(inic_ipc_ex_msg_t);
+	g_inic_ipc_msg.msg_len = sizeof(struct inic_ipc_ex_msg);
 	ipc_send_message(IPC_DIR_MSG_TX, IPC_INT_CHAN_WIFI_TRX_TRAN, \
 					 (PIPC_MSG_STRUCT)&g_inic_ipc_msg);
 #else
@@ -350,11 +371,11 @@ void inic_ipc_ipc_send_msg(inic_ipc_ex_msg_t *p_ipc_msg)
 
 #ifdef CONFIG_AS_INIC_NP
 	if (wifi_user_config.cfg80211) {
-		restore_flags();
+		rtos_critical_exit();
 	} else {
-		rtw_up_sema(&g_ipc_msg_q_priv.msg_send_sema);
+		rtos_sema_give(g_ipc_msg_q_priv.msg_send_sema);
 	}
 #else
-	rtw_up_sema(&g_ipc_msg_q_priv.msg_send_sema);
+	rtos_sema_give(g_ipc_msg_q_priv.msg_send_sema);
 #endif
 }

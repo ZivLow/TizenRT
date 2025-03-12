@@ -159,6 +159,7 @@ err_t low_level_output(struct netdev *dev, uint8_t *data, uint16_t dlen)
 	int sg_len = 0;
 	int ret = 0;
 	int idx = 0;
+	u8 is_special_pkt = 0; // TODO: is_special_pkt needs to be implemented
 
 #if CONFIG_WLAN
 /*
@@ -178,7 +179,7 @@ err_t low_level_output(struct netdev *dev, uint8_t *data, uint16_t dlen)
 		if (softap_flag == 1) {
 			idx = 1;
 		}
-		ret = inic_ipc_host_send(idx, sg_list, sg_len, dlen, NULL);
+		ret = inic_host_send(idx, sg_list, sg_len, dlen, NULL, is_special_pkt);
 		if (ret == ERR_IF) {
 			return ret;
 		}
