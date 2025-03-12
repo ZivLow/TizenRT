@@ -164,6 +164,7 @@ CFLAGS += -I$(TARGETDIR)/misc
 CFLAGS += -I$(COMPONENT_DIR)/stdlib
 CFLAGS += -I$(COMPONENT_DIR)/usrcfg/rtl8730e/include
 
+CFLAGS += -I$(COMPONENT_DIR)/wifi/common
 CFLAGS += -I$(COMPONENT_DIR)/wifi/api
 CFLAGS += -I$(COMPONENT_DIR)/wifi/driver/include
 CFLAGS += -I$(COMPONENT_DIR)/wifi/inic
