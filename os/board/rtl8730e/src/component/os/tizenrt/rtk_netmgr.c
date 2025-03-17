@@ -57,7 +57,7 @@ static WiFi_InterFace_ID_t g_mode = RTK_WIFI_NONE;
 trwifi_result_e wifi_netmgr_utils_init(struct netdev *dev);
 trwifi_result_e wifi_netmgr_utils_deinit(struct netdev *dev);
 trwifi_result_e wifi_netmgr_utils_scan_ap(struct netdev *dev, trwifi_scan_config_s *config);
-// trwifi_result_e wifi_netmgr_utils_scan_multi_ap(struct netdev *dev, trwifi_scan_multi_configs_s *config);
+trwifi_result_e wifi_netmgr_utils_scan_multi_ap(struct netdev *dev, trwifi_scan_multi_configs_s *config);
 trwifi_result_e wifi_netmgr_utils_connect_ap(struct netdev *dev, trwifi_ap_config_s *ap_connect_config, void *arg);
 trwifi_result_e wifi_netmgr_utils_disconnect_ap(struct netdev *dev, void *arg);
 trwifi_result_e wifi_netmgr_utils_get_info(struct netdev *dev, trwifi_info *wifi_info);
@@ -85,7 +85,7 @@ struct trwifi_ops g_trwifi_drv_ops = {
 	wifi_netmgr_utils_stop_softap,		/* stop_softap */
 	wifi_netmgr_utils_set_autoconnect, /* set_autoconnect */
 	wifi_netmgr_utils_ioctl,					/* drv_ioctl */
-	NULL, // wifi_netmgr_utils_scan_multi_ap,	/* scan_multi_ap */
+	wifi_netmgr_utils_scan_multi_ap,	/* scan_multi_ap */
 	wifi_netmgr_utils_set_chplan,		/* set_chplan */
 	wifi_netmgr_utils_get_signal_quality,		/* get_signal_quality */
 	wifi_netmgr_utils_get_disconn_reason,		/* get_deauth_reason */
@@ -466,8 +466,7 @@ trwifi_result_e wifi_netmgr_utils_scan_ap(struct netdev *dev, trwifi_scan_config
 
 		if(config->ssid_length > 0 || (ch_valid)) {
 			/* Scan with SSID, or Scan with SSID And Channel */
-			//scan_param.ssid[0].ssid = (char *)config->ssid;	//ziv TODO: add back multi scan customization
-			scan_param.ssid = (char *)config->ssid;
+			scan_param.ssid[0].ssid = (char *)config->ssid;
 			if(config->ssid_length > 0 && config->channel == 0) {
 				printf("[ATWs]: _AT_WLAN_SCAN_WITH_SSID_ [%s]\n\r", (char *)config->ssid);
 			}
@@ -496,7 +495,6 @@ trwifi_result_e wifi_netmgr_utils_scan_ap(struct netdev *dev, trwifi_scan_config
 	return TRWIFI_SUCCESS;
 }
 
-#if 0
 trwifi_result_e wifi_netmgr_utils_scan_multi_ap(struct netdev *dev, trwifi_scan_multi_configs_s *config)
 {
 	g_scan_num = 0;
@@ -592,7 +590,6 @@ trwifi_result_e wifi_netmgr_utils_scan_multi_ap(struct netdev *dev, trwifi_scan_
 	nvdbg("[RTK] WIFi Scan success\n");
 	return TRWIFI_SUCCESS;
 }
-#endif
 
 trwifi_result_e wifi_netmgr_utils_connect_ap(struct netdev *dev, trwifi_ap_config_s *ap_connect_config, void *arg)
 {
