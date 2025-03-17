@@ -160,6 +160,16 @@ typedef struct _rtw_ssid_t {
 	unsigned char		val[INIC_MAX_SSID_LENGTH]; /**< SSID name (AP name)  */
 } rtw_ssid_t;
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+/**
+  * @brief  The structure is used to describe the SSID for scanning.
+  */
+typedef struct _rtw_scan_ssid_t {
+	char len;     /**< SSID length */
+	char *ssid; /**< SSID name (AP name)  */
+} rtw_scan_ssid_t;
+#endif //CONFIG_PLATFORM_TIZENRT_OS
+
 /**
   * @brief  The structure is used to describe the unique 6-byte MAC address.
   */
@@ -212,7 +222,12 @@ typedef enum _rtw_result_t (*scan_report_acs_user_callback_t)(struct acs_mntr_rp
 typedef struct _rtw_scan_param_t {
 	//enum rtw_scan_option 					options;
 	u8									options;
+	/* TizenRT customization: scan multiple SSIDs */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	rtw_scan_ssid_t							ssid[SSID_SCAN_NUM];
+#else
 	char									*ssid;
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 	unsigned char							*channel_list;
 	unsigned char							channel_list_num;
 	struct _rtw_channel_scan_time_t 				chan_scan_time;
