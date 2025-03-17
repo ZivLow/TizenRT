@@ -667,7 +667,11 @@ enum rtw_scan_option {
 	RTW_SCAN_PASSIVE             	= 0x02,    /**< passive scan*/
 	RTW_SCAN_NO_HIDDEN_SSID	= 0x04, /**< Filter hidden ssid APs*/
 	RTW_SCAN_REPORT_EACH	= 0x08,    /**< report each */
-	RTW_SCAN_WITH_P2P		= 0x10    /**< for P2P usage */
+	RTW_SCAN_WITH_P2P		= 0x10,    /**< for P2P usage */
+	/* TizenRT customization: scan multiple SSIDs */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	RTW_SCAN_ALL			= 0x20	/**< Scan specific AP and also report other APs responding to NULL probe req */
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 };
 
 /**

@@ -36,6 +36,12 @@
 /**************** configurations for concurrent mode end **********************/
 
 /************************* Default Values of User Configure *****************************/
+/* TizenRT customization: scan multiple SSIDs */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+/* Upper limit of multiple SSID scan */
+#define SSID_SCAN_NUM 6
+#endif //CONFIG_PLATFORM_TIZENRT_OS
+
 /* Upper limit of STAs connected with SoftAP, more STAs connected will cost more heap*/
 #define AP_STA_NUM	12
 #define MACID_HW_MAX_NUM		16
