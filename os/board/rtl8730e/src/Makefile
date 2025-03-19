@@ -89,7 +89,6 @@ include component/soc/amebad2/swlib/Make.defs
 include component/usrcfg/rtl8730e/Make.defs
 include component/lwip/api/Make.defs
 include component/wifi/Make.defs
-include component/wifi/inic/Make.defs
 include component/wifi/common/Make.defs
 include component/mbed/targets/hal/rtl8730e/Make.defs
 include component/os_dep/Make.defs
