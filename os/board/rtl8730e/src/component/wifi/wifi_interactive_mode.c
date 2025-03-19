@@ -725,9 +725,8 @@ int8_t cmd_wifi_on(WiFi_InterFace_ID_t interface_id)
 
 int8_t cmd_wifi_off(void)
 {
-	if (!wifi_off())
-		return 0;
-	return -1;
+/* 8730E doesn't support wifi_off() */
+	return 0;
 }
 
 int8_t cmd_wifi_stop_ap(void)
