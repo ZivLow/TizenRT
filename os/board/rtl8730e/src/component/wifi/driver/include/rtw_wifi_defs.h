@@ -279,6 +279,7 @@ enum rtw_security {
 	RTW_SECURITY_WPA2_WPA3_MIXED = (WPA2_SECURITY | WPA3_SECURITY | AES_ENABLED), /**< WPA3-SAE/WPA2 with AES security		   */
 	RTW_SECURITY_WPA2_AES_CMAC      = (WPA2_SECURITY | AES_CMAC_ENABLED),                           /**< WPA2 Security with AES and Management Frame Protection */
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	RTW_SECURITY_WPA_TKIP_ENTERPRISE       = (WPA_SECURITY | TKIP_ENABLED | ENTERPRISE_ENABLED),                               /**< WPA Security with TKIP via 802.1X authentication            */
 	RTW_SECURITY_WPA_AES_ENTERPRISE        = (WPA_SECURITY | AES_ENABLED | ENTERPRISE_ENABLED),                                /**< WPA Security with AES via 802.1X authentication             */
 	RTW_SECURITY_WPA_MIXED_ENTERPRISE      = (WPA_SECURITY | AES_ENABLED | TKIP_ENABLED | ENTERPRISE_ENABLED),                 /**< WPA Security with AES & TKIP via 802.1X authentication      */
@@ -296,6 +297,7 @@ enum rtw_security {
 	RTW_SECURITY_UNKNOWN         = -1,                                            /**< May be returned by scan function if security is unknown. Do not pass this to the join function! */
 
 	RTW_SECURITY_FORCE_32_BIT    = 0x7fffffff                                     /**< Exists only to force rtw_security_t type to 32 bits */
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 };
 
 /**
