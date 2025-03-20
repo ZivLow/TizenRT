@@ -311,8 +311,11 @@ typedef enum {
 
 #define IPC_N2A_WIFI_TRX_TRAN					0	/*!<  NP -->  AP WIFI Message Exchange */
 #define IPC_N2A_WIFI_API_TRAN					1	/*!<  NP -->  AP API WIFI Message Exchange */
-//#define IPC_N2A_Channel2						2	/*!<  NP -->  AP */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
 #define IPC_N2A_NP_LOG_CHN						2	/*!<  NP -->  AP Send NP log to AP */
+#else
+//#define IPC_N2A_Channel2						2	/*!<  NP -->  AP */
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 #define IPC_N2A_BT_API_TRAN						3	/*!<  NP -->  AP BT API Exchange */
 #define IPC_N2A_BT_DRC_TRAN						4	/*!<  NP -->  AP BT DATA Message Exchange */
 #define IPC_N2A_802154_TRAN						5
@@ -326,7 +329,11 @@ typedef enum {
 #define IPC_A2L_TICKLESS_INDICATION			0	/*!<  AP -->  LP Tickless Indicate */
 //#define IPC_A2L_Channel1						1
 #define IPC_A2L_UARTBRIDGE						2
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
 #define IPC_A2L_DISLOGUART						3
+#else
+//#define IPC_A2L_Channel3						3
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 //#define IPC_A2L_Channel4						4
 //#define IPC_A2L_Channel5						5
 //#define IPC_A2L_Channel6						6

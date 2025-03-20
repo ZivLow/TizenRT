@@ -55,12 +55,11 @@
 #define IPC_H2D_WIFI_TRX_TRAN IPC_A2N_WIFI_TRX_TRAN
 #define IPC_H2D_WIFI_API_TRAN IPC_A2N_WIFI_API_TRAN
 #define IPC_D2H_WIFI_API_TRAN IPC_N2A_WIFI_API_TRAN
-#define BUFFERED_PRINTF				1
-#if defined(BUFFERED_PRINTF) && (BUFFERED_PRINTF == 1)
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	extern void inic_ipc_dev_buffered_printf(const char *fmt, ...);
 	#undef printf
 	#define printf					inic_ipc_dev_buffered_printf
-#endif
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 #endif
 #endif
 
