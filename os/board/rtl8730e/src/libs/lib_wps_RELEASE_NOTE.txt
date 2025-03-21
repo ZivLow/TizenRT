@@ -1,0 +1,4 @@
+== version cba2709e 2025/03/21-13:26:49 ==
+1.	Sync lib_wps.a from ameba-rtos-v1.0 SDK
+2.	Change optimization flags from "-O2" to "-Os"
+3.	Change instruction set build "-marm" to "-mthumb"
