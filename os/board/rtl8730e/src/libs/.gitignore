@@ -2,8 +2,11 @@
 !./bt_mgr.a
 !./leaudio.a
 !./lib_btgap.a
+!./lib_usbh.a
+!./lib_usbh_new.a
 !./lib_wifi_common.a
 !./lib_wpa_lite.a
-!./sysm.a
 !./lib_wifi_com_sec.a
 !./lib_wps.a
+!./lib_wifi_inic_ap.a
+!./sysm.a
