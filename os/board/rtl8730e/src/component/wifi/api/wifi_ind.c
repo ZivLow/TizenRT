@@ -51,6 +51,10 @@ extern enum rtw_join_status_type rtw_join_status;
 extern enum _rtw_result_t join_fail_reason;
 extern struct internal_join_block_param *join_block_param;
 extern wifi_jioninfo_free_ptr p_wifi_join_info_free;
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+extern enum rtw_join_status_type prev_join_status;
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 //----------------------------------------------------------------------------//
 enum _rtw_result_t rtw_indicate_event_handle(int event_cmd, char *buf, int buf_len, int flags)
 {
@@ -202,6 +206,9 @@ void wifi_event_join_status_internal_hdl(char *buf, int flags)
 #endif
 	}
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	prev_join_status = rtw_join_status;
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 	rtw_join_status = join_status;
 
 	if ((join_status == RTW_JOINSTATUS_DISCONNECT) || (join_status == RTW_JOINSTATUS_FAIL)) {

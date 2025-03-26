@@ -593,6 +593,10 @@ typedef struct _pwr_lmt_regu_remap {
 typedef struct _rtw_sw_statistics_t { /* software statistics for tx and rx*/
 	unsigned int    max_skbbuf_used_number; /*!< max skb buffer used number       */
 	unsigned int    skbbuf_used_number;     /*!< current used skbbuf number       */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	unsigned long   tx_drop;
+	unsigned long   rx_drop;
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 } rtw_sw_statistics_t;
 
 /**
@@ -769,12 +773,18 @@ enum rtw_disconn_reason {
 struct rtw_event_disconn_info_t {
 	u16 disconn_reason;/*Detail in enum rtw_disconn_reason*/
 	u8	bssid[6]; /*AP's MAC address*/
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	u32 prev_key_mgmt;
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 };
 
 struct rtw_event_join_fail_info_t {
 	enum _rtw_result_t	fail_reason;
 	u16					reason_or_status_code;/*from AP*/
 	u8					bssid[6]; /*AP's MAC address*/
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	u32 prev_key_mgmt;
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 };
 
 #ifndef CONFIG_FULLMAC
@@ -988,6 +998,37 @@ int _wifi_on_ap(void);
  * @return  RTW_ERROR: otherwise.
  */
 int _wifi_off_ap(void);
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+/**
+ * @brief  Get the deauth reason received by driver
+ * @param[in]  void
+ * @return  Return the last deauth reason received by driver
+ */
+int wifi_get_last_reason(void);
+
+/**
+ * @brief  Get a string containing KM4 wlan lib version info
+ * @param[out]  lib_ver: Pointer where the KM4 wlan lib version will be written to
+ * @return  RTW_SUCCESS: Copied KM4 wlan lib version info into buffer.
+ * @return  RTW_ERROR: Buffer is NULL.
+ */
+int wifi_get_lib_version(char *lib_ver);
+
+/**
+ * @brief  get the previous join status during wifi connection
+ * @param  None
+ * @return join status, refer to macros in wifi_conf.c
+ */
+rtw_join_status_t wifi_get_prev_join_status(void);
+
+/**
+ * @brief  Get key_mgmt value used by the connection in the last disconnection event
+ * @param[in]  void
+ * @return  unsigned int: The key_mgmt value used by the connection in the last disconnection event
+ */
+unsigned int wifi_get_prev_key_mgmt(void);
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 /**
 * @}
 */
