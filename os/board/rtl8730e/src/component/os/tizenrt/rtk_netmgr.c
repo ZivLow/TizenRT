@@ -25,6 +25,7 @@
 #include <tinyara/net/if/wifi.h>
 #include <tinyara/netmgr/netdev_mgr.h>
 // #include "freertos/wrapper.h"
+#include "common/defs.h"
 #include "os_wrapper.h"
 /* WLAN CONFIG ---------------------------------------------------------------*/
 #define RTK_OK          0		/*!< RTK_err_t value indicating success (no error) */
@@ -65,11 +66,11 @@ trwifi_result_e wifi_netmgr_utils_start_softap(struct netdev *dev, trwifi_softap
 trwifi_result_e wifi_netmgr_utils_stop_softap(struct netdev *dev);
 trwifi_result_e wifi_netmgr_utils_set_autoconnect(struct netdev *dev, uint8_t check);
 trwifi_result_e wifi_netmgr_utils_ioctl(struct netdev *dev, trwifi_msg_s *msg);
-// trwifi_result_e wifi_netmgr_utils_set_chplan(struct netdev *dev, uint8_t chplan);
-// trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_signal_quality *signal_quality);
-// trwifi_result_e wifi_netmgr_utils_get_disconn_reason(struct netdev *dev, int *deauth_reason);
-// trwifi_result_e wifi_netmgr_utils_get_driver_info(struct netdev *dev, trwifi_driver_info *driver_info);
-// trwifi_result_e wifi_netmgr_utils_get_wpa_supplicant_state(struct netdev *dev, trwifi_wpa_states *wpa_supplicant_state);
+trwifi_result_e wifi_netmgr_utils_set_chplan(struct netdev *dev, uint8_t chplan);
+trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_signal_quality *signal_quality);
+trwifi_result_e wifi_netmgr_utils_get_disconn_reason(struct netdev *dev, int *deauth_reason);
+trwifi_result_e wifi_netmgr_utils_get_driver_info(struct netdev *dev, trwifi_driver_info *driver_info);
+trwifi_result_e wifi_netmgr_utils_get_wpa_supplicant_state(struct netdev *dev, trwifi_wpa_states *wpa_supplicant_state);
 void print_scan_result(rtw_scan_result_t *record);
 
 struct trwifi_ops g_trwifi_drv_ops = {
@@ -85,11 +86,11 @@ struct trwifi_ops g_trwifi_drv_ops = {
 	wifi_netmgr_utils_set_autoconnect, /* set_autoconnect */
 	wifi_netmgr_utils_ioctl,					/* drv_ioctl */
 	NULL, // wifi_netmgr_utils_scan_multi_ap,	/* scan_multi_ap */
-	NULL, // wifi_netmgr_utils_set_chplan,		/* set_chplan */
-	NULL, // wifi_netmgr_utils_get_signal_quality,		/* get_signal_quality */
-	NULL, // wifi_netmgr_utils_get_disconn_reason,		/* get_deauth_reason */
-	NULL, // wifi_netmgr_utils_get_driver_info,			/* get_driver_info */
-	NULL, // wifi_netmgr_utils_get_wpa_supplicant_state,	/* get_wpa_supplicant_state */
+	wifi_netmgr_utils_set_chplan,		/* set_chplan */
+	wifi_netmgr_utils_get_signal_quality,		/* get_signal_quality */
+	wifi_netmgr_utils_get_disconn_reason,		/* get_deauth_reason */
+	wifi_netmgr_utils_get_driver_info,			/* get_driver_info */
+	wifi_netmgr_utils_get_wpa_supplicant_state,	/* get_wpa_supplicant_state */
 };
 
 static trwifi_scan_list_s *g_scan_list;
@@ -660,7 +661,6 @@ trwifi_result_e wifi_netmgr_utils_disconnect_ap(struct netdev *dev, void *arg)
 	return wuret;
 }
 
-#if 0
 trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_signal_quality *signal_quality)
 {
 	trwifi_result_e wuret = TRWIFI_INVALID_ARGS;
@@ -700,8 +700,8 @@ trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_
 					signal_quality->network_bw = wifi_get_current_bw();
 				}
 			}
-			signal_quality->tx_drop = sw_stats.tx_dropped;
-			signal_quality->rx_drop = sw_stats.rx_dropped;
+			signal_quality->tx_drop = sw_stats.tx_drop;
+			signal_quality->rx_drop = sw_stats.rx_drop;
 			signal_quality->tx_retry = tx_rty;
 			wuret = TRWIFI_SUCCESS;
 		} else {
@@ -711,7 +711,6 @@ trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_
 
 	return wuret;
 }
-#endif
 
 trwifi_result_e wifi_netmgr_utils_get_info(struct netdev *dev, trwifi_info *wifi_info)
 {
@@ -742,7 +741,6 @@ trwifi_result_e wifi_netmgr_utils_get_info(struct netdev *dev, trwifi_info *wifi
 	return wuret;
 }
 
-#if 0
 trwifi_result_e wifi_netmgr_utils_get_wpa_supplicant_state(struct netdev *dev, trwifi_wpa_states *wpa_supplicant_state)
 {
 	trwifi_result_e wuret = TRWIFI_FAIL;
@@ -785,15 +783,13 @@ trwifi_result_e wifi_netmgr_utils_get_wpa_supplicant_state(struct netdev *dev, t
 		}
 
 		/* key_mgmt will return the value used in the last disconnected network */
-		key_mgmt = wifi_get_key_mgmt();
+		key_mgmt = wifi_get_prev_key_mgmt();
 		wpa_supplicant_state->wpa_supplicant_key_mgmt = key_mgmt;
 		wuret = TRWIFI_SUCCESS;
 	}
 	return wuret;
 }
-#endif
 
-#if 0
 trwifi_result_e wifi_netmgr_utils_get_driver_info(struct netdev *dev, trwifi_driver_info *driver_info)
 {
 	trwifi_result_e wuret = TRWIFI_SUCCESS;
@@ -806,7 +802,6 @@ trwifi_result_e wifi_netmgr_utils_get_driver_info(struct netdev *dev, trwifi_dri
 	}
 	return wuret;
 }
-#endif
 
 trwifi_result_e wifi_netmgr_utils_start_softap(struct netdev *dev, trwifi_softap_config_s *softap_config)
 {
@@ -937,7 +932,6 @@ trwifi_result_e wifi_netmgr_utils_ioctl(struct netdev *dev, trwifi_msg_s *msg)
 	return TRWIFI_NOT_SUPPORTED;
 }
 
-#if 0
 trwifi_result_e wifi_netmgr_utils_set_chplan(struct netdev *dev, uint8_t chplan)
 {
 	trwifi_result_e wuret = TRWIFI_FAIL;
@@ -963,7 +957,6 @@ trwifi_result_e wifi_netmgr_utils_get_disconn_reason(struct netdev *dev, int *de
 	wuret = TRWIFI_SUCCESS;
 	return wuret;
 }
-#endif
 
 void print_scan_result(rtw_scan_result_t *record)
 {
