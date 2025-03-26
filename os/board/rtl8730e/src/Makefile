@@ -168,6 +168,7 @@ CFLAGS += -I$(COMPONENT_DIR)/wifi/common
 CFLAGS += -I$(COMPONENT_DIR)/wifi/api
 CFLAGS += -I$(COMPONENT_DIR)/wifi/driver/include
 CFLAGS += -I$(COMPONENT_DIR)/wifi/inic
+CFLAGS += -I$(COMPONENT_DIR)/wifi/wpa_supplicant/src
 CFLAGS += -I$(COMPONENT_DIR)/wifi/wpa_supplicant/src/crypto
 CFLAGS += -I$(COMPONENT_DIR)/lwip/api
 

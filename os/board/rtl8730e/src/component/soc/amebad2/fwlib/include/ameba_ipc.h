@@ -331,10 +331,11 @@ typedef enum {
 #define IPC_A2L_UARTBRIDGE						2
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
 #define IPC_A2L_DISLOGUART						3
+#define IPC_A2L_WIFI_FW_INFO					4 /*!<  AP -->  LP Get stats info from WIFI FW */
 #else
 //#define IPC_A2L_Channel3						3
-#endif //CONFIG_PLATFORM_TIZENRT_OS
 //#define IPC_A2L_Channel4						4
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 //#define IPC_A2L_Channel5						5
 //#define IPC_A2L_Channel6						6
 #define IPC_A2L_IMQ_TRX_TRAN					7	/*!<  AP -->  LP IMQ Message Exchange */
