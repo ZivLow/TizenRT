@@ -102,5 +102,11 @@ _WEAK void wifi_set_user_config(void)
 
 	/*Automatic channel selection*/
 	wifi_user_config.acs_en = 0;
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	/* SoftAP silent table to reduce probe response when receiving probe request continuously */
+	wifi_user_config.softap_keep_silent_table_enable = 1;
+	wifi_user_config.softap_keep_silent_table_interval = 500; /* ms. Once interval period is reached, remove from silent table, so can send probe response to same STA again. */
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 }
 
