@@ -1242,6 +1242,12 @@ struct wifi_user_conf {
 
 	/*Automatic channel selection*/
 	unsigned char acs_en;
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	/* SoftAP silent table to reduce probe response when receiving probe request continuously */
+	int softap_keep_silent_table_enable;
+	int softap_keep_silent_table_interval;
+#endif //CONFIG_PLATFORM_TIZENRT_OS
 };
 /** @} */
 #ifdef __cplusplus
