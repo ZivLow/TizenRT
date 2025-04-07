@@ -143,7 +143,7 @@ uint32_t rtos_task_priority_get(rtos_task_t p_handle)
 		return 0;
 	}
 
-	pid_t pid = (pid_t)((uint32_t)p_handle);
+	pid_t pid = (*(pid_t *)p_handle);
 	struct tcb_s *p_tcb = sched_gettcb(pid);
 
 	if (!p_tcb) {
@@ -159,7 +159,7 @@ uint32_t rtos_task_priority_get(rtos_task_t p_handle)
 int rtos_task_priority_set(rtos_task_t p_handle, uint16_t priority)
 {
 	struct tcb_s *p_tcb;
-	pid_t pid = (pid_t)((uint32_t)p_handle);
+	pid_t pid = (*(pid_t *)p_handle);
 
 	if (!p_handle) {
 		dbg("p_handle is NULL\n");
