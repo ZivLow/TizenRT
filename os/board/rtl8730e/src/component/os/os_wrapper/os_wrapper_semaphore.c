@@ -82,11 +82,6 @@ int rtos_sema_create(rtos_sema_t *pp_handle, uint32_t init_count, uint32_t max_c
 		return FAIL;
 	}
 
-	if (*pp_handle) {
-		dbg("sem already init\n");
-		return FAIL;
-	}
-
 	sem = (sem_t *)rtos_mem_zmalloc(sizeof(sem_t));
 	if (sem == NULL) {
 		dbg("alloc sem_t fail\n");
@@ -127,7 +122,6 @@ int rtos_sema_delete(rtos_sema_t p_handle)
 	}
 
 	rtos_mem_free((void *)p_handle);
-	p_handle = NULL;
 
 	return SUCCESS;
 }
