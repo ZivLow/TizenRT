@@ -85,7 +85,7 @@ void os_wrapper_timer_wrapper(void *timer)
 	}
 
 	if (timer_entry->timer->reload) {
-		if (work_queue(HPWORK, timer_entry->timer->work_hdl, os_wrapper_timer_wrapper, (void *)(timer_entry->timer), (timer_entry->timer->timeout * TICK_PER_SEC / 1000L)) != OK) {
+		if (work_queue(LPWORK, timer_entry->timer->work_hdl, os_wrapper_timer_wrapper, (void *)(timer_entry->timer), (timer_entry->timer->timeout * TICK_PER_SEC / 1000L)) != OK) {
 			dbg("work queue fail\n");
 			timer_entry->timer->live = 0;
 		}
@@ -172,7 +172,7 @@ int rtos_timer_delete(rtos_timer_t p_handle, uint32_t wait_ms)
 	}
 
 	timer = (struct os_wrapper_timer_list *)p_handle;
-	ret = work_cancel(HPWORK, timer->work_hdl);
+	ret = work_cancel(LPWORK, timer->work_hdl);
 	if (ret != OK && ret != -ENOENT) {
 		dbg("work cancel fail\n");
 		return FAIL;
@@ -224,14 +224,14 @@ int rtos_timer_start(rtos_timer_t p_handle, uint32_t wait_ms)
 	}
 
 	timer = (struct os_wrapper_timer_list *)p_handle;
-	ret = work_queue(HPWORK, timer->work_hdl, os_wrapper_timer_wrapper, (void *)timer, (timer->timeout * TICK_PER_SEC / 1000L));
+	ret = work_queue(LPWORK, timer->work_hdl, os_wrapper_timer_wrapper, (void *)timer, (timer->timeout * TICK_PER_SEC / 1000L));
 	if (ret == -EALREADY) {
-		if (work_cancel(HPWORK, timer->work_hdl) != OK) {
+		if (work_cancel(LPWORK, timer->work_hdl) != OK) {
 			dbg("work cancel fail\n");
 			return FAIL;
 		}
 
-		if (work_queue(HPWORK, timer->work_hdl, os_wrapper_timer_wrapper, (void *)timer, (timer->timeout * TICK_PER_SEC / 1000L)) != OK) {
+		if (work_queue(LPWORK, timer->work_hdl, os_wrapper_timer_wrapper, (void *)timer, (timer->timeout * TICK_PER_SEC / 1000L)) != OK) {
 			dbg("work queue fail\n");
 			return FAIL;
 		}
@@ -255,7 +255,7 @@ int rtos_timer_stop(rtos_timer_t p_handle, uint32_t wait_ms)
 	}
 
 	timer = (struct os_wrapper_timer_list *)p_handle;
-	if (work_cancel(HPWORK, timer->work_hdl) != OK) {
+	if (work_cancel(LPWORK, timer->work_hdl) != OK) {
 		dbg("work cancel fail\n");
 		return FAIL;
 	}
@@ -276,14 +276,14 @@ int rtos_timer_change_period(rtos_timer_t p_handle, uint32_t interval_ms, uint32
 	}
 
 	timer = (struct os_wrapper_timer_list *)p_handle;
-	ret = work_queue(HPWORK, timer->work_hdl, os_wrapper_timer_wrapper, (void *)timer, (interval_ms * TICK_PER_SEC / 1000L));
+	ret = work_queue(LPWORK, timer->work_hdl, os_wrapper_timer_wrapper, (void *)timer, (interval_ms * TICK_PER_SEC / 1000L));
 	if (ret == -EALREADY) {
-		if (work_cancel(HPWORK, timer->work_hdl) != OK) {
+		if (work_cancel(LPWORK, timer->work_hdl) != OK) {
 			dbg("work cancel fail\n");
 			return FAIL;
 		}
 
-		if (work_queue(HPWORK, timer->work_hdl, os_wrapper_timer_wrapper, (void *)timer, (interval_ms * TICK_PER_SEC / 1000L)) != OK) {
+		if (work_queue(LPWORK, timer->work_hdl, os_wrapper_timer_wrapper, (void *)timer, (interval_ms * TICK_PER_SEC / 1000L)) != OK) {
 			dbg("work queue fail\n");
 			return FAIL;
 		}
