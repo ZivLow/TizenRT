@@ -30,6 +30,7 @@
 #include <tinyara/wifi/rtk/wifi_constants.h>
 #include <sched.h>
 #include <semaphore.h>
+#include <example_wifi_csi.h>
 
 #define IP_ADDR_INVALID "0.0.0.0"
 extern int wifi_csi_config(rtw_csi_action_parm_t *act_param);
@@ -59,13 +60,20 @@ int wificsi_main(int argc, char *argv[])
 	unsigned long long *buff_tmp = NULL; /* to printf csi data*/
 	unsigned int csi_seq_num;
 	unsigned int timestamp;
+	/* Set the mac addr of each device */
+	unsigned char device_1[6] = {0x1c, 0x3b, 0xf3, 0xea, 0x9d, 0xc3};  /* need modify to mac address of associated AP when sta mode */
+	unsigned char device_2[6] = {0xba, 0xbc, 0xb7, 0xae, 0xd9, 0x8f};  /* need modify to mac address of associated AP when sta mode */
 	act_param.group_num = 0;
-	act_param.mode = 0;  /* 0: rx normal 2:rx respon */
+	act_param.mode = 2;  /* 0: rx normal 2:rx respon */
 	act_param.accuracy = 0;
 	act_param.trig_period = 200;  /* ms */
-	act_param.data_rate = 0x80;  /* ofdm 6 mpbs*/
-	act_param.ch_opt = 1; //0: legacy 1: non-legacy
-//	act_param.mac_addr = {0x00, 0xe0, 0x4c, 0x81, 0x92, 0xbb};
+	act_param.data_rate = 0xc;  /* ofdm 6 mpbs*/
+	act_param.ch_opt = 0; //0: legacy 1: non-legacy
+	act_param.trig_frame_mgnt = 0;   /* no need for rx resp mode, default 0*/
+	act_param.trig_frame_ctrl = 0;   /* no need for rx resp mode, default 0*/
+	act_param.trig_frame_data = 0;   /* no need for rx resp mode, default 0*/
+	/* Config mac addr for device 1 */
+	memcpy(act_param.mac_addr, device_1, 6);
 	char ipv4_address[4];
 	char ipv4_buf[16];
 	while (1) {
@@ -86,7 +94,7 @@ int wificsi_main(int argc, char *argv[])
 	sem_init(&wc_ready_sema, 0, 0);
 
 	/* register wifi event callback function */
-	wifi_reg_event_handler(21, example_wifi_csi_report_cb, NULL);
+	wifi_reg_event_handler(WIFI_CSI_DONE, example_wifi_csi_report_cb, NULL);
 
 	/* csi cfg and csi en */
 	act_param.act = 1;  /* csi cfg */
@@ -95,6 +103,11 @@ int wificsi_main(int argc, char *argv[])
 
 	act_param.act = 0;  /* csi en */
 	act_param.enable = 1;
+	wifi_csi_config(&act_param);
+
+	/* Config mac addr for device 2 */
+	act_param.trig_flag = 1;
+	memcpy(act_param.mac_addr, device_2, 6);
 	wifi_csi_config(&act_param);
 	csi_buf = (unsigned char *)malloc(csi_data_len);
 	if (csi_buf) {
@@ -125,7 +138,7 @@ int wificsi_main(int argc, char *argv[])
 
 
 	/* unregister wifi event callback function */
-	wifi_unreg_event_handler(21, example_wifi_csi_report_cb);
+	wifi_unreg_event_handler(WIFI_CSI_DONE, example_wifi_csi_report_cb);
 
 	sem_destroy(&wc_ready_sema);
 
