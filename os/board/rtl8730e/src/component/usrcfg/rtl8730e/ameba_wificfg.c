@@ -22,7 +22,7 @@ _WEAK void wifi_set_user_config(void)
 	memset(&wifi_user_config, 0, sizeof(struct wifi_user_conf));
 
 	/* below items for user config, for details, see wifi_user_conf in wifi_intf_drv_to_app_basic.h */
-	wifi_user_config.concurrent_enabled = 1;
+	wifi_user_config.concurrent_enabled = 0;
 	wifi_user_config.softap_addr_offset_idx = 1;
 	wifi_user_config.auto_reconnect_count = 10;
 	wifi_user_config.auto_reconnect_interval = 5;
@@ -49,7 +49,7 @@ _WEAK void wifi_set_user_config(void)
 	/*Regulatory related*/
 	wifi_user_config.country_code[0] = 0;
 	wifi_user_config.country_code[1] = 0;
-	wifi_user_config.rtw_tx_pwr_lmt_enable = 2;
+	wifi_user_config.rtw_tx_pwr_lmt_enable = 0;
 	wifi_user_config.rtw_tx_pwr_by_rate	= 2;
 	wifi_user_config.rtw_802_11d_en = 0;
 	wifi_user_config.rtw_trp_tis_cert_en = RTW_TRP_TIS_DISABLE;
