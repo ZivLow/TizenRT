@@ -94,7 +94,7 @@ void os_wrapper_timer_wrapper(void *timer)
 	}
 
 	if (timer_entry->timer->function) {
-		timer_entry->timer->function((void *) timer_entry->timer->data);
+		timer_entry->timer->function(timer);
 	}
 }
 
