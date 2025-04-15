@@ -120,12 +120,20 @@ int rtos_timer_create(rtos_timer_t *pp_handle, const char *p_timer_name, uint32_
 		return FAIL;
 	}
 
+#ifdef CONFIG_DEBUG_MM_HEAPINFO
+	DEBUG_SET_CALLER_ADDR(timer);
+#endif
+
 	timer->work_hdl = rtos_mem_zmalloc(sizeof(struct work_s));
 	if (timer->work_hdl == NULL) {
 		dbg("alloc work_s fail\n");
 		rtos_mem_free(timer);
 		return FAIL;
 	}
+
+#ifdef CONFIG_DEBUG_MM_HEAPINFO
+	DEBUG_SET_CALLER_ADDR(timer->work_hdl);
+#endif
 
 	timer->timer_hdl = timer;
 	memcpy(timer->timer_name, p_timer_name, TMR_NAME_SIZE);
@@ -149,6 +157,10 @@ int rtos_timer_create(rtos_timer_t *pp_handle, const char *p_timer_name, uint32_
 		rtos_mem_free(timer);
 		return FAIL;
 	}
+
+#ifdef CONFIG_DEBUG_MM_HEAPINFO
+	DEBUG_SET_CALLER_ADDR(timer_entry);
+#endif
 
 	timer_entry->timer = timer;
 

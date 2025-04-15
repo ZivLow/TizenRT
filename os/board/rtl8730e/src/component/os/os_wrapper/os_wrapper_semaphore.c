@@ -89,7 +89,7 @@ int rtos_sema_create(rtos_sema_t *pp_handle, uint32_t init_count, uint32_t max_c
 	}
 
 #ifdef CONFIG_DEBUG_MM_HEAPINFO
-	DEBUG_SET_CALLER_ADDR(*pp_handle);
+	DEBUG_SET_CALLER_ADDR(sem);
 #endif
 
 	if (sem_init(sem, 0, init_count) != OK) {
@@ -137,7 +137,11 @@ int rtos_sema_take(rtos_sema_t p_handle, uint32_t wait_ms)
 		struct timespec ts;
 		clock_gettime(CLOCK_REALTIME, &ts);
 		ts.tv_sec += wait_ms / 1000;
-		//ts.tv_nsec += (wait_ms % 1000) * 1000 * 1000;    /* ziv: cannot use tv_nsec as we would exceed max input of 1000000000 */
+		ts.tv_nsec += (wait_ms % 1000) * 1000 * 1000;
+		if (ts.tv_nsec >= NSEC_PER_SEC) {
+			ts.tv_sec ++;
+			ts.tv_nsec -= NSEC_PER_SEC;
+		}
 		if (sem_timedwait((sem_t *) p_handle, &ts) != OK) {
 			dbg("sema wait 0x%x ms fail\n", wait_ms);
 			return FAIL;
