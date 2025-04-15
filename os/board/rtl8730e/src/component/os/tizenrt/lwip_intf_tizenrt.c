@@ -285,7 +285,6 @@ void netif_pre_sleep_processing(void)
 {
 }
 
-#ifdef CONFIG_WOWLAN
 unsigned char *rltk_wlan_get_ip(int idx)
 {
 	struct netdev *dev_tmp = NULL;
@@ -330,7 +329,6 @@ unsigned char *rltk_wlan_get_gwmask(int idx)
 	struct netif *ni = (struct netif *)(((struct netdev_ops *)(dev_tmp)->ops)->nic);
 	return (uint8_t *) &(ni->netmask);
 }
-#endif
 
 void *rltk_pbuf_wrapper(struct sk_buff *skb, u16_t *len)
 {
