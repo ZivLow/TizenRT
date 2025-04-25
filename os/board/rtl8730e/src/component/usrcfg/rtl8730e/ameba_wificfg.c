@@ -9,10 +9,6 @@
 #else
 #include "platform_autoconf.h"
 #include <wifi_conf.h>
-#include <ameba_soc.h>	// include for CONFIG_LINUX_FW_EN
-#if defined(CONFIG_AS_INIC_AP)
-#include "inic_ipc.h"
-#endif
 #endif
 
 struct wifi_user_conf wifi_user_config __attribute__((aligned(64)));
@@ -72,12 +68,12 @@ _WEAK void wifi_set_user_config(void)
 	wifi_user_config.uapsd_ac_enable = 0;
 
 	/* Softap related */
-	wifi_user_config.ap_sta_num = NUM_STA;
-	wifi_user_config.ap_polling_sta = 0; /*set to 1 if CONFIG_ENABLE_AP_POLLING_CLIENT_ALIVE is defined*/
+	wifi_user_config.ap_sta_num = 12;	/*should not exceed AP_STA_NUM */
+	wifi_user_config.ap_polling_sta = 0;
 
 	/* MISC */
 	wifi_user_config.en_mcc = 0; /*not support if CONFIG_MCC_MODE is undefined*/
-	wifi_user_config.max_roaming_times = 2; /*not support if CONFIG_LAYER2_ROAMING is undefined*/
+	wifi_user_config.max_roaming_times = 2;
 	wifi_user_config.ampdu_rx_enable = 1; /* not support if CONFIG_80211AC_VHT is undefined*/
 	wifi_user_config.ampdu_tx_enable = 1; /* not support if CONFIG_80211AC_VHT is undefined*/
 	wifi_user_config.bCheckDestAddress = 1;
