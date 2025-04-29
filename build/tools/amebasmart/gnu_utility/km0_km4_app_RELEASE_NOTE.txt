@@ -1,5 +1,8 @@
 /* == "version" + "Realtek git version" + "compile date" + "compile time" == */
 
+== version 95cc455d 2025/04/28-17:42:10 ==
+1. Updated KM4 image 95cc455d + ARP forward commit
+
 == version c58cd8c3d5 2025/03/21-14:20:16 ==
 1. Add condition to check TizenRT status before doing IPC print
 
