@@ -114,7 +114,7 @@ int rtos_timer_create(rtos_timer_t *pp_handle, const char *p_timer_name, uint32_
 		return FAIL;
 	}
 
-	timer = rtos_mem_zmalloc(sizeof(struct os_wrapper_timer_list));
+	timer = (struct os_wrapper_timer_list *)kmm_zalloc(sizeof(struct os_wrapper_timer_list));
 	if (timer == NULL) {
 		dbg("alloc os_wrapper_timer_list fail\n");
 		return FAIL;
@@ -124,7 +124,7 @@ int rtos_timer_create(rtos_timer_t *pp_handle, const char *p_timer_name, uint32_
 	DEBUG_SET_CALLER_ADDR(timer);
 #endif
 
-	timer->work_hdl = rtos_mem_zmalloc(sizeof(struct work_s));
+	timer->work_hdl = (struct work_s *)kmm_zalloc(sizeof(struct work_s));
 	if (timer->work_hdl == NULL) {
 		dbg("alloc work_s fail\n");
 		rtos_mem_free(timer);

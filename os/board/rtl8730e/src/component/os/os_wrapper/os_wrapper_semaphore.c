@@ -82,7 +82,7 @@ int rtos_sema_create(rtos_sema_t *pp_handle, uint32_t init_count, uint32_t max_c
 		return FAIL;
 	}
 
-	sem = (sem_t *)rtos_mem_zmalloc(sizeof(sem_t));
+	sem = (sem_t *)kmm_zalloc(sizeof(sem_t));
 	if (sem == NULL) {
 		dbg("alloc sem_t fail\n");
 		return FAIL;
