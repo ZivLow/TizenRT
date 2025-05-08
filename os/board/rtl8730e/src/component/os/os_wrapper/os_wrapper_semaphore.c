@@ -8,69 +8,20 @@
 #include "ameba.h"
 #include "os_wrapper.h"
 
-/* FreeRTOS Static Implementation */
-#if( configSUPPORT_STATIC_ALLOCATION == 1 )
-extern StaticSemaphore_t *__reserved_get_sema_from_poll(void);
-extern void __reserved_release_sema_to_poll(void *buf);
-#endif
-
 int rtos_sema_create_static(rtos_sema_t *pp_handle, uint32_t init_count, uint32_t max_count)
 {
-#if( configSUPPORT_STATIC_ALLOCATION == 1 )
-	StaticSemaphore_t *sema;
-
-	sema = __reserved_get_sema_from_poll();
-
-	if (sema == NULL) {
-		return rtos_sema_create(pp_handle, init_count, max_count);
-	} else {
-		*pp_handle = xSemaphoreCreateCountingStatic(max_count, init_count, sema);
-
-		if (*pp_handle != NULL) {
-			return SUCCESS;
-		} else {
-			return FAIL;
-		}
-	}
-#else
 	return rtos_sema_create(pp_handle, init_count, max_count);
-#endif
 }
 
 int rtos_sema_create_binary_static(rtos_sema_t *pp_handle)
 {
-#if( configSUPPORT_STATIC_ALLOCATION == 1 )
-	StaticSemaphore_t *sema;
-
-	sema = __reserved_get_sema_from_poll();
-
-	if (sema == NULL) {
-		return rtos_sema_create_binary(pp_handle);
-	} else {
-		*pp_handle = xSemaphoreCreateBinaryStatic(sema);
-
-		if (*pp_handle != NULL) {
-			return SUCCESS;
-		} else {
-			return FAIL;
-		}
-	}
-#else
 	return rtos_sema_create_binary(pp_handle);
-#endif
 }
 
 int rtos_sema_delete_static(rtos_sema_t p_handle)
 {
-#if( configSUPPORT_STATIC_ALLOCATION == 1 )
-	rtos_sema_delete(p_handle);
-	__reserved_release_sema_to_poll(p_handle);
-	return SUCCESS;
-#else
 	return rtos_sema_delete(p_handle);
-#endif
 }
-
 
 int rtos_sema_create(rtos_sema_t *pp_handle, uint32_t init_count, uint32_t max_count)
 {
@@ -93,12 +44,15 @@ int rtos_sema_create(rtos_sema_t *pp_handle, uint32_t init_count, uint32_t max_c
 #endif
 
 	if (sem_init(sem, 0, init_count) != OK) {
-		rtos_mem_free((void *)sem);
+		kmm_free((void *)sem);
 		dbg("sem init fail\n");
 		return FAIL;
 	}
 
 	*pp_handle = sem;
+	// no sem_setprotocol previously, is this needed?
+	// https://cwiki.apache.org/confluence/display/NUTTX/Signaling+Semaphores+and+Priority+Inheritance
+	// seems like only needed if we are using it for signalling
 	sem_setprotocol(*pp_handle, SEM_PRIO_NONE);
 
 	return SUCCESS;
@@ -121,7 +75,7 @@ int rtos_sema_delete(rtos_sema_t p_handle)
 		return FAIL;
 	}
 
-	rtos_mem_free((void *)p_handle);
+	kmm_free((void *)p_handle);
 
 	return SUCCESS;
 }
