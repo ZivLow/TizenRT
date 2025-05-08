@@ -300,7 +300,7 @@ uint32_t osif_lock(void)
 	uint32_t flags = 0U;
 	if (osif_task_context_check() == true)
 	{
-		flags = save_and_cli();
+		flags = tizenrt_critical_enter();
 	}
 	return flags;
 }
@@ -312,7 +312,7 @@ void osif_unlock(uint32_t flags)
 {
 	if (osif_task_context_check() == true)
 	{
-		restore_flags(flags);
+		tizenrt_critical_exit(flags);
 	}
 }
 

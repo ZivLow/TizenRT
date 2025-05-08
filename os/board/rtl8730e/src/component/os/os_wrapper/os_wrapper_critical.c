@@ -9,7 +9,7 @@
 
 int rtos_critical_is_in_interrupt(void)
 {
-	return !up_interrupt_context();
+	return up_interrupt_context();
 }
 
 void rtos_critical_enter(void)

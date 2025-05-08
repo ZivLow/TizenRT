@@ -83,9 +83,9 @@ int rtos_task_create(rtos_task_t *pp_handle, const char *p_name, void (*p_routin
 	task_info[0] = itoa((int)p_routine, routine_addr, 16);
 	task_info[1] = itoa((int)p_param, param_addr, 16);
 	task_info[2] = NULL;
+	stack_size_in_byte *= sizeof(uint32_t);
 	priority = priority + SCHED_PRIORITY_DEFAULT;
-	if (priority > SCHED_PRIORITY_MAX)
-		priority = SCHED_PRIORITY_DEFAULT;
+	priority = (priority > SCHED_PRIORITY_MAX || priority < SCHED_PRIORITY_MIN)?SCHED_PRIORITY_DEFAULT:priority;
 
 	pid = kernel_thread(p_name, priority, (int)stack_size_in_byte, wrapper_thread, (char *const *)task_info);
 	if (pid == ERROR) {
@@ -173,8 +173,7 @@ int rtos_task_priority_set(rtos_task_t p_handle, uint16_t priority)
 	}
 
 	priority = priority + SCHED_PRIORITY_DEFAULT;
-	if (priority > SCHED_PRIORITY_MAX)
-		priority = SCHED_PRIORITY_DEFAULT;
+	priority = (priority > SCHED_PRIORITY_MAX || priority < SCHED_PRIORITY_MIN)?SCHED_PRIORITY_DEFAULT:priority;
 
 	if (sched_setpriority(p_tcb, priority) != OK) {
 		dbg("sched setpriority fail\n");

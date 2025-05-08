@@ -14,51 +14,17 @@ struct os_wrapper_timer_entry {
 
 static _list os_wrapper_timer_table;
 bool os_wrapper_timer_table_init = 0;
-
-/* FreeRTOS Static Implementation */
-#if( configSUPPORT_STATIC_ALLOCATION == 1 )
-extern StaticTimer_t *__reserved_get_timer_from_poll(void);
-extern void __reserved_release_timer_to_poll(void *buf);
-#endif
+static rtos_mutex_t _rtw_timer_mutex = NULL;
 
 int rtos_timer_create_static(rtos_timer_t *pp_handle, const char *p_timer_name, uint32_t timer_id,
-							 uint32_t interval_ms, uint8_t reload, void (*p_timer_callback)(void *))
+							uint32_t interval_ms, uint8_t reload, void (*p_timer_callback)(void *))
 {
-#if( configSUPPORT_STATIC_ALLOCATION == 1 )
-	StaticTimer_t *timer;
-	TickType_t timer_ticks;
-
-	timer = __reserved_get_timer_from_poll();
-
-	if (timer == NULL) {
-		return rtos_timer_create(pp_handle, p_timer_name, timer_id, interval_ms, reload, p_timer_callback);
-	} else {
-		timer_ticks = (TickType_t)((interval_ms + portTICK_PERIOD_MS - 1) / portTICK_PERIOD_MS);
-
-		*pp_handle = xTimerCreateStatic(p_timer_name, timer_ticks, (BaseType_t)reload,
-										(void *)timer_id, (TimerCallbackFunction_t)p_timer_callback, timer);
-
-		if (*pp_handle == NULL) {
-			return FAIL;
-		}
-	}
-	return SUCCESS;
-#else
 	return rtos_timer_create(pp_handle, p_timer_name, timer_id, interval_ms, reload, p_timer_callback);
-#endif
 }
 
 int rtos_timer_delete_static(rtos_timer_t p_handle, uint32_t wait_ms)
 {
-#if( configSUPPORT_STATIC_ALLOCATION == 1 )
-	rtos_timer_t handle_for_delete = p_handle;
-	while (rtos_timer_delete(handle_for_delete, wait_ms) != SUCCESS) {};
-	// wait timer until inactive in __reserved_release_timer_to_poll
-	__reserved_release_timer_to_poll(p_handle);
-	return SUCCESS;
-#else
 	return rtos_timer_delete(p_handle, wait_ms);
-#endif
 }
 
 void os_wrapper_timer_wrapper(void *timer)
@@ -66,8 +32,7 @@ void os_wrapper_timer_wrapper(void *timer)
 	_list *plist;
 	struct os_wrapper_timer_entry *timer_entry = NULL;
 
-	irqstate_t flags = tizenrt_critical_enter();
-
+	rtos_mutex_take(_rtw_timer_mutex, 0xFFFFFFFF);
 	plist = get_next(&os_wrapper_timer_table);
 	while ((rtw_end_of_queue_search(&os_wrapper_timer_table, plist)) == FALSE) {
 		timer_entry = LIST_CONTAINOR(plist, struct os_wrapper_timer_entry, list);
@@ -76,8 +41,7 @@ void os_wrapper_timer_wrapper(void *timer)
 		}
 		plist = get_next(plist);
 	}
-
-	tizenrt_critical_exit(flags);
+	rtos_mutex_give(_rtw_timer_mutex);
 
 	if (plist == &os_wrapper_timer_table) {
 		dbg("find timer_entry fail\n");
@@ -127,7 +91,7 @@ int rtos_timer_create(rtos_timer_t *pp_handle, const char *p_timer_name, uint32_
 	timer->work_hdl = (struct work_s *)kmm_zalloc(sizeof(struct work_s));
 	if (timer->work_hdl == NULL) {
 		dbg("alloc work_s fail\n");
-		rtos_mem_free(timer);
+		kmm_free(timer);
 		return FAIL;
 	}
 
@@ -145,16 +109,21 @@ int rtos_timer_create(rtos_timer_t *pp_handle, const char *p_timer_name, uint32_
 
 	*pp_handle = timer;
 
+	if(_rtw_timer_mutex == NULL) {
+		rtos_mutex_create(&_rtw_timer_mutex);
+	}
 	if (!os_wrapper_timer_table_init) {
+		rtos_mutex_take(_rtw_timer_mutex, 0xFFFFFFFF);
 		INIT_LIST_HEAD(&os_wrapper_timer_table);
+		rtos_mutex_give(_rtw_timer_mutex);
 		os_wrapper_timer_table_init = 1;
 	}
 
-	timer_entry = rtos_mem_zmalloc(sizeof(struct os_wrapper_timer_entry));
+	timer_entry = (struct os_wrapper_timer_entry *)kmm_zalloc(sizeof(struct os_wrapper_timer_entry));
 	if (timer_entry == NULL) {
 		dbg("alloc os_wrapper_timer_entry fail\n");
-		rtos_mem_free(timer->work_hdl);
-		rtos_mem_free(timer);
+		kmm_free(timer->work_hdl);
+		kmm_free(timer);
 		return FAIL;
 	}
 
@@ -164,9 +133,9 @@ int rtos_timer_create(rtos_timer_t *pp_handle, const char *p_timer_name, uint32_
 
 	timer_entry->timer = timer;
 
-	irqstate_t flags = tizenrt_critical_enter();
+	rtos_mutex_take(_rtw_timer_mutex, 0xFFFFFFFF);
 	rtw_list_insert_head(&(timer_entry->list), &os_wrapper_timer_table);
-	tizenrt_critical_exit(flags);
+	rtos_mutex_give(_rtw_timer_mutex);
 
 	return SUCCESS;
 }
@@ -189,21 +158,18 @@ int rtos_timer_delete(rtos_timer_t p_handle, uint32_t wait_ms)
 		dbg("work cancel fail\n");
 		return FAIL;
 	}
-
-	irqstate_t flags = tizenrt_critical_enter();
-
+	rtos_mutex_take(_rtw_timer_mutex, 0xFFFFFFFF);
 	plist = get_next(&os_wrapper_timer_table);
 	while ((rtw_end_of_queue_search(&os_wrapper_timer_table, plist)) == FALSE) {
 		timer_entry = LIST_CONTAINOR(plist, struct os_wrapper_timer_entry, list);
 		if (timer_entry->timer == timer) {
 			rtw_list_delete(plist);
-			rtos_mem_free(timer_entry);
+			kmm_free(timer_entry);
 			break;
 		}
 		plist = get_next(plist);
 	}
-
-	tizenrt_critical_exit(flags);
+	rtos_mutex_give(_rtw_timer_mutex);
 
 	if (plist == &os_wrapper_timer_table) {
 		dbg("find timer_entry fail\n");
@@ -217,9 +183,9 @@ int rtos_timer_delete(rtos_timer_t p_handle, uint32_t wait_ms)
 	timer->timeout = 0;
 	timer->timer_id = 0;
 	memset(timer->timer_name, 0, TMR_NAME_SIZE);
-	rtos_mem_free(timer->work_hdl);
+	kmm_free(timer->work_hdl);
 	timer->work_hdl = NULL;
-	rtos_mem_free(timer);
+	kmm_free(timer);
 	timer = NULL;
 
 	return SUCCESS;
