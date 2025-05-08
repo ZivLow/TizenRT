@@ -55,7 +55,6 @@ CSRCS += osdep_service_atomic.c \
          osdep_service_memory.c \
          osdep_service_misc.c \
          osdep_service_mutex.c \
-         osdep_service_queue.c \
          osdep_service_sem.c \
          osdep_service_task.c \
          osdep_service_time.c \

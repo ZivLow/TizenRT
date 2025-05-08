@@ -8,67 +8,19 @@
 #include "ameba.h"
 #include "os_wrapper.h"
 
-/* FreeRTOS Static Implementation */
-#if(configSUPPORT_STATIC_ALLOCATION == 1)
-extern StaticSemaphore_t *__reserved_get_mutex_from_poll(void);
-extern void __reserved_release_mutex_to_poll(void *buf);
-#endif
-
 int rtos_mutex_create_static(rtos_mutex_t *pp_handle)
 {
-#if(configSUPPORT_STATIC_ALLOCATION == 1)
-	StaticSemaphore_t *mutex;
-
-	mutex = __reserved_get_mutex_from_poll();
-
-	if (mutex == NULL) {
-		return rtos_mutex_create(pp_handle);
-	} else {
-		*pp_handle = xSemaphoreCreateMutexStatic(mutex);
-
-		if (*pp_handle != NULL) {
-			return SUCCESS;
-		} else {
-			return FAIL;
-		}
-	}
-#else
 	return rtos_mutex_create(pp_handle);
-#endif
 }
 
 int rtos_mutex_delete_static(rtos_mutex_t p_handle)
 {
-#if(configSUPPORT_STATIC_ALLOCATION == 1)
-	int ret = rtos_mutex_delete(p_handle);
-	__reserved_release_mutex_to_poll(p_handle);
-	return ret;
-#else
 	return rtos_mutex_delete(p_handle);
-#endif
 }
 
 int rtos_mutex_recursive_create_static(rtos_mutex_t *pp_handle)
 {
-#if(configSUPPORT_STATIC_ALLOCATION == 1)
-	StaticSemaphore_t *mutex;
-
-	mutex = __reserved_get_mutex_from_poll();
-
-	if (mutex == NULL) {
-		return rtos_mutex_create(pp_handle);
-	} else {
-		*pp_handle = xSemaphoreCreateRecursiveMutexStatic(mutex);
-
-		if (*pp_handle != NULL) {
-			return SUCCESS;
-		} else {
-			return FAIL;
-		}
-	}
-#else
 	return rtos_mutex_recursive_create(pp_handle);
-#endif
 }
 
 int rtos_mutex_recursive_delete_static(rtos_mutex_t p_handle)
