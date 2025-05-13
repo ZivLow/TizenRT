@@ -110,7 +110,7 @@ struct Page_T {
 };
 
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-_sema  ftl_sem = NULL;
+rtos_sema_t  ftl_sem = NULL;
 #elif
 QueueHandle_t ftl_sem = NULL;
 #endif
@@ -1386,7 +1386,7 @@ uint32_t ftl_init(uint32_t u32PageStartAddr, uint8_t pagenum)
 
 	if (ftl_sem == NULL) {
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-		rtw_init_sema(&ftl_sem, 0);
+	rtos_sema_create(&ftl_sem, 0, 0);
 #elif
 		ftl_sem = xSemaphoreCreateRecursiveMutex();
 #endif

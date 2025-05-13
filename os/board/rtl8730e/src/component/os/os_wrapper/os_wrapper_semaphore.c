@@ -53,6 +53,7 @@ int rtos_sema_create(rtos_sema_t *pp_handle, uint32_t init_count, uint32_t max_c
 	// no sem_setprotocol previously, is this needed?
 	// https://cwiki.apache.org/confluence/display/NUTTX/Signaling+Semaphores+and+Priority+Inheritance
 	// seems like only needed if we are using it for signalling
+	// previously we set for mutex, but mutex shouldnt even need this because we use mutex for locking
 	sem_setprotocol(*pp_handle, SEM_PRIO_NONE);
 
 	return SUCCESS;
