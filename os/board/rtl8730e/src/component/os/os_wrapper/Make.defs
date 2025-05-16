@@ -56,7 +56,9 @@ CSRCS += os_wrapper_critical.c \
 	 os_wrapper_semaphore.c \
 	 os_wrapper_task.c \
 	 os_wrapper_time.c \
-	 os_wrapper_timer.c
+	 os_wrapper_timer.c \
+	 os_wrapper_misc.c \
+     device_lock.c
 
 DEPPATH += --dep-path component/os/os_wrapper
 VPATH += :component/os/os_wrapper
