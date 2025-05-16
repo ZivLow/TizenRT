@@ -28,7 +28,7 @@ void _init_thread(void *param)
 
 	/* wait for inic_ipc_device ready, after that send WIFI_ON ipc msg to device */
 	while ((HAL_READ32(SYSTEM_CTRL_BASE_LP, REG_AON_AON_BACKUP3) & BIT(26)) == 0) {
-		rtw_mdelay_os(1);
+		rtos_time_delay_ms(1);
 	}
 	u32 value = HAL_READ32(SYSTEM_CTRL_BASE_LP, REG_AON_AON_BACKUP3);
 	HAL_WRITE32(SYSTEM_CTRL_BASE_LP, REG_AON_AON_BACKUP3, value & ~BIT(26));
