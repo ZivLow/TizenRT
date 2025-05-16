@@ -17,7 +17,10 @@
 #include "rtw_queue.h"
 #include "rtw_timer.h"
 #include "rtw_atomic.h"
-
+/* Added for os_wrapper_misc.c */
+#include "basic_types.h"
+#include <ameba_vector.h>
+#include <ameba.h>
 /**
  * @brief  Common header file
 */

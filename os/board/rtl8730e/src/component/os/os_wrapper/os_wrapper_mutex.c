@@ -8,6 +8,7 @@
 #include "ameba.h"
 #include "os_wrapper.h"
 
+/* Static implementation only in FreeRTOS */
 int rtos_mutex_create_static(rtos_mutex_t *pp_handle)
 {
 	return rtos_mutex_create(pp_handle);
