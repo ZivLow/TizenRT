@@ -318,10 +318,10 @@ void _wt_softap_start(void *arg)
 		return;
 	}
 	wifi_manager_softap_config_s ap_config;
-	strncpy(ap_config.ssid, ap_info->ssid, WIFIMGR_SSID_LEN - 1);
-	ap_config.ssid[WIFIMGR_SSID_LEN - 1] = '\0';
-	strncpy(ap_config.passphrase, ap_info->password, WIFIMGR_PASSPHRASE_LEN - 1);
-	ap_config.passphrase[WIFIMGR_PASSPHRASE_LEN - 1] = '\0';
+	strncpy(ap_config.ssid, ap_info->ssid, WIFIMGR_SSID_LEN);
+	ap_config.ssid[WIFIMGR_SSID_LEN] = '\0';
+	strncpy(ap_config.passphrase, ap_info->password, WIFIMGR_PASSPHRASE_LEN);
+	ap_config.passphrase[WIFIMGR_PASSPHRASE_LEN] = '\0';
 	ap_config.channel = ap_info->softap_channel;
 
 	wt_print_wifi_softap_profile(&ap_config, "AP INFO");
