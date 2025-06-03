@@ -236,7 +236,7 @@ static int _get_ap_security_mode(IN char *ssid, OUT rtw_security_t *security_mod
 		if (strcmp((const char *)wifi.ssid, ssid) == 0) {
 			*security_mode = wifi.security_type;
 			*channel = wifi.channel;
-			ret = 1;
+			ret = wifi.security_type;
 		}
 	}
 
