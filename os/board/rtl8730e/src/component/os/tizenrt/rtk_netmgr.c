@@ -634,8 +634,11 @@ trwifi_result_e wifi_netmgr_utils_connect_ap(struct netdev *dev, trwifi_ap_confi
 				&& (ap_connect_config->ap_auth_type == saved_scan_list[i].ap_auth_type)
 				&& (ap_connect_config->ap_crypto_type == saved_scan_list[i].ap_crypto_type)) {
 				ap_channel = saved_scan_list[i].channel;
-			vddbg("[RTK] Scanned AP info : ssid = %s, auth = %d, crypt = %d, channel = %d\n", ap_connect_config->ssid, ap_connect_config->ap_auth_type, ap_connect_config->ap_crypto_type, ap_channel);
-				break;
+				vddbg("[RTK] Scanned AP info : ssid = %s, auth = %d, crypt = %d, channel = %d\n", ap_connect_config->ssid, ap_connect_config->ap_auth_type, ap_connect_config->ap_crypto_type, ap_channel);
+				/* Prefer 5GHz band network */
+				if (saved_scan_list[i].channel > 14 && saved_scan_list[i].rssi > -70) {
+					break;
+				}
 			}
 		}
 	}

@@ -1,5 +1,8 @@
 /* == "version" + "Realtek git version" + "compile date" + "compile time" == */
 
+== version f2e18dbd66 2026/01/07-21:35:24 ==
+1. Prefer 5GHz network when both 2.4GHz and 5GHz are available on same shared SSID
+
 == version c220540be0 2025/12/24-13:53:09 ==
 1. Fix issue of crash due to wakeup by invalid packets
 
