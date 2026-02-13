@@ -49,7 +49,7 @@
 #
 ############################################################################
 
-CSRCS += ftl.c
+CSRCS += vfs.c
 
-DEPPATH += --dep-path component/file_system/ftl
-VPATH += :component/file_system/ftl
+DEPPATH += --dep-path component/file_system/vfs
+VPATH += :component/file_system/vfs

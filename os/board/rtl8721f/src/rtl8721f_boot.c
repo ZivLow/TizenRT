@@ -210,17 +210,63 @@ void amebagreen2_mount_partitions(void)
 #endif /* CONFIG_FLASH_PARTITION */
 }
 
-#if defined(CONFIG_FTL_ENABLED) && CONFIG_FTL_ENABLED
-#include "ftl_int.h"
-
-void app_ftl_init(void)
+#ifdef CONFIG_VFS_ENABLED
+#if (defined CONFIG_WHC_HOST || defined CONFIG_WHC_NONE || defined CONFIG_WHC_WPA_SUPPLICANT_OFFLOAD)
+#include "vfs.h"
+#include "littlefs_adapter.h"
+#endif
+extern uint32_t vfs_ftl_init(void);
+extern int vfs_kv_init(void);
+extern FAR struct mtd_dev_s *rtk_lfs_mtd_initialize(void);
+extern void vfs_assign_region(int vfs_type, char region, int interface);
+void app_filesystem_init(void)
 {
-	u32 ftl_start_addr, ftl_end_addr;
+	int ret = 0;
+	vfs_init();
 
-	flash_get_layout_info(FTL, &ftl_start_addr, &ftl_end_addr);
-	ftl_phy_page_start_addr = ftl_start_addr - SPI_FLASH_BASE;
-	ftl_phy_page_num = (ftl_end_addr - ftl_start_addr + 1) / PAGE_SIZE_4K;
-	ftl_init(ftl_phy_page_start_addr, ftl_phy_page_num);
+	vfs_assign_region(VFS_LITTLEFS, VFS_REGION_1, VFS_INF_FLASH);
+
+	FAR struct mtd_dev_s *mtd = rtk_lfs_mtd_initialize();
+	if (!mtd) {
+		dbg("ERROR: rtk_lfs_mtd_initialize failed\n");
+	} else {
+		ret = little_initialize(0, mtd, NULL);
+		if (ret < 0) {
+			dbg("ERROR: little_initialize failed: %d\n", ret);
+		} else {
+			ret = mount("/dev/little0", "/vfs", "littlefs", 0, "autoformat");
+			if (ret != 0) {
+				dbg("ERROR: mount littlefs at /vfs failed: %d\n", ret);
+			} else {
+				lfs_mount_flag = 1;
+				vfs.user[0].tag                = VFS_PREFIX;
+				vfs.user[0].vfs_type           = VFS_LITTLEFS;
+				vfs.user[0].vfs_interface_type = VFS_INF_FLASH;
+				vfs.user[0].vfs_region         = VFS_REGION_1;
+				vfs.user[0].vfs_ro_flag        = VFS_RW;
+			}
+		}
+	}
+
+	ret = vfs_kv_init();
+	if (ret == 0) {
+		dbg("File System Init Success \n");
+	} else {
+		dbg("File System Init Fail \n");
+	}
+
+#ifdef CONFIG_FATFS_WITHIN_APP_IMG
+	ret = vfs_user_register(VFS_R3_PREFIX, VFS_FATFS, VFS_INF_FLASH, VFS_REGION_3, VFS_RO);
+	if (ret == 0) {
+		dbg("VFS-FAT Init Success \n");
+	} else {
+		dbg("VFS-FAT Init Fail \n");
+	}
+#endif
+
+#if defined(CONFIG_FTL_ENABLED) && CONFIG_FTL_ENABLED
+	vfs_ftl_init();
+#endif
 }
 #endif
 
@@ -279,8 +325,8 @@ void board_initialize(void)
 		}
 	}
 #endif
-#ifdef CONFIG_FTL_ENABLED
-	app_ftl_init();
+#ifdef CONFIG_VFS_ENABLED
+	app_filesystem_init();
 #endif
 #ifdef CONFIG_AMEBAGREEN2_BLE
 	coex_ipc_entry();

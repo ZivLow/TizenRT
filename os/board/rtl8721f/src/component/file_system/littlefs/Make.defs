@@ -49,7 +49,7 @@
 #
 ############################################################################
 
-CSRCS += ftl.c
+CSRCS += littlefs_adapter.c
 
-DEPPATH += --dep-path component/file_system/ftl
-VPATH += :component/file_system/ftl
+DEPPATH += --dep-path component/file_system/littlefs
+VPATH += :component/file_system/littlefs

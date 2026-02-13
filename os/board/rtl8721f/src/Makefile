@@ -119,6 +119,10 @@ include component/bluetooth/example/ble_scatternet/Make.defs
 endif
 endif
 
+include component/file_system/kv/Make.defs
+include component/file_system/littlefs/Make.defs
+include component/file_system/vfs/Make.defs
+
 ifeq ($(CONFIG_AMEBAGREEN2_FTL),y)
 include component/file_system/ftl/Make.defs
 endif
@@ -201,6 +205,11 @@ CFLAGS += -I$(DIR_BT)/example/bt_atcmd/
 CFLAGS += -I$(DIR_BT)/example/gatt_service/client/
 CFLAGS += -I$(DIR_BT)/example/gatt_service/server/
 endif
+
+CFLAGS += -I$(TOPDIR)/fs/littlefs/littlefs
+CFLAGS += -I$(COMPONENT_DIR)/file_system/kv
+CFLAGS += -I$(COMPONENT_DIR)/file_system/littlefs
+CFLAGS += -I$(COMPONENT_DIR)/file_system/vfs
 
 ifeq ($(CONFIG_AMEBAGREEN2_FTL),y)
 CFLAGS += -I$(COMPONENT_DIR)/file_system/ftl
