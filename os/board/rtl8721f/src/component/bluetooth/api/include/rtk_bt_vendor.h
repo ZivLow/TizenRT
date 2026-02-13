@@ -73,6 +73,55 @@ typedef struct {
 	bool enable;
 } rtk_bt_vendor_free_run_clock_t;
 
+typedef struct {
+	uint32_t Valid: 1;    /* bit[0]: 1 is valid and 0 is invalid */
+	uint32_t Type: 1;     /* bit[1]: 1 is the ISO and 0 is the ACL (always 1) */
+	uint32_t Role: 1;     /* bit[2]: 1 is the master and 0 is the slave */
+	uint32_t Dir: 1;      /* bit[3]: 1 is Tx, 0 is Rx */
+	uint32_t Cis: 1;      /* bit[4]: 1 is the CIS, 0 is the BIS */
+	uint32_t Rsvd0: 3;    /* bit[7:5]: reserved */
+	uint32_t Status: 8;   /* bit[15:8]: status */
+	uint32_t Rsvd1: 16;   /* bit[31:16]: reserved */
+	uint16_t Conn_Handle;         /* iso (cis or bis) connection handle */
+	uint16_t Sdu_Seq_Num;         /* sdu sequence number */
+	uint32_t Sdu_Interval;        /* sdu interval (us) */
+	uint32_t Cur_Sync_Ref_Point;  /* current sdu sync ref point (us) */
+	uint32_t Pre_Sync_Ref_Point;  /* previous sdu sync ref point (us) */
+	uint32_t Accumulate_Sw_Timer; /* accumulate sw timer (us) */
+	uint32_t Iso_Interval_us;     /* iso interval (us)*/
+	uint32_t Group_Anchor_Point;  /* cig or big anchor point */
+	uint32_t Cur_SDU_Sync_Ref_Point; /* current sdu sync ref point (us) */
+} rtk_bt_le_iso_sync_ref_ap_info_t;
+
+typedef struct {
+	rtk_bt_le_iso_sync_ref_ap_info_t info;
+	void *sem;
+	bool enable;
+} rtk_bt_vendor_sync_ref_ap_info_t;
+
+typedef enum {
+	RTK_BT_LE_CLOCK_STATUS_SUCCESS = 0,       /* get successs */
+	RTK_BT_LE_CLOCK_STATUS_CONN_HANDLE_ERROR, /* input parameter conn_handle error */
+	RTK_BT_LE_CLOCK_STATUS_GET_FAIL,          /* get fail reason: the slave did not receive the connection packet */
+} rtk_bt_le_clock_status_t;
+
+typedef struct {
+	uint64_t clock_counter; /* clock_counter wrap around from 83886079999 to 0 */
+	uint16_t conn_handle;
+	uint16_t event_counter; /* event_counter wrap around from 65535 to 0 */
+	uint16_t ce_interval;   /* the value of the connection interval: connection_interval = ce_interval * 1.25 ms */
+	uint8_t  status;        /* refers to rtk_bt_le_clock_status_t */
+} rtk_bt_le_conn_clock_info_t;
+
+typedef struct {
+	rtk_bt_le_conn_clock_info_t info;
+	void *sem;
+} rtk_bt_vendor_conn_clock_info_t;
+
+typedef enum {
+	SUB_CMD_READ_ACC_HIT_COUNTER    = 0x14,
+} rtk_bt_vendor_get_slave_conn_clock_subcmd_type_t;
+
 /**
  * @typedef   rtk_bt_vendor_free_run_clock_latch_subcmd_type_t
  * @brief     Free run clock latch subcmd type.
@@ -178,6 +227,38 @@ rtk_bt_vendor_free_run_clock_t *rtk_bt_get_hc_free_run_clock(void);
 uint16_t rtk_bt_get_hc_clock_offset(int64_t *offset);
 #endif
 
+#if defined(RTK_BT_GET_LE_ISO_SYNC_REF_AP_INFO_SUPPORT) && RTK_BT_GET_LE_ISO_SYNC_REF_AP_INFO_SUPPORT
+
+rtk_bt_vendor_sync_ref_ap_info_t *rtk_bt_get_ref_ap_info(void);
+
+/**
+ * @brief      Get the CIG/BIG reference anchor point of controller.
+ * @param[in] conn_handle: connection handle
+ * @param[in] dir: The ISO path direction
+ * @param[out] p_info: The information include CIG/BIG referece anchor point
+ * @note       This API shall NOT be called in bt_api_task.
+ * @return
+ *            - 0  : Succeed
+ *            - Others: Error code
+ */
+uint16_t rtk_bt_get_le_iso_sync_ref_ap_info(uint16_t conn_handle, uint8_t dir, rtk_bt_le_iso_sync_ref_ap_info_t *p_info);
+#endif
+
+#if defined(RTK_BLE_GET_SLAVE_CONN_CLOCK_SUPPORT) && RTK_BLE_GET_SLAVE_CONN_CLOCK_SUPPORT
+
+rtk_bt_vendor_conn_clock_info_t *rtk_bt_get_slave_clock_info(void);
+
+/**
+ * @brief      Get the clock information  of slave connection link.
+ * @param[in] conn_handle: connection handle
+ * @param[out] p_info: The clock information
+ * @note       This API shall NOT be called in bt_api_task.
+ * @return
+ *            - 0  : Succeed
+ *            - Others: Error code
+ */
+uint16_t rtk_bt_le_get_slave_conn_clock(uint16_t conn_handle, rtk_bt_le_conn_clock_info_t *clock_info);
+#endif
 /**
  * @}
  */

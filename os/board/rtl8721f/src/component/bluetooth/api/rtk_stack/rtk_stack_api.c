@@ -73,9 +73,9 @@ static void bt_stack_api_taskentry(void *ctx)
 
 	osif_sem_give(api_task_sem);
 
-#if defined(configENABLE_TRUSTZONE) && (configENABLE_TRUSTZONE == 1)
+#if !defined(CONFIG_PLATFORM_TIZENRT_OS) || defined(configENABLE_TRUSTZONE) && (configENABLE_TRUSTZONE == 1)
 	osif_create_secure_context(BT_SECURE_STACK_SIZE);
-#endif
+#endif //#if !defined(CONFIG_PLATFORM_TIZENRT_OS) || defined(configENABLE_TRUSTZONE) && (configENABLE_TRUSTZONE == 1)
 
 	while (true) {
 		if (true == osif_msg_recv(api_task_evt_msg_q, &event, BT_TIMEOUT_FOREVER)) {
@@ -92,7 +92,8 @@ static void bt_stack_api_taskentry(void *ctx)
 							break;
 
 						case IO_MSG_TYPE_BT_STATUS:
-							bt_stack_le_gap_handle_io_msg(io_msg.subtype, (void *)&io_msg.u.param);
+							/* When le_gap_msg_info_way(false) is called, gap io msg will be excuted in gap callback instead of here. */
+							// bt_stack_le_gap_handle_io_msg(io_msg.subtype, (void *)&io_msg.u.param);
 							break;
 #if defined(RTK_BLE_AUDIO_SUPPORT) && RTK_BLE_AUDIO_SUPPORT
 						case IO_MSG_TYPE_LE_AUDIO:
@@ -246,6 +247,7 @@ static uint16_t bt_stack_init(void *app_config)
 		default_conf.irk_auto_gen = papp_conf->irk_auto_gen;
 		memcpy(default_conf.irk, papp_conf->irk, RTK_BT_LE_GAP_IRK_LEN);
 #endif
+		default_conf.min_enc_key_size = papp_conf->min_enc_key_size;
 	} else {
 		default_conf.mtu_size = 180;
 		default_conf.master_init_mtu_req = true;
@@ -265,6 +267,7 @@ static uint16_t bt_stack_init(void *app_config)
 		default_conf.irk_auto_gen = true;
 		memset(default_conf.irk, 0, RTK_BT_LE_GAP_IRK_LEN);
 #endif
+		default_conf.min_enc_key_size = 0;
 	}
 
 	//Trace uart init
@@ -929,6 +932,12 @@ uint16_t bt_stack_act_handler(rtk_bt_cmd_t *p_cmd)
 		BT_LOGD("RTK_BT_LE_GP_MESH_HEALTH_SERVER_MODEL group");
 		bt_mesh_health_server_model_act_handle(p_cmd);
 		break;
+#if defined(BT_MESH_ENABLE_REMOTE_PROVISIONING_SERVER_MODEL) && BT_MESH_ENABLE_REMOTE_PROVISIONING_SERVER_MODEL
+	case RTK_BT_LE_GP_MESH_REMOTE_PROV_SERVER_MODEL:
+		BT_LOGD("RTK_BT_LE_GP_MESH_REMOTE_PROV_SERVER_MODEL group");
+		bt_mesh_remote_prov_server_model_act_handle(p_cmd);
+		break;
+#endif
 #endif // end of RTK_BLE_MESH_DEVICE_SUPPORT
 #if defined(BT_MESH_ENABLE_DATATRANS_MODEL) && BT_MESH_ENABLE_DATATRANS_MODEL
 	case RTK_BT_LE_GP_MESH_DATATRANS_MODEL:

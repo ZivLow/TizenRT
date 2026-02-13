@@ -13,6 +13,7 @@
 #include "platform_autoconf.h"
 #if defined(CONFIG_WLAN) && CONFIG_WLAN
 #include "wifi_api.h"
+#include "wifi_intf_drv_to_app_internal.h"
 extern int wifi_set_ips_internal(u8 enable);
 #endif
 #if defined(CONFIG_BT_COEXIST)
@@ -87,6 +88,7 @@ void hci_platform_cfg_bd_addr(uint8_t *bdaddr)
 
 	hci_cfg_flag |= HCI_CFG_BD_ADDR;
 }
+
 void hci_platform_bt_rf_calibration(void)
 {
 #if defined(CONFIG_BT_COEXIST)
@@ -151,8 +153,11 @@ void hci_platform_bt_rf_calibration(void)
 
 		rtk_coex_btc_bt_rfk(&p_temp_pram, sizeof(struct bt_rfk_param));
 	}
+#else
+	BT_LOGE("BT_COEXIST disabled! ignore bt_rfk!");
 #endif
 }
+
 void hci_platform_bt_rx_dck(void)
 {
 #if defined(CONFIG_BT_COEXIST)
@@ -161,8 +166,11 @@ void hci_platform_bt_rx_dck(void)
 	p_temp_pram.type = BT_RX_DCK;
 
 	rtk_coex_btc_bt_rfk(&p_temp_pram, sizeof(struct bt_rfk_param));
+#else
+	BT_LOGE("BT_COEXIST disabled! ignore bt_rx_dck!");
 #endif
 }
+
 int hci_platform_get_rx_adck_data(uint8_t *data, uint8_t len)
 {
 #if defined(CONFIG_BT_COEXIST)
@@ -179,9 +187,12 @@ int hci_platform_get_rx_adck_data(uint8_t *data, uint8_t len)
 	(void) data;
 	(void) len;
 
+	BT_LOGE("BT_COEXIST disabled! ignore bt_rx_adck!");
+
 	return HCI_FAIL;
 #endif
 }
+
 int hci_platform_get_write_phy_efuse_data(uint8_t *data, uint8_t len)
 {
 	memcpy(data, hci_phy_efuse, len);
@@ -331,13 +342,14 @@ static uint8_t hci_platform_parse_config(void)
 
 static void bt_power_on(void)
 {
-	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_PWC, BIT1 | BIT2, 3);                 /* enable BT Power Cut */
+	set_reg_value(SYSTEM_MEM_CTRL_BASE + REG_CTRL_GRP_BT_E0_CTRL, BIT3 | BIT4 | BIT5, 0); /* set BT BMEM high 32K power mode in sys LPS mode */
+	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_PWC, BIT1 | BIT2, 3);                 /* enable BT Power Cut & PD_SHRM Power Cut */
 	osif_delay_us(40);
-	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_PWC, BIT17 | BIT18, 0);               /* disable ISO of BT */
+	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_PWC, BIT17 | BIT18, 0);               /* disable ISO of BT and PD_SHRM */
 	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_FEN_GRP1, BIT2, 1);                   /* enable WL RFAFE control circuit */
 	set_reg_value((u32)(&(WLAFE_BASE->WLAFE_ANAPAR_POW_MAC_0)), BIT5 | BIT6, 3);    /* enable RFAFE */
 	set_reg_value((u32)(&(WLAFE_BASE->WLAFE_WLRFC_CTRL)), BIT4, 1);                 /* enable WL_CKI_80M_RFC, default=1, can skip */
-	set_reg_value((u32)(&(WLAFE_BASE->WLAFE_WLRFC_CTRL)), BIT3, 0);                 /* when WL RFAFE enter power off, keep WLRFC not power off */
+	set_reg_value((u32)(&(WLAFE_BASE->WLAFE_WLRFC_CTRL)), BIT3, 0);                 /* when WL RFAFE enter power off, keep WLRFC not power off, default=0 */
 	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_FEN_GRP1, BIT1, 1);                   /* release BTON reset */
 	osif_delay_us(100);
 	if (HCI_BT_KEEP_AWAKE) {
@@ -363,7 +375,7 @@ void bt_power_off(void)
 
 	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_BT_CTRL0, BIT5, 1);                   /* request poff xtal and swr */
 	osif_delay_us(100);
-	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_BT_CTRL0, BIT5, 0);                   /* disable request poff xtal and swr, for next POFF flow */
+	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_BT_CTRL0, BIT5, 0);                   /* disable request poff xtal and swr, for next PON flow */
 	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_FEN_GRP1, BIT1, 0);                   /* assert BTON reset */
 #if defined(CONFIG_WLAN) && CONFIG_WLAN
 	if (!(wifi_is_running(STA_WLAN_INDEX) || wifi_is_running(SOFTAP_WLAN_INDEX)))
@@ -374,6 +386,7 @@ void bt_power_off(void)
 	}
 	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_PWC, BIT17 | BIT18, 3);                /* enable ISO of BT and PD_SHRM */
 	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_PWC, BIT1 | BIT2, 0);                  /* disable BT Power Cut & PD_SHRM Power Cut */
+	set_reg_value(SYSTEM_MEM_CTRL_BASE + REG_CTRL_GRP_BT_E0_CTRL, BIT3 | BIT4 | BIT5, 2); /* set BT BMEM high 32K power mode in sys LPS mode */
 	set_reg_value(SYSTEM_CTRL_BASE + REG_LSYS_BT_CTRL0, BIT13, 0);                   /* disable HOST_WAKE_BT */
 }
 
@@ -401,10 +414,7 @@ bool rtk_bt_pre_enable(void)
 		return false;
 	}
 
-	if (hci_is_wifi_need_leave_ps()) {
-		wifi_set_lps_enable(FALSE);
-		wifi_set_ips_internal(FALSE);
-	}
+	wifi_ps_en_by_bt_on(DISABLE);
 #endif
 
 	return true;
@@ -413,10 +423,7 @@ bool rtk_bt_pre_enable(void)
 void rtk_bt_post_enable(void)
 {
 #if defined(CONFIG_WLAN) && CONFIG_WLAN
-	if (hci_is_wifi_need_leave_ps()) {
-		wifi_set_lps_enable(wifi_user_config.lps_enable);
-		wifi_set_ips_internal(wifi_user_config.ips_enable);
-	}
+	wifi_ps_en_by_bt_on(ENABLE);
 #endif
 }
 
