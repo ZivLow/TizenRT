@@ -12,6 +12,9 @@
 #endif
 #include "diag.h"
 #include "littlefs_adapter.h"
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#include <errno.h>
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 int kv_init_done = 0;
 
@@ -36,13 +39,21 @@ int vfs_kv_init(void)
 		goto exit;
 	}
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	DiagSnPrintf(path, MAX_KEY_LENGTH + 1, "%s/KV", prefix);
+#else
 	DiagSnPrintf(path, MAX_KEY_LENGTH + 1, "%s:KV", prefix);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	ret = mkdir(path, 0);
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	if (ret < 0 && get_errno() == EEXIST) {
+#else
 	if (ret == LFS_ERR_EXIST
 #ifdef CONFIG_VFS_FATFS_INCLUDED
 		|| ret == -FR_EXIST
 #endif
 	   ) {
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 		VFS_DBG(VFS_INFO, "KV dir already exist");
 		ret = 0;
 	}
@@ -86,7 +97,11 @@ int32_t rt_kv_set(const char *key, const void *val, int32_t len)
 		goto exit;
 	}
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s/KV/%s", prefix, key);
+#else
 	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s:KV/%s", prefix, key);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	finfo = fopen(path, "w");
 	if (finfo == NULL) {
 		VFS_DBG(VFS_ERROR, "fopen failed, res is %d", res);
@@ -94,7 +109,11 @@ int32_t rt_kv_set(const char *key, const void *val, int32_t len)
 	}
 
 	res = fwrite(val, len, 1, finfo);
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	if (res != 1) {
+#else
 	if (res != len) {
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 		VFS_DBG(VFS_ERROR, "fwrite failed,err is %d!!", res);
 	}
 	fclose(finfo);
@@ -134,10 +153,18 @@ int32_t rt_kv_set_offset(const char *key, const void *val, int32_t len, int32_t 
 		goto exit;
 	}
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s/KV/%s", prefix, key);
+#else
 	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s:KV/%s", prefix, key);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	finfo = fopen(path, "wx");
 	if (finfo == NULL) {
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+		finfo = fopen(path, "r+");
+#else
 		finfo = fopen(path, "+");
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 		if (finfo == NULL) {
 			VFS_DBG(VFS_ERROR, "fopen failed, res is %d", res);
 			goto exit;
@@ -153,7 +180,11 @@ int32_t rt_kv_set_offset(const char *key, const void *val, int32_t len, int32_t 
 	}
 
 	res = fwrite(val, len, 1, finfo);
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	if (res != 1) {
+#else
 	if (res != len) {
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 		VFS_DBG(VFS_ERROR, "fwrite failed,err is %d!!", res);
 	}
 	fclose(finfo);
@@ -192,7 +223,11 @@ int32_t rt_kv_get(const char *key, void *buffer, int32_t len)
 		goto exit;
 	}
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s/KV/%s", prefix, key);
+#else
 	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s:KV/%s", prefix, key);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	finfo = fopen(path, "r");
 	if (finfo == NULL) {
 		VFS_DBG(VFS_WARNING, "fopen failed ");
@@ -200,7 +235,11 @@ int32_t rt_kv_get(const char *key, void *buffer, int32_t len)
 	}
 
 	res = fread(buffer, len, 1, finfo);
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	if (res != 1) {
+#else
 	if (res < 0) {
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 		VFS_DBG(VFS_ERROR, "fread failed,err is %d!!!", res);
 	}
 	fclose(finfo);
@@ -239,7 +278,11 @@ int32_t rt_kv_get_offset(const char *key, void *buffer, int32_t len, int32_t off
 		goto exit;
 	}
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s/KV/%s", prefix, key);
+#else
 	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s:KV/%s", prefix, key);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	finfo = fopen(path, "r");
 	if (finfo == NULL) {
 		VFS_DBG(VFS_WARNING, "fopen failed ");
@@ -255,7 +298,11 @@ int32_t rt_kv_get_offset(const char *key, void *buffer, int32_t len, int32_t off
 	}
 
 	res = fread(buffer, len, 1, finfo);
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	if (res != 1) {
+#else
 	if (res < 0) {
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 		VFS_DBG(VFS_ERROR, "fread failed,err is %d!!!", res);
 	}
 	fclose(finfo);
@@ -299,7 +346,11 @@ int32_t rt_kv_size(const char *key)
 		goto exit;
 	}
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s/KV/%s", prefix, key);
+#else
 	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s:KV/%s", prefix, key);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 	res = stat(path, stat_buf);
 	if (res < 0) {
@@ -345,7 +396,11 @@ int32_t rt_kv_delete(const char *key)
 		goto exit;
 	}
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s/KV/%s", prefix, key);
+#else
 	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s:KV/%s", prefix, key);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	res = remove(path);
 
 exit:
@@ -379,7 +434,11 @@ int rt_kv_list(char *buf, int32_t len)
 		goto exit;
 	}
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s/KV", prefix);
+#else
 	DiagSnPrintf(path, MAX_KEY_LENGTH + 2, "%s:KV", prefix);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 	dir = opendir(path);
 	if (dir == NULL) {

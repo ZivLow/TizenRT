@@ -1,14 +1,20 @@
 #include "platform_autoconf.h"
 #include "littlefs_adapter.h"
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #include "vfs_second_nor_flash.h"
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #ifdef CONFIG_SUPPORT_NAND_FLASH
 #include "vfs_nand_ftl.h"
 #endif
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 
 lfs_t g_lfs;
 u32 LFS_FLASH_BASE_ADDR;
 u32 LFS_FLASH_SIZE;
+
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 
 #ifdef CONFIG_SUPPORT_NAND_FLASH
 struct lfs_config g_nand_lfs_cfg = {
@@ -311,3 +317,5 @@ int rt_lfs_init(lfs_t *lfs)
 
 	return ret;
 }
+
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS

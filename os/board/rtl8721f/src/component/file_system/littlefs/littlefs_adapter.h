@@ -11,6 +11,8 @@ extern lfs_t g_lfs;
 extern u32 LFS_FLASH_BASE_ADDR;
 extern u32 LFS_FLASH_SIZE;
 
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
+
 #ifdef CONFIG_LITTLEFS_SECOND_FLASH
 extern lfs_t g_second_lfs;
 
@@ -71,6 +73,8 @@ int lfs_diskio_unlock(const struct lfs_config *c);
 #endif
 
 int rt_lfs_init(lfs_t *lfs);
+
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 
 enum {
 	FS_ERROR = 0,

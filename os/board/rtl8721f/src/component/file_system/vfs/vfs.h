@@ -6,7 +6,12 @@ extern "C" {
 
 #include "basic_types.h"
 #include "log.h"
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#include <platform_autoconf.h>
+#include <unistd.h>
+#else
 #include <sys/unistd.h>
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 #include <sys/stat.h>
 
 #define VFS_PATH_MAX 256
@@ -47,8 +52,13 @@ extern "C" {
 #define PATTERN_VFS_1 0x5f736676
 #define PATTERN_VFS_2 0x5f746166
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#define VFS_PREFIX "/vfs"
+#define VFS_R3_PREFIX "/fat1"
+#else
 #define VFS_PREFIX "vfs"
 #define VFS_R3_PREFIX "fat1"
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 #define DT_DIR 0x04
 #define DT_REG 0x08
@@ -175,8 +185,10 @@ typedef struct {
 } vfs_drv;
 
 extern vfs_drv vfs;
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 extern vfs_opt fatfs_drv;
 extern vfs_opt littlefs_drv;
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 extern int lfs_mount_flag;
 extern int lfs2_mount_flag;
 extern int fatfs_mount_flag;

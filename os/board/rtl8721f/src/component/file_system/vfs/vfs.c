@@ -2,13 +2,19 @@
 #include "ameba.h"
 #include "time.h"
 #include "vfs.h"
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #include "ameba_ota.h"
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #include "vfs_second_nor_flash.h"
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #include "littlefs_adapter.h"
 
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #ifdef CONFIG_SUPPORT_NAND_FLASH
 #include "vfs_nand_ftl.h"
 #endif
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 
 vfs_drv  vfs = {0};
 rtos_mutex_t vfs_mutex = NULL;
@@ -27,6 +33,11 @@ u32 VFS1_FLASH_BASE_ADDR = 0;
 u32 VFS1_FLASH_SIZE = 0;
 u32 VFS2_FLASH_BASE_ADDR = 0;
 u32 VFS2_FLASH_SIZE = 0;
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+int lfs_mount_flag = 0;
+int lfs2_mount_flag = 0;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 int vfs_check_mount_flag(int vfs_type, int vfs_interface_type, char *operation)
 {
@@ -75,6 +86,7 @@ void vfs_init()
 		VFS_DBG(VFS_INFO, "vfs_mutex is already init");
 	}
 
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #ifdef CONFIG_SUPPORT_NAND_FLASH
 	if (SHOULD_USE_NAND()) {
 		if (NAND_FTL_Init() == HAL_OK) {
@@ -94,6 +106,7 @@ void vfs_init()
 		}
 	}
 #endif
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 }
 
 void vfs_deinit()
@@ -347,8 +360,10 @@ int vfs_user_register(const char *prefix, int vfs_type, int interface, char regi
 			vfs_num = vfs_scan_vfs(vfs_type);
 			if (vfs_num < 0) {
 				if (vfs_type == VFS_LITTLEFS) {
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 					vfs_num = vfs_register(&littlefs_drv, vfs_type);
 					VFS_DBG(VFS_INFO, "littlefs register");
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 				}
 #ifdef CONFIG_VFS_FATFS_INCLUDED
 				else {

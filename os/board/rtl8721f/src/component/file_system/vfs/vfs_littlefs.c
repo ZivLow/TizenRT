@@ -368,8 +368,10 @@ int littlefs_stat(void *fs, char *path, struct stat *buf)
 	if (ret < 0) {
 		return -1;
 	}
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 	buf->st_dev = 0;
 	buf->st_ino = 0;
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 	mode_t st_mode = 0;
 	if (info.type == LFS_TYPE_DIR) {
 		st_mode |= (S_IFDIR | 0x777);
@@ -378,10 +380,12 @@ int littlefs_stat(void *fs, char *path, struct stat *buf)
 	}
 
 	buf->st_mode = st_mode;
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 	buf->st_nlink = 0;
 	buf->st_uid = 0;
 	buf->st_gid = 0;
 	buf->st_rdev = 0;
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 	buf->st_size = info.size;
 	buf->st_blksize = 0;
 	buf->st_blocks = 0;
