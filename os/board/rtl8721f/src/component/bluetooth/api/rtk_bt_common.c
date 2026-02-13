@@ -482,9 +482,9 @@ static void rtk_bt_evt_taskentry(void *ctx)
 
 	osif_sem_give(g_evt_task_sem);
 
-#if defined(CONFIG_BUILD_NONSECURE)
+#if !defined(CONFIG_PLATFORM_TIZENRT_OS) || defined(configENABLE_TRUSTZONE) && (configENABLE_TRUSTZONE == 1)
 	osif_create_secure_context(BT_SECURE_STACK_SIZE);
-#endif //#if defined(CONFIG_BUILD_NONSECURE)
+#endif //#if !defined(CONFIG_PLATFORM_TIZENRT_OS) || defined(configENABLE_TRUSTZONE) && (configENABLE_TRUSTZONE == 1)
 
 	while (true) {
 		if (osif_msg_recv(g_evt_queue, &pevt, BT_TIMEOUT_FOREVER)) {

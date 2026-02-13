@@ -92,6 +92,18 @@ static rtk_bt_evt_cb_ret_t central_gap_app_callback(uint8_t evt_code, void *para
 		BT_LOGA("[APP] proto_id(%d) conn_handle(%d) remote_mtu(%d) identity_id(%d)\r\n",
 				p_ind->proto_id, p_ind->conn_handle, p_ind->remote_mtu, p_ind->identity_id);
 		BT_DUMP16A("[APP] cid: ", p_ind->cid, p_ind->cid_num);
+		rtk_bt_gap_ecfc_conn_cfm_t cfm_param = {0};
+		uint16_t ret = 0;
+		cfm_param.conn_handle = p_ind->conn_handle;
+		cfm_param.identity_id = p_ind->identity_id;
+		cfm_param.cause = 0;
+		cfm_param.cid_num = p_ind->cid_num;
+		memcpy(cfm_param.p_cid, p_ind->cid, p_ind->cid_num * sizeof(uint16_t));
+		cfm_param.local_mtu = p_ind->remote_mtu;
+		ret = rtk_bt_gap_ecfc_send_conn_cfm(&cfm_param);
+		if (RTK_BT_OK == ret) {
+			BT_LOGA("[APP] ECFC auto conn confirm success\r\n");
+		}
 		break;
 	}
 	case RTK_BT_GAP_EVT_ECFC_DISCONN_IND: {
@@ -327,6 +339,21 @@ static rtk_bt_evt_cb_ret_t ble_central_gap_app_callback(uint8_t evt_code, void *
 						phy_update_ind->conn_handle,
 						phy_update_ind->tx_phy,
 						phy_update_ind->rx_phy);
+		}
+		break;
+	}
+
+	case RTK_BT_LE_GAP_EVT_READ_REMOTE_VERSION_IND: {
+		rtk_bt_le_read_remote_version_ind_t *rmt_ver = (rtk_bt_le_read_remote_version_ind_t *)param;
+		if (rmt_ver->err) {
+			BT_LOGE("[APP] Read remote version failed, conn_handle: %d, err: 0x%x\r\n",
+					rmt_ver->conn_handle, rmt_ver->err);
+			BT_AT_PRINT("+BLEGAP:remote_version,%d,-1\r\n", rmt_ver->conn_handle);
+		} else {
+			BT_LOGA("[APP] Read remote version, conn_handle: %d, version: 0x%x, company_id: 0x%x, subversion: 0x%x\r\n",
+					rmt_ver->conn_handle, rmt_ver->version, rmt_ver->company_id, rmt_ver->subversion);
+			BT_AT_PRINT("+BLEGAP:remote_version,%d,0,0x%x,0x%x,0x%x\r\n", mt_ver->conn_handle,
+						rmt_ver->version, rmt_ver->company_id, rmt_ver->subversion);
 		}
 		break;
 	}
@@ -586,7 +613,7 @@ static rtk_bt_evt_cb_ret_t ble_central_gap_app_callback(uint8_t evt_code, void *
 			BT_LOGA("[APP] LE COC connected, conn_handle: %d, cid: 0x%x\r\n",
 					coc_conn_ind->conn_handle, coc_conn_ind->cid);
 		} else {
-			BT_LOGE("[APP] LE COC connect failed, conn_hande: %d, cid: 0x%x, err: 0x%x\r\n",
+			BT_LOGE("[APP] LE COC connect failed, conn_handle: %d, cid: 0x%x, err: 0x%x\r\n",
 					coc_conn_ind->conn_handle, coc_conn_ind->cid, coc_conn_ind->err);
 		}
 		BT_AT_PRINT("+BLEGAP:coc_conn,%d,0x%x,%d\r\n", coc_conn_ind->conn_handle, coc_conn_ind->cid,
@@ -600,7 +627,7 @@ static rtk_bt_evt_cb_ret_t ble_central_gap_app_callback(uint8_t evt_code, void *
 			BT_LOGA("[APP] LE COC disconnected, conn_handle: %d, cid: 0x%x\r\n",
 					coc_disconn_ind->conn_handle, coc_disconn_ind->cid);
 		} else {
-			BT_LOGE("[APP] LE COC disconnect failed, conn_hande: %d, cid: 0x%x, err: 0x%x\r\n",
+			BT_LOGE("[APP] LE COC disconnect failed, conn_handle: %d, cid: 0x%x, err: 0x%x\r\n",
 					coc_disconn_ind->conn_handle, coc_disconn_ind->cid, coc_disconn_ind->err);
 		}
 		BT_AT_PRINT("+BLEGAP:coc_disconn,%d,0x%x,%d\r\n", coc_disconn_ind->conn_handle,

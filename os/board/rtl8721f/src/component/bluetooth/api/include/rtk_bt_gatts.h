@@ -18,24 +18,30 @@ extern "C"
 
 /**
  * @def       RTK_BT_GATT_INTERNAL
- * @brief     The attribute value is defined as a static(or global) variable in user APP,
- *            and the variable's pointer will be passed into lower stack. If this attribute is
- *            read by remote, lower stack will auto send this attribute value to response
- *            to read request, if this attribute is write by remote, lower stack will auto
- *            write the attribute value into this variable and response to write request.
- *            User APP layer need not to care it.
+ * @brief     This attribute will be handled by stack internal. When the attribute is a
+ *            characteristic value, this flag is equal to @ref RTK_BT_GATT_VOID.
  */
 #define RTK_BT_GATT_INTERNAL                0
 
 /**
  * @def       RTK_BT_GATT_APP
- * @brief     This attribute will be handled by User APP. ALL read/write to this attribute
- *            will be indicated to user app by a callback, and user App need to call
+ * @brief     This attribute will be handled by user APP. All read/write to this attribute
+ *            will be indicated to user APP by a callback, and user APP need to call
  *            @ref rtk_bt_gatts_read_resp or @ref rtk_bt_gatts_write_resp to response to
  *            read/write request from remote and modify the attribute value maintained
  *            in user APP when recevie write request.
  */
 #define RTK_BT_GATT_APP                     1
+
+/**
+ * @def       RTK_BT_GATT_VOID
+ * @brief     This attribute value will be passed into lower stack as a pointer. If this
+ *            attribute is read by remote, lower stack will auto send this attribute value
+ *            to response to read request. This flag is not suggested to be used when the
+ *            attribute is writable(including encrypted/authenticated write), because it
+ *            will not indicate APP the write events.
+ */
+#define RTK_BT_GATT_VOID                    2
 
 /**
  * @struct    rtk_bt_gatt_chrc
@@ -308,7 +314,7 @@ typedef struct {
 	uint16_t seq;                           /*!< Sequence number, for convinience, not mandatory */
 	uint16_t app_id;                        /*!< Every service has a app_id. */
 	uint16_t conn_handle;                   /*!< Connection handle for a client */
-	uint16_t cid;                           /*!< ID of L2CAP channel to send the response, MUST be same as cid in @ref rtk_bt_gatts_read_ind_t. Ignored when RTK_BT_5_2_EATT_SUPPORT is 0. */
+	uint16_t cid;                           /*!< ID of L2CAP channel to send the response, MUST be same as cid in @ref rtk_bt_gatts_read_ind_t. Ignored when RTK_BLE_MGR_LIB is 0. */
 	uint16_t index;                         /*!< Attribute index in service */
 	uint8_t err_code;                       /*!< Error code, @ref rtk_bt_err_att , if NOT ERR_RESP, equals 0 */
 	uint16_t len;                           /*!< Response Value length, when err_code == 0 */
@@ -323,7 +329,7 @@ typedef struct {
 	uint16_t seq;                           /*!< Sequence number, for convinience, not mandatory */
 	uint16_t app_id;                        /*!< Every service has a app_id. */
 	uint16_t conn_handle;                   /*!< Connection handle for a client */
-	uint16_t cid;                           /*!< ID of L2CAP channel to send the response, 0 indicates auto-select. Ignored when RTK_BT_5_2_EATT_SUPPORT is 0. */
+	uint16_t cid;                           /*!< ID of L2CAP channel to send the response, 0 indicates auto-select. Ignored when RTK_BLE_MGR_LIB is 0. */
 	uint16_t index;                         /*!< Attribute index in service */
 	uint8_t type;                           /*!< Write type */
 	uint8_t err_code;                       /*!< Error code, @ref rtk_bt_err_att , if NOT ERR_RESP, equals 0 */
@@ -337,7 +343,7 @@ typedef struct {
 	uint16_t seq;                           /*!< Sequence number, for convinience, not mandatory */
 	uint16_t app_id;                        /*!< Every service has a app_id. */
 	uint16_t conn_handle;                   /*!< Connection handle for a client */
-	uint16_t cid;                           /*!< ID of L2CAP channel to send the response, 0 indicates auto-select. Ignored when RTK_BT_5_2_EATT_SUPPORT is 0. */
+	uint16_t cid;                           /*!< ID of L2CAP channel to send the response, 0 indicates auto-select. Ignored when RTK_BLE_MGR_LIB is 0. */
 	uint16_t index;                         /*!< Attribute index in service */
 	uint16_t len;                           /*!< Indicate Value length */
 	const void *data;                       /*!< Indicate Value data */
@@ -349,7 +355,7 @@ typedef struct {
  */
 typedef struct {
 	uint16_t conn_handle;                   /*!< Connection handle for a client */
-	uint16_t cid;                           /*!< ID of L2CAP channel, 0 indicates auto-select. Ignored when RTK_BT_5_2_EATT_SUPPORT is 0. */
+	uint16_t cid;                           /*!< ID of L2CAP channel, 0 indicates auto-select. Ignored when RTK_BLE_MGR_LIB is 0. */
 	uint16_t start_handle;                  /*!< Start of affected attribute handle range */
 	uint16_t end_handle;                    /*!< End of affected attribute handle range */
 } rtk_bt_gatts_service_changed_indicate_param_t;
@@ -546,7 +552,7 @@ uint16_t rtk_bt_gatts_write_resp(rtk_bt_gatts_write_resp_param_t *param);
 /**
  * @brief     Server send service changed indication when builtin service is used.
  * @param[in] conn_handle: Connection handle for a client.
- * @param[in] cid: ID of L2CAP channel, 0 indicates auto-select. Ignored when RTK_BT_5_2_EATT_SUPPORT is 0.
+ * @param[in] cid: ID of L2CAP channel, 0 indicates auto-select. Ignored when RTK_BLE_MGR_LIB is 0.
  * @param[in] start_handle: Start of affected attribute handle range.
  * @param[in] end_handle: End of affected attribute handle range.
  * @return
