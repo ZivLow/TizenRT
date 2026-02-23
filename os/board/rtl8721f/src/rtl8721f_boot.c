@@ -76,13 +76,13 @@
 #include "ameba_i2c.h"
 #include "ameba_spi.h"
 #include "board_pins.h"
+#include "os_wrapper.h"
 #ifdef CONFIG_FLASH_PARTITION
 #include "common.h"
 #endif
 #ifdef CONFIG_AMEBAGREEN2_BLE
 #include "rtw_coex_ipc.h"
 #endif
-
 /************************************************************************************
  * Pre-processor Definitions
  ************************************************************************************/
@@ -244,10 +244,6 @@ void board_initialize(void)
 	ipc_table_init(IPCAP_DEV);
 	InterruptRegister(IPC_INTHandler, IPC_CPU0_IRQ, (u32)IPCAP_DEV, INT_PRI5);
 	InterruptEn(IPC_CPU0_IRQ, INT_PRI5);
-	/* Set delay function & critical function for hw ipc sema */
-	/* TODO */
-	// IPC_patch_function(&rtos_critical_enter, &rtos_critical_exit);
-	// IPC_SEMDelayStub(rtos_time_delay_ms);
 #if 0 //def CONFIG_MBED_TLS_ENABLED
 	app_mbedtls_rom_init();
 #endif
@@ -292,6 +288,9 @@ void board_initialize(void)
 #ifdef CONFIG_AMEBAGREEN2_WIFI
 	wifi_init();
 #endif
+	/* Set delay function & critical function for hw ipc sema */
+	IPC_patch_function(tizenrt_critical_enter, tizenrt_critical_exit);
+	IPC_SEMDelayStub(rtos_time_delay_ms);
 }
 #else
 #error "CONFIG_BOARD_INITIALIZE MUST ENABLE"
