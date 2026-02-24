@@ -1548,8 +1548,13 @@ void bt_coex_send_w2b_sw_mailbox(uint8_t *user_data, uint16_t length)
 			return;
 		}
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+		if (true == osif_timer_create(&p_rtk_bt_coex_priv->monitor_timer, "bt_coex_monitor_timer", 0, BT_COEX_MONITOR_INTERVAL, true,
+									  bt_coex_monitor_timer_handler)) {
+#else
 		if (true == osif_timer_create(&p_rtk_bt_coex_priv->monitor_timer, "bt_coex_monitor_timer", NULL, BT_COEX_MONITOR_INTERVAL, true,
 									  bt_coex_monitor_timer_handler)) {
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 			osif_timer_start(&p_rtk_bt_coex_priv->monitor_timer);
 		}
 
