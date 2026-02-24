@@ -819,7 +819,9 @@ static uint16_t app_get_gatts_app_id(uint8_t event, void *data)
 static rtk_bt_evt_cb_ret_t ble_peripheral_gatts_app_callback(uint8_t event, void *data, uint32_t len)
 {
 	(void)len;
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 	uint16_t app_id = 0xFFFF;
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 
 	if (RTK_BT_GATTS_EVT_MTU_EXCHANGE == event) {
 		rtk_bt_gatt_mtu_exchange_ind_t *p_gatt_mtu_ind = (rtk_bt_gatt_mtu_exchange_ind_t *)data;
