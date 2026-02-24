@@ -110,7 +110,7 @@ uint16_t hci_uart_send(uint8_t *buf, uint16_t len)
 		if (!hci_is_mp_mode()) {
 #if defined(CONFIG_WLAN) && CONFIG_WLAN
 			/* trigger wifi pll ready for bt action */
-			// wifi_wake_pll_rdy_in_ps_state(1); // TODO: Port amebagreen2 wifi
+			wifi_wake_pll_rdy_in_ps_state(1);
 #endif
 		}
 		/* acquire host wake bt */
@@ -132,7 +132,7 @@ uint16_t hci_uart_send(uint8_t *buf, uint16_t len)
 		if (!hci_is_mp_mode()) {
 #if defined(CONFIG_WLAN) && CONFIG_WLAN
 			/* wifi restore */
-			// wifi_wake_pll_rdy_in_ps_state(0); // TODO: Port amebagreen2 wifi
+			wifi_wake_pll_rdy_in_ps_state(0);
 #endif
 		}
 	}
