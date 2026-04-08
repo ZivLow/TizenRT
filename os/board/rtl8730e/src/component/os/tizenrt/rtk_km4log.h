@@ -6,7 +6,7 @@
 #include <osif.h>
 #include "section_config.h"
 #include "ameba_soc.h"
-#include "inic_ipc_cfg.h"
+#include "whc_ipc_cfg.h"
 #ifndef CONFIG_KM4_MAX_LOG_QUEUE_SIZE
 #define CONFIG_KM4_MAX_LOG_QUEUE_SIZE 5
 #endif
