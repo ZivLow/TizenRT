@@ -11,6 +11,11 @@
 #include "hci_platform.h"
 #include "hci_dbg.h"
 #include "dlist.h"
+#if defined(CONFIG_WLAN) && CONFIG_WLAN
+#include "wifi_api.h"
+#include "wifi_intf_drv_to_app_internal.h"
+extern int wifi_set_ips_internal(u8 enable);
+#endif
 
 #ifdef CONFIG_RTK_DATA_BINARY_TO_EXT_FLASH
 #include <tinyara/fs/ioctl.h>
@@ -345,7 +350,7 @@ bool hci_platform_check_lmp_subver(uint16_t lmp_subver)
 uint8_t hci_platform_check_mp(void)
 {
 #if defined(CONFIG_WLAN) && CONFIG_WLAN
-	if (wifi_driver_is_mp())
+	if (hci_is_mp_mode())
 		return HCI_SUCCESS;
 	else
 		return HCI_FAIL;
@@ -590,7 +595,7 @@ void bt_power_off(void)
 		osif_delay(5);
 	} else {
 #if defined(CONFIG_WLAN) && CONFIG_WLAN
-		if (!(wifi_is_running(WLAN0_IDX) || wifi_is_running(WLAN1_IDX)))
+		if (!(wifi_is_running(STA_WLAN_INDEX) || wifi_is_running(SOFTAP_WLAN_INDEX)))
 #endif
 		{
 			set_reg_value(0x42008940, BIT5 | BIT6, 0);	//disable RFAFE (if WIFI active, keep 2'b11)
@@ -622,7 +627,7 @@ bool rtk_bt_pre_enable(void)
 
 #if defined(CONFIG_WLAN) && CONFIG_WLAN
 	if (bt_ant_switch == ANT_S1) {
-		if (!(wifi_is_running(WLAN0_IDX) || wifi_is_running(WLAN1_IDX))) {
+		if (!(wifi_is_running(STA_WLAN_INDEX) || wifi_is_running(SOFTAP_WLAN_INDEX))) {
 			HCI_ERR("WiFi is OFF! Please Restart BT after Wifi on!");
 			return false;
 		}

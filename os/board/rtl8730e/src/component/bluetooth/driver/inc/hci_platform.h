@@ -10,7 +10,6 @@
 #include "hci_common.h"
 #include "hci_uart.h"
 #include "ameba_soc.h"
-#include "wifi_conf.h"
 
 #define hci_platform_DOWNLOAD_PATCH
 #define hci_platform_MP_RESET_BAUDRATE

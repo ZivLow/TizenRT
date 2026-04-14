@@ -299,7 +299,7 @@ uint32_t osif_lock(void)
 	uint32_t flags = 0U;
 	if (osif_task_context_check() == true)
 	{
-		flags = save_and_cli();
+		flags = enter_critical_section();
 	}
 	return flags;
 }
@@ -311,7 +311,7 @@ void osif_unlock(uint32_t flags)
 {
 	if (osif_task_context_check() == true)
 	{
-		restore_flags(flags);
+		leave_critical_section(flags);
 	}
 }
 

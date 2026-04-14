@@ -12,6 +12,10 @@
 #include "hci_platform.h"
 #include "hci_dbg.h"
 
+/* Zi Yik DLIST */
+/////////////////////////////////////////////////////////////TizenRT service header start
+#include "dlist.h"
+
 #define H4_HDR_LEN          (1)
 #define RESERVED_LEN        (H4_HDR_LEN + 0)
 

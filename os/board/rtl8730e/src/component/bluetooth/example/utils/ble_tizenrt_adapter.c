@@ -9,7 +9,7 @@
 #include "rtk_bt_le_gap.h"
 #include "rtk_bt_def.h"
 
-trble_result_e rtw_ble_get_version(uint8_t *version)
+trble_result_e rtw_ble_server_get_version(uint8_t *version)
 {
     if (version == NULL)
         return TRBLE_FAIL;

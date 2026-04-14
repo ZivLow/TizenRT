@@ -180,10 +180,9 @@ CFLAGS += -I$(DIR_WIFI)/wpa_supplicant/src
 CFLAGS += -I$(DIR_WIFI)/wpa_supplicant/src/crypto
 CFLAGS += -I$(COMPONENT_DIR)/lwip/api
 
-CFLAGS += -I$(COMPONENT_DIR)/os/os_wrapper/include
+CFLAGS += -I$(DIR_OSDEP)/include
 CFLAGS += -I$(COMPONENT_DIR)/os/tizenrt
 CFLAGS += -I$(DIR_MBED)
-CFLAGS += -I$(DIR_OSDEP)/include
 CFLAGS += -I$(DIR_WIFI)/wpa_supplicant/wpa_lite
 CFLAGS += -I$(COMPONENT_DIR)/mbed/api
 CFLAGS += -I$(COMPONENT_DIR)/mbed/hal
@@ -196,6 +195,7 @@ CFLAGS += -I$(COMPONENT_DIR)/file_system/ftl
 # CFLAGS += -I$(COMPONENT_DIR)/file_system/kv
 
 ifeq ($(CONFIG_AMEBASMART_BLE),y)
+CFLAGS += -I$(DIR_BT)/os/tizenrt
 CFLAGS += -I$(DIR_BT)/inc
 CFLAGS += -I$(DIR_BT)/profile/client
 CFLAGS += -I$(DIR_BT)/driver/inc
