@@ -3,20 +3,76 @@
  * Copyright(c) 2021, Realtek Semiconductor Corporation. All rights reserved.
  *******************************************************************************
  */
+
+#include "platform_autoconf.h"
 #include <bt_api_config.h>
+#include "bt_debug.h"
 #if defined(RTK_BT_POWER_CONTROL_SUPPORT) && RTK_BT_POWER_CONTROL_SUPPORT
 #include <stdio.h>
 #include <string.h>
 #include <osif.h>
 #include <basic_types.h>
-#include <platform_opts_bt.h>
-#if defined(CONFIG_BT_AP) && CONFIG_BT_AP
-#include <bt_ipc_host_api.h>
-#include <bt_ipc_profile_config.h>
-#endif
 #include "rtk_bt_power_control.h"
 #include "ameba_soc.h"
-#include "wifi_conf.h"
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#ifdef CONFIG_PM
+#include "ameba_tizenrt_pmu.h"
+#endif
+#endif
+
+/* Zi Yik: old -> PMU_BT_DEVICE, new -> PMU_BT_CONTROLLER */
+/* Temporary disable power save */
+
+rtk_bt_ps_callback rtk_bt_suspend_callback = NULL;
+rtk_bt_ps_callback rtk_bt_resume_callback = NULL;
+
+_WEAK void hci_platform_force_uart_rts(bool op)
+{
+	(void) op;
+}
+
+static bool rtk_bt_get_wakelock_status(void)
+{
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#ifdef CONFIG_PM
+	uint32_t lock_status = pmu_get_wakelock_status();
+	BT_LOGD("[BT_PS] lock_status = 0x%x\r\n", lock_status);
+
+	if (lock_status & ((0x01) << PMU_BT_DEVICE)) {
+		return true;	//Already acquire bt wake lock
+	} else {
+		return false;	//Already release bt wake lock
+	}
+#endif
+#endif
+	return false;		//Already acquire bt wake lock
+}
+
+void rtk_bt_release_wakelock(void)
+{
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#ifdef CONFIG_PM
+	if (rtk_bt_get_wakelock_status() == true) {
+		BT_LOGD("[BT_PS] pmu_release_wakelock PMU_BT_CONTROLLER\r\n");
+		pmu_release_wakelock(PMU_BT_DEVICE);
+	} else {
+		BT_LOGD("[BT_PS] already release PMU_BT_CONTROLLER\r\n");
+	}
+#endif
+#endif
+}
+
+void rtk_bt_acquire_wakelock(void)
+{
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
+	if (rtk_bt_get_wakelock_status() == false) {
+		BT_LOGD("[BT_PS] pmu_acquire_wakelock PMU_BT_CONTROLLER\r\n");
+		pmu_acquire_wakelock(PMU_BT_DEVICE);
+	} else {
+		BT_LOGD("[BT_PS] already acquire PMU_BT_CONTROLLER\r\n");
+	}
+#endif
+}
 
 static void rtk_bt_enable_bt_wake_host(void)
 {
@@ -43,14 +99,15 @@ static uint32_t rtk_bt_suspend(uint32_t expected_idle_time, void *param)
 	(void)expected_idle_time;
 	(void)param;
 
-	pmvdbg("[BT_PS] Enter rtk_bt_suspend\r\n");
+	BT_LOGD("[BT_PS] Enter rtk_bt_suspend\r\n");
 
-#ifndef CONFIG_PLATFORM_TIZENRT_OS
-#if defined(CONFIG_BT_SINGLE_CORE) && CONFIG_BT_SINGLE_CORE
 	hci_platform_force_uart_rts(true);
-#endif
-#endif
+
 	rtk_bt_enable_bt_wake_host();
+
+	if (rtk_bt_suspend_callback) {
+		rtk_bt_suspend_callback();
+	}
 
 	return 1;
 }
@@ -60,15 +117,17 @@ static uint32_t rtk_bt_resume(uint32_t expected_idle_time, void *param)
 	(void)expected_idle_time;
 	(void)param;
 
-	pmvdbg("[BT_PS] Enter rtk_bt_resume\r\n");
+	BT_LOGD("[BT_PS] Enter rtk_bt_resume\r\n");
+
+	rtk_bt_acquire_wakelock();
 
 	rtk_bt_disable_bt_wake_host();
 
-#ifndef CONFIG_PLATFORM_TIZENRT_OS
-#if defined(CONFIG_BT_SINGLE_CORE) && CONFIG_BT_SINGLE_CORE
+	if (rtk_bt_resume_callback) {
+		rtk_bt_resume_callback();
+	}
+
 	hci_platform_force_uart_rts(false);
-#endif
-#endif
 
 	return 1;
 }
@@ -80,21 +139,30 @@ static uint32_t rtk_bt_wake_host_irq_handler(void *data)
 	return 1;
 }
 
-void rtk_bt_power_save_init(void)
+void rtk_bt_power_save_init(rtk_bt_ps_callback p_suspend_callback, rtk_bt_ps_callback p_resume_callback)
 {
+	rtk_bt_suspend_callback = p_suspend_callback;
+	rtk_bt_resume_callback = p_resume_callback;
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
 #ifdef CONFIG_PM	/* If PM is enable inti BT power save */
 	/* register callback before entering ps mode and after exiting ps mode */
 	pmu_register_sleep_callback(PMU_BT_DEVICE, (PSM_HOOK_FUN)rtk_bt_suspend, NULL, (PSM_HOOK_FUN)rtk_bt_resume, NULL);
-	InterruptRegister((IRQ_FUN)rtk_bt_wake_host_irq_handler, BT_WAKE_HOST_IRQ, (int)NULL, INT_PRI_LOWEST);
+	InterruptRegister((IRQ_FUN)rtk_bt_wake_host_irq_handler, BT_WAKE_HOST_IRQ, NULL, INT_PRI_LOWEST);
+#endif
 #endif
 }
-
 void rtk_bt_power_save_deinit(void)
 {
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
 #ifdef CONFIG_PM
 	InterruptDis(BT_WAKE_HOST_IRQ);
 	InterruptUnRegister(BT_WAKE_HOST_IRQ);
+
 	pmu_unregister_sleep_callback(PMU_BT_DEVICE);
 #endif
+#endif
+	rtk_bt_suspend_callback = NULL;
+	rtk_bt_resume_callback = NULL;
 }
 #endif

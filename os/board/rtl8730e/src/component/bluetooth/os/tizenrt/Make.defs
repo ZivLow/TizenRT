@@ -49,7 +49,8 @@
 #
 ############################################################################
 
-CSRCS += osif_tizenrt.c
+CSRCS += osif_tizenrt.c \
+		bt_debug.c
 
 DEPPATH += --dep-path component/bluetooth/os/tizenrt
 VPATH += :component/bluetooth/os/tizenrt

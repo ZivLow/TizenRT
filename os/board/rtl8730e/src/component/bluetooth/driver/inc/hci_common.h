@@ -38,4 +38,14 @@ typedef uint8_t *(*HCI_RECV_GET_BUF)(uint8_t type, uint16_t len, uint32_t timeou
 typedef uint8_t (*HCI_SEND_CB)(void);
 typedef uint8_t (*HCI_RECV_IND)(void);
 
+#if defined(CONFIG_MP_INCLUDED) && CONFIG_MP_INCLUDED
+#if defined(CONFIG_MP_SHRINK) && CONFIG_MP_SHRINK
+#define hci_is_mp_mode()            true
+#else /* CONFIG_MP_SHRINK */
+#define hci_is_mp_mode              hci_check_mp
+#endif /* CONFIG_MP_SHRINK */
+#else /* CONFIG_MP_INCLUDED */
+#define hci_is_mp_mode()            false
+#endif /* CONFIG_MP_INCLUDED */
+
 #endif

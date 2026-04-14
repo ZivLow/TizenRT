@@ -1028,7 +1028,7 @@ int ble_tizenrt_scatternet_main(uint8_t enable)
                                                     (rtk_bt_evt_cb_t)ble_tizenrt_scatternet_gattc_app_callback));
         BT_APP_PROCESS(general_client_add());
 #if (defined(RTK_BT_POWER_CONTROL_SUPPORT) && RTK_BT_POWER_CONTROL_SUPPORT)
-		rtk_bt_power_save_init();
+		rtk_bt_power_save_init(NULL, NULL);
 #endif
 	}
 	else if (0 == enable)
