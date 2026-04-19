@@ -153,6 +153,19 @@ s32 wifi_get_join_status(u8 *join_status);
  */
 s32 wifi_scan_networks(struct rtw_scan_param *scan_param, u8 block);
 
+/* TizenRT customization: scan multiple SSIDs */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+/**
+ * @brief  Initiate a scan for multiple target SSIDs in one scan procedure.
+ * @param[in]  scan_param: Multi-SSID scan parameters. See struct rtw_scan_multi_param in wifi_api_types.h.
+ * @param[in]  block:
+ *             - 1: Synchronous scan (function returns after scan completes).
+ *             - 0: Asynchronous scan (function returns immediately).
+ * @return  Number of scanned APs if successful (>= 0), or an error code.
+ */
+s32 wifi_scan_networks_multi(struct rtw_scan_multi_param *scan_param, u8 block);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
+
 /**
  * @brief  Get scan results
  * @param[inout]  ap_num: Pointer to the number of AP records:
