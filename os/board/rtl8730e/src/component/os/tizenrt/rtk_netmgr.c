@@ -440,9 +440,7 @@ trwifi_result_e wifi_netmgr_utils_scan_ap(struct netdev *dev, trwifi_scan_config
 
 		if(config->ssid_length > 0 || (ch_valid)) {
 			/* Scan with SSID, or Scan with SSID And Channel */
-			scan_param.ssid = (unsigned char *)config->ssid;
-			/* G2 TODO: Multiscan support */
-			// scan_param.ssid[0].ssid = (char *)config->ssid;
+			scan_param.ssid = (u8 *)config->ssid;
 			if(config->ssid_length > 0 && config->channel == 0) {
 				printf("[ATWs]: _AT_WLAN_SCAN_WITH_SSID_ [%s]\n\r", (char *)config->ssid);
 			}
@@ -473,106 +471,97 @@ trwifi_result_e wifi_netmgr_utils_scan_ap(struct netdev *dev, trwifi_scan_config
 
 trwifi_result_e wifi_netmgr_utils_scan_multi_ap(struct netdev *dev, trwifi_scan_multi_configs_s *config)
 {
-	dbg_noarg("Not supported yet, G2 TODO\n");
+	g_scan_num = 0;
+	g_scan_list = NULL;
+	int i = 0;
+	int j = 0;
+	char ch_valid = 0;
+	char scan_all_ch = 0;
+	u8 channel_list[SCAN_SSID_CNT] = {0};
+	u8 channel_list_num = 0;
+	struct rtw_scan_multi_param scan_multi_param = {0};
+
+	scan_multi_param.scan_user_callback = app_scan_result_handler;
+	scan_multi_param.max_ap_record_num = 100;
+
+	if (config) {
+		if (config->scan_ap_config_count > SCAN_SSID_CNT) {
+			dbg_noarg("ERROR: SSID count exceeded, maximum allowed:%d given:%d\n\r", SCAN_SSID_CNT, config->scan_ap_config_count);
+			TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
+			return TRWIFI_INVALID_ARGS;
+		}
+
+		if ((config->scan_ap_config_count == 0) && !config->scan_all) {
+			dbg_noarg("[RTK][WARN] scan_ap_config_count is 0. Do not scan. \n\r");
+			TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
+			return TRWIFI_INVALID_ARGS;
+		}
+
+		if (config->scan_all) {
+			scan_multi_param.options = RTW_SCAN_ALL;
+		}
+
+		if (config->scan_ap_config_count) {
+			for (i = 0; i < config->scan_ap_config_count; i++) {
+				/* If any AP channel is 0, scan all channels */
+				if (config->scan_ap_config[i].channel == 0) {
+					scan_all_ch = 1;
+					break;
+				}
+
+				ch_valid = 0;
+				for (j = 0; j < valid_ch_list_size; j++) {
+					if (config->scan_ap_config[i].channel == valid_ch_list[j]) {
+						ch_valid = 1;
+						break;
+					}
+				}
+
+				if (!ch_valid) {
+					dbg_noarg("ERROR: Invalid channel for AP %s, given channel %d\n\r", (char *)config->scan_ap_config[i].ssid, config->scan_ap_config[i].channel);
+					TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
+					return TRWIFI_INVALID_ARGS;
+				}
+			}
+
+			for (i = 0; i < config->scan_ap_config_count; i++) {
+				if (config->scan_ap_config[i].ssid_length > 0) {
+					scan_multi_param.ssid[i].len = config->scan_ap_config[i].ssid_length;
+					scan_multi_param.ssid[i].ssid = (u8 *)config->scan_ap_config[i].ssid;
+				}
+
+				if (!scan_all_ch) {
+					char duplicated_channel = 0;
+					for (j = 0; j < channel_list_num; j++) {
+						if (channel_list[j] == (u8)config->scan_ap_config[i].channel) {
+							duplicated_channel = 1;
+							break;
+						}
+					}
+
+					if (!duplicated_channel) {
+						channel_list[channel_list_num] = (u8)config->scan_ap_config[i].channel;
+						channel_list_num++;
+					}
+				}
+			}
+
+			if (!scan_all_ch && channel_list_num > 0) {
+				scan_multi_param.channel_list = channel_list;
+				scan_multi_param.channel_list_num = channel_list_num;
+			}
+		}
+	}
+
+	if (wifi_scan_networks_multi(&scan_multi_param, 0) != RTK_SUCCESS) {
+		dbg_noarg("[RTK] [ERR] WiFi multi scan fail\n");
+		TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
+		return TRWIFI_FAIL;
+	}
+
+	nvdbg("[RTK] WiFi Multi Scan success\n");
 	return TRWIFI_SUCCESS;
 }
-// trwifi_result_e wifi_netmgr_utils_scan_multi_ap(struct netdev *dev, trwifi_scan_multi_configs_s *config)
-// {
-// 	g_scan_num = 0;
-// 	g_scan_list = NULL;
-// 	char *channel_list = NULL;
-// 	int i,j = 0;
-// 	char ch_valid, scan_all_ch = 0;
-// 	struct rtw_scan_param scan_param = {0};
-
-// 	memset(&scan_param, 0, sizeof(struct rtw_scan_param));
-// 	scan_param.scan_user_callback = app_scan_result_handler;
-// 	/* Set the maximum number of APs in scan result to 100 */
-// 	scan_param.max_ap_record_num = 100;
-
-// 	if (config) {
-// 		if (config->scan_ap_config_count) {
-// 			if (config->scan_ap_config_count > SSID_SCAN_NUM) {
-// 				dbg_noarg("ERROR: SSID count exceeded, maximum allowed:%d given:%d\n\r",SSID_SCAN_NUM,config->scan_ap_config_count);
-// 				TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
-// 				return TRWIFI_INVALID_ARGS;
-// 			}
-// 			for (i = 0; i < config->scan_ap_config_count; i++) {
-// 				/* Scan all channels if any channel in scan config is set to 0 */
-// 				if (config->scan_ap_config[i].channel == 0) {
-// 					scan_all_ch = 1;
-// 					/* Skip checking of channel validity if scanning all channels */
-// 					break;
-// 				}
-// 				ch_valid = 0;
-// 				/* Check that channels provided for each AP are valid */
-// 				for (j = 0; j < valid_ch_list_size; j++) {
-// 					if (config->scan_ap_config[i].channel == valid_ch_list[j]) {
-// 						ch_valid = 1;
-// 						break;
-// 					}
-// 				}
-// 				if (!ch_valid) {
-// 					dbg_noarg("ERROR: Invalid channel for AP %s, given channel %d\n\r",(char *)config->scan_ap_config[i].ssid, config->scan_ap_config[i].channel);
-// 					TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
-// 					return TRWIFI_INVALID_ARGS;
-// 				}
-// 			}
-
-// 			if (scan_all_ch) {
-// 				scan_param.channel_list_num = 0;
-// 			} else {
-// 				channel_list = (char *)malloc(config->scan_ap_config_count);
-// 				if (!channel_list) {
-// 					dbg_noarg("ERROR: Can't malloc memory for channel list\n\r");
-// 					TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
-// 					return TRWIFI_FAIL;
-// 				}
-// 				scan_param.channel_list = (unsigned char *)channel_list;
-// 				scan_param.channel_list_num = config->scan_ap_config_count;
-// 			}
-
-// 			/* Prepare scan param */
-// 			for (i = 0; i < config->scan_ap_config_count; i++) {
-// 				scan_param.ssid[i].ssid = (char *)config->scan_ap_config[i].ssid;
-// 				/* Prepare list of channels to scan if not scanning all channels */
-// 				if (!scan_all_ch) {
-// 					*(channel_list + i) = (u8)config->scan_ap_config[i].channel;
-// 				}
-// 			}
-// 		}
-
-// 		/* If scan_all is set, set scan option to RTW_SCAN_ALL to scan for specific AP + other APs responding to NULL probe req */
-// 		if (config->scan_all) {
-// 			scan_param.options = RTW_SCAN_ALL;
-// 		} else {
-// 			if (config->scan_ap_config_count == 0) {
-// 				/* do not scan if scan_all is false and scan_ap_config_count is 0 */
-// 				dbg_noarg("[RTK][WARN] scan_ap_config_count is 0. Do not scan. \n\r");
-// 				TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
-// 				return TRWIFI_INVALID_ARGS;
-// 			}
-// 		}
-// 		if (wifi_scan_networks(&scan_param, 0) != RTK_SUCCESS) {
-// 			if (channel_list) {
-// 				free(channel_list);
-// 			}
-// 			TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
-// 			return TRWIFI_FAIL;
-// 		}
-// 		if (channel_list) {
-// 			free(channel_list);
-// 		}
-// 	} else {
-// 		if (wifi_scan_networks(&scan_param, 0) != RTK_SUCCESS) {
-// 			dbg_noarg("[RTK] [ERR] WiFi scan fail\n");
-// 			TRWIFI_POST_SCANEVENT(ameba_nm_dev_wlan0, LWNL_EVT_SCAN_FAILED, NULL);
-// 			return TRWIFI_FAIL;
-// 		}
-// 	}
-// 	nvdbg("[RTK] WIFi Scan success\n");
-// 	return TRWIFI_SUCCESS;
-// }
 
 trwifi_result_e wifi_netmgr_utils_connect_ap(struct netdev *dev, trwifi_ap_config_s *ap_connect_config, void *arg)
 {

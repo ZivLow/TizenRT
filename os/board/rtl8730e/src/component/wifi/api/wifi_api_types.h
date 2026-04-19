@@ -498,6 +498,10 @@ enum rtw_scan_type {
 	RTW_SCAN_REPORT_EACH    = 0x08,  /**< Report each found AP immediately */
 	RTW_SCAN_WITH_P2P       = 0x10,  /**< For P2P usage */
 	RTW_SCAN_FOR_ZRPP       = 0x20,  /**< For Zero R-mesh Provisioning Protocol usage */
+	/* TizenRT customization: scan multiple SSIDs */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	RTW_SCAN_ALL			= 0x40,  /**< Scan specific AP and also report other APs responding to NULL probe req */
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 };
 
 /**
@@ -712,6 +716,17 @@ struct rtw_ssid {
 struct rtw_mac {
 	u8		octet[6]; /**< Unique 6-byte MAC address. */
 };
+
+/* TizenRT customization: scan multiple SSIDs */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+/**
+  * @brief  The structure is used to describe the SSID for scanning.
+  */
+struct rtw_scan_ssid {
+	u8 len;     /**< SSID length */
+	u8 *ssid;   /**< SSID name (AP name) */
+};
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 #pragma pack()
 
 /**********************************************************************************************
@@ -796,6 +811,47 @@ struct rtw_scan_param {
 	  */
 	s32(*scan_report_acs_user_callback)(struct rtw_acs_mntr_rpt *acs_mntr_rpt);
 };
+
+/* TizenRT customization: scan multiple SSIDs */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+/**
+  * @brief  Describes the scan parameters used for multi-SSID Wi-Fi scanning.
+  */
+struct rtw_scan_multi_param {
+	u8                               options; /**< Scan option: @ref RTW_SCAN_ACTIVE, @ref RTW_SCAN_PASSIVE, etc.*/
+	struct rtw_scan_ssid             ssid[SSID_SCAN_NUM]; /**< Target SSID list to scan for. */
+	u8                              *channel_list;      /**< List of specific channels to scan. */
+	u8                               channel_list_num;  /**< Number of channels in `channel_list`.*/
+	struct rtw_channel_scan_time     chan_scan_time;    /**< Scan duration for each channel.*/
+	u8							 probe_req_num;	/**< Number of probe request frames to issue in an active scan channel.*/
+
+	/** Maximum number of APs to record. When set to 0, use default value 64.
+	 *  APs with the lowest RSSI are discarded if scanned APs exceed this number. */
+	u16                              max_ap_record_num;
+	void                            *scan_user_data;   /**< User-defined data passed to callback functions for handling scan results. */
+	u8                              rom_rsvd[8];       //resverd for next cut
+
+	/** @brief Callback for normal asynchronous mode.
+	  * @param[in] ap_num: Total number of scanned APs.
+	  * @param[in] user_data: Pointer to user data (see `scan_user_data`).
+	  * @return @ref RTK_SUCCESS or @ref RTK_FAIL.
+	  */
+	s32(*scan_user_callback)(u32 ap_num, void *user_data);
+
+	/** @brief Callback for @ref RTW_SCAN_REPORT_EACH mode.
+	  * @param[in] scanned_ap_info: Pointer to details of a scanned AP.
+	  * @param[in] user_data: Pointer to user data (see `scan_user_data`).
+	  * @return @ref RTK_SUCCESS or @ref RTK_FAIL.
+	  */
+	s32(*scan_report_each_mode_user_callback)(struct rtw_scan_result *scanned_ap_info, void *user_data);
+
+	/** @brief  Callback for reporting ACS (Automatic Channel Selection) info.
+	  * @param[in] scanned_ap_info: Pointer to channel busyness information.
+	  * @return @ref RTK_SUCCESS or @ref RTK_FAIL.
+	  */
+	s32(*scan_report_acs_user_callback)(struct rtw_acs_mntr_rpt *acs_mntr_rpt);
+};
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 #pragma pack()
 
 /**********************************************************************************************
