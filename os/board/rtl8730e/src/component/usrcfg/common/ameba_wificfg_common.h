@@ -287,6 +287,12 @@ struct wifi_user_conf {
 
 	/*! Max node number in R-mesh network, this is used for decide each node's beacon window.*/
 	u16 wtn_max_node_num;
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	/* TizenRT bugfix: softap silent table to reduce probe response under probe request spam */
+	u8 softap_keep_silent_table_enable;
+	u16 softap_keep_silent_table_interval;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 };
 
 /** @} End of WIFI_Exported_Structure_Types group*/

@@ -137,6 +137,12 @@ _WEAK void wifi_set_user_config(void)
 		RTK_LOGW(TAG_WLAN_DRV, "only enable uspsd mode\n");
 #endif
 	}
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	/* TizenRT bugfix: softap silent table to reduce probe response under probe request spam */
+	wifi_user_config.softap_keep_silent_table_enable = 1;
+	wifi_user_config.softap_keep_silent_table_interval = 500; /* ms. Once interval period is reached, remove from silent table, so can send probe response to same STA again. */
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 }
 
 /**
