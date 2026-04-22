@@ -474,7 +474,7 @@ uint8_t *LwIP_GetIP(uint8_t idx)
 	if (pnetif == NULL) {
 		return NULL;
 	}
-	return (uint8_t *) & (pnetif->ip_addr);
+	return (uint8_t *)rltk_wlan_get_ip(idx);
 }
 
 uint8_t *LwIP_GetGW(uint8_t idx)
@@ -483,7 +483,7 @@ uint8_t *LwIP_GetGW(uint8_t idx)
 	if (pnetif == NULL) {
 		return NULL;
 	}
-	return (uint8_t *) & (pnetif->gw);
+	return (uint8_t *)rltk_wlan_get_gw(idx);
 }
 
 uint8_t *LwIP_GetMASK(uint8_t idx)
@@ -492,7 +492,7 @@ uint8_t *LwIP_GetMASK(uint8_t idx)
 	if (pnetif == NULL) {
 		return NULL;
 	}
-	return (uint8_t *) & (pnetif->netmask);
+	return (uint8_t *)rltk_wlan_get_gwmask(idx);
 }
 
 void LwIP_wlan_set_netif_info(uint8_t idx, void *dev, unsigned char *dev_addr)
