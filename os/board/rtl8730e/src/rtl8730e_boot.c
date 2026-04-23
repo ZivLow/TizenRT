@@ -410,8 +410,7 @@ void board_initialize(void)
 #ifdef CONFIG_AMEBASMART_USBDEVICE
 	usb_initialize();
 #endif
-// Temporary disable first
-	// rtl8730e_km4_logtask_initialize();
+	rtl8730e_km4_logtask_initialize();
 
 	/* init console */
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
@@ -508,7 +507,7 @@ void board_initialize(void)
 	ipc_send_message(IPC_AP_TO_LP, IPC_A2L_DISLOGUART, &ipc_msg_loguart);
 
 	/* Enable IPC buffered print */
-	// whc_ipc_buffered_printf_set_np_enable(1);
+	whc_ipc_buffered_printf_set_np_enable(1);
 
 	up_print_iwdg_status();
 }
