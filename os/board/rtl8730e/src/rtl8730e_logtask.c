@@ -122,7 +122,7 @@ void whc_ipc_print_int_hdl(VOID *Data, u32 IrqStatus, u32 ChanNum)
 		strncpy((char *)g_whc_ipc_logging_buf[g_whc_ipc_logging_buf_ctr], tmp_buffer, ipc_recv_msg->msg_len);
 	} else {
 		DBG_8195A("WARN: KM4 logbuf full, dropped log!\n");
-		goto NOTIFY_MSG;
+		return;
 	}
 	
 	/* fill message struct */
@@ -136,17 +136,11 @@ void whc_ipc_print_int_hdl(VOID *Data, u32 IrqStatus, u32 ChanNum)
 
 		/* set the first byte to null to cause string to print empty in case this buffer slot is accidentally reused */
 		g_whc_ipc_logging_buf[g_whc_ipc_logging_buf_ctr][0] = 0;
-		goto NOTIFY_MSG;
+		return;
 	}
 
 	/* increment to next buffer */
 	g_whc_ipc_logging_buf_ctr = (g_whc_ipc_logging_buf_ctr + 1) % CONFIG_KM4_MAX_LOG_QUEUE_SIZE;
-
-NOTIFY_MSG: ;
-	/* Indicate logs have been printed */
-	u8 *print_flag = (u8 *)ipc_recv_msg->rsvd;
-	print_flag[0] = 1;
-	DCache_Clean((u32)print_flag, sizeof(print_flag));
 }
 
 IPC_TABLE_DATA_SECTION
