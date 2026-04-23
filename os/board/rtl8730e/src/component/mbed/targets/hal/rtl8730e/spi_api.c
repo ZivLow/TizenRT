@@ -669,10 +669,6 @@ void spi_frequency(spi_t *obj, int hz)
 		ClockDivider = 0xFFFE;
 	}
 
-	if (IpClk / ClockDivider != (u32)hz) {
-		RTK_LOGI(TAG, "IpClk:%luHz/div%lu, get:%luHz(target%dHz) \r\n", IpClk, ClockDivider, (IpClk / ClockDivider), hz);
-	}
-
 	SSI_SetBaudDiv(ssi_adapter->spi_dev, ClockDivider);
 }
 
