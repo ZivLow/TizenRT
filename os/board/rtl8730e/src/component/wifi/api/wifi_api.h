@@ -213,6 +213,38 @@ s32 wifi_stop_ap(void);
  */
 s32 wifi_get_setting(u8 wlan_idx, struct rtw_wifi_setting *psetting);
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+/**
+ * @brief  Get the deauth or connection fail reason received by driver
+ * @param[in]  void
+ * @return  If the disconnection is due to RTW_JOINSTATUS_FAIL, it will return the fail reason based on rtk_error_code in rtk_status.h
+ *          If the disconnection is due to RTW_JOINSTATUS_DISCONNECT, it will return the deauth reason based on rtw_disconn_reason in wifi_api_types.h
+ */
+s32 wifi_get_last_reason(void);
+
+/**
+ * @brief  Get a string containing KM4 wlan lib version info
+ * @param[out]  lib_ver: Pointer where the KM4 wlan lib version will be written to
+ * @return  RTK_SUCCESS: Copied KM4 wlan lib version info into buffer.
+ * @return  RTK_FAIL: Buffer is NULL.
+ */
+s32 wifi_get_lib_version(char *lib_ver);
+
+/**
+ * @brief  Get the previous join status during wifi connection
+ * @param  None
+ * @return Return the previous join status, refer to rtw_join_status in wifi_api_event.h
+ */
+u8 wifi_get_prev_join_status(void);
+
+/**
+ * @brief  Get the key management type used in the previous connected network
+ * @param  None
+ * @return Return the key management type used in the previous connected network, eg. WPA_KEY_MGMT_PSK
+ */
+u32 wifi_get_prev_key_mgmt(void);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
+
 /** @} End of Basic_Functions group */
 /** @} End of WIFI_Exported_Functions group */
 /** @} End of WIFI_API group */

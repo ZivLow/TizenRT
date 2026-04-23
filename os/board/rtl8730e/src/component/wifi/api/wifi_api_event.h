@@ -111,9 +111,15 @@ struct rtw_event_join_status_info {
 		struct rtw_event_join_fail {
 			s32 fail_reason;  /**< Failure reason, refer to @ref RTK_FAIL, -@ref RTK_ERR_WIFI_CONN_INVALID_KEY, etc. */
 			u16 reason_or_status_code;
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+			u32 prev_key_mgmt;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 		} fail;  /* RTW_JOINSTATUS_FAIL */
 		struct rtw_event_disconnect {
 			u16 disconn_reason;  /**< Disconnect reason, refer to @ref rtw_disconn_reason. */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+			u32 prev_key_mgmt;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 		} disconnect;  /* RTW_JOINSTATUS_DISCONNECT */
 	} priv;
 

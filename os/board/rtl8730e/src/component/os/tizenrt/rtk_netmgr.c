@@ -736,70 +736,63 @@ trwifi_result_e wifi_netmgr_utils_get_info(struct netdev *dev, trwifi_info *wifi
 	return wuret;
 }
 
-// trwifi_result_e wifi_netmgr_utils_get_wpa_supplicant_state(struct netdev *dev, trwifi_wpa_states *wpa_supplicant_state)
-// {
-// 	trwifi_result_e wuret = TRWIFI_FAIL;
-// 	int key_mgmt = 0;
-// 	rtw_join_status_t previous_join_status;
-
-// 	/* This API is used to check the supplicant state before disconnection, so use the join status before disconnection to check */
-// 	previous_join_status = wifi_get_prev_join_status();
-
-// 		switch (previous_join_status) {
-// 			case RTW_JOINSTATUS_UNKNOWN:
-// 				wpa_supplicant_state->wpa_supplicant_state = WPA_INACTIVE;
-// 				break;
-// 			case RTW_JOINSTATUS_SCANNING:
-// 				wpa_supplicant_state->wpa_supplicant_state = WPA_SCANNING;
-// 				break;
-// 			case RTW_JOINSTATUS_AUTHENTICATING:
-// 				wpa_supplicant_state->wpa_supplicant_state = WPA_AUTHENTICATING;
-// 				break;
-// 			case RTW_JOINSTATUS_ASSOCIATING:
-// 				wpa_supplicant_state->wpa_supplicant_state = WPA_ASSOCIATING;
-// 				break;
-// 			case RTW_JOINSTATUS_ASSOCIATED:
-// 				wpa_supplicant_state->wpa_supplicant_state = WPA_ASSOCIATED;
-// 				break;
-// 			case RTW_JOINSTATUS_4WAY_HANDSHAKING:
-// 				wpa_supplicant_state->wpa_supplicant_state = WPA_4WAY_HANDSHAKE;
-// 				break;
-// 			case RTW_JOINSTATUS_4WAY_HANDSHAKE_DONE:
-// 			case RTW_JOINSTATUS_SUCCESS:
-// 				wpa_supplicant_state->wpa_supplicant_state = WPA_COMPLETED;
-// 				break;
-// 			case RTW_JOINSTATUS_FAIL:
-// 			case RTW_JOINSTATUS_DISCONNECT:
-// 				wpa_supplicant_state->wpa_supplicant_state = WPA_DISCONNECTED;
-// 				break;
-// 			default:
-// 				break;
-// 		}
-
-// 	/* key_mgmt will return the value used in the last disconnected network */
-// 	key_mgmt = wifi_get_prev_key_mgmt();
-// 	wpa_supplicant_state->wpa_supplicant_key_mgmt = key_mgmt;
-// 	wuret = TRWIFI_SUCCESS;
-// 	return wuret;
-// }
 trwifi_result_e wifi_netmgr_utils_get_wpa_supplicant_state(struct netdev *dev, trwifi_wpa_states *wpa_supplicant_state)
 {
 	trwifi_result_e wuret = TRWIFI_FAIL;
-	dbg_noarg("Not supported yet, G2 TODO\n");
+	int key_mgmt = 0;
+	u8 previous_join_status;
+
+	/* This API is used to check the supplicant state before disconnection, so use the join status before disconnection to check */
+	previous_join_status = wifi_get_prev_join_status();
+
+		switch (previous_join_status) {
+			case RTW_JOINSTATUS_UNKNOWN:
+				wpa_supplicant_state->wpa_supplicant_state = WPA_INACTIVE;
+				break;
+			case RTW_JOINSTATUS_SCANNING:
+				wpa_supplicant_state->wpa_supplicant_state = WPA_SCANNING;
+				break;
+			case RTW_JOINSTATUS_AUTHENTICATING:
+				wpa_supplicant_state->wpa_supplicant_state = WPA_AUTHENTICATING;
+				break;
+			case RTW_JOINSTATUS_ASSOCIATING:
+				wpa_supplicant_state->wpa_supplicant_state = WPA_ASSOCIATING;
+				break;
+			case RTW_JOINSTATUS_ASSOCIATED:
+				wpa_supplicant_state->wpa_supplicant_state = WPA_ASSOCIATED;
+				break;
+			case RTW_JOINSTATUS_4WAY_HANDSHAKING:
+				wpa_supplicant_state->wpa_supplicant_state = WPA_4WAY_HANDSHAKE;
+				break;
+			case RTW_JOINSTATUS_4WAY_HANDSHAKE_DONE:
+			case RTW_JOINSTATUS_SUCCESS:
+				wpa_supplicant_state->wpa_supplicant_state = WPA_COMPLETED;
+				break;
+			case RTW_JOINSTATUS_FAIL:
+			case RTW_JOINSTATUS_DISCONNECT:
+				wpa_supplicant_state->wpa_supplicant_state = WPA_DISCONNECTED;
+				break;
+			default:
+				break;
+		}
+
+	/* key_mgmt will return the value used in the previous connected network */
+	key_mgmt = wifi_get_prev_key_mgmt();
+	wpa_supplicant_state->wpa_supplicant_key_mgmt = key_mgmt;
+	wuret = TRWIFI_SUCCESS;
 	return wuret;
 }
 
 trwifi_result_e wifi_netmgr_utils_get_driver_info(struct netdev *dev, trwifi_driver_info *driver_info)
 {
 	trwifi_result_e wuret = TRWIFI_SUCCESS;
-	dbg_noarg("Not supported yet, G2 TODO\n");
-	// char lib_ver[64];
-	// if (wifi_get_lib_version(lib_ver) != RTK_FAIL){
-	// 	memcpy(driver_info->lib_version, lib_ver, sizeof(lib_ver));
-	// }
-	// else {
-	// 	wuret = TRWIFI_FAIL;
-	// }
+	char lib_ver[64];
+	if (wifi_get_lib_version(lib_ver) != RTK_FAIL){
+		memcpy(driver_info->lib_version, lib_ver, sizeof(lib_ver));
+	}
+	else {
+		wuret = TRWIFI_FAIL;
+	}
 	return wuret;
 }
 
@@ -924,27 +917,32 @@ trwifi_result_e wifi_netmgr_utils_ioctl(struct netdev *dev, trwifi_msg_s *msg)
 trwifi_result_e wifi_netmgr_utils_set_chplan(struct netdev *dev, uint8_t chplan)
 {
 	trwifi_result_e wuret = TRWIFI_FAIL;
-	dbg_noarg("Not supported yet, G2 TODO\n");
-	// if ((wifi_is_connected_to_ap() == RTK_STATUS_SUCCESS) || (wifi_is_running(SOFTAP_WLAN_INDEX))){
-	// 	dbg_noarg("[RTK] Failed to set channel plan, disconnect from AP or stop SoftAP before setting\n");
-	// 	return wuret;
-	// }
 
-	// int ret = wifi_set_chplan(chplan);
-	// if (ret == RTK_STATUS_SUCCESS) {
-	// 	wuret = TRWIFI_SUCCESS;
-	// 	dbg_noarg("[RTK] Successfully set channel plan to %x\n", chplan);
-	// } else {
-	// 	dbg_noarg("[RTK] Failed to set channel plan, invalid channel plan %x\n", chplan);
-	// }
+	u8 connect_status = RTW_JOINSTATUS_UNKNOWN;
+	if(wifi_get_join_status(&connect_status) != RTK_SUCCESS) {
+		dbg_noarg("[RTK] Failed to get connection status!");
+		return wuret;
+	}
+
+	if (((connect_status != RTW_JOINSTATUS_UNKNOWN) && (connect_status != RTW_JOINSTATUS_FAIL) && (connect_status != RTW_JOINSTATUS_DISCONNECT)) || (wifi_is_running(SOFTAP_WLAN_INDEX))){
+		dbg_noarg("[RTK] Failed to set channel plan, disconnect from AP or stop SoftAP before setting\n");
+		return wuret;
+	}
+
+	int ret = wifi_set_chplan(chplan);
+	if (ret == RTK_SUCCESS) {
+		wuret = TRWIFI_SUCCESS;
+		dbg_noarg("[RTK] Successfully set channel plan to %x\n", chplan);
+	} else {
+		dbg_noarg("[RTK] Failed to set channel plan, invalid channel plan %x\n", chplan);
+	}
 	return wuret;
 }
 
 trwifi_result_e wifi_netmgr_utils_get_disconn_reason(struct netdev *dev, int *deauth_reason)
 {
 	trwifi_result_e wuret = TRWIFI_FAIL;
-	dbg_noarg("Not supported yet, G2 TODO\n");
-	// *deauth_reason = wifi_get_last_reason();
+	*deauth_reason = wifi_get_last_reason();
 	wuret = TRWIFI_SUCCESS;
 	return wuret;
 }

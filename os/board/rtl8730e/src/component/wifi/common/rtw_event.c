@@ -63,6 +63,11 @@ extern void wtn_zrpp_get_ap_info_evt_hdl(u8 *evt_info);
 
 extern rtk_network_link_callback_t g_link_up;
 extern rtk_network_link_callback_t g_link_down;
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+u8 prev_join_status = 0;
+s32 deauth_reason = 0;
+u32 prev_key_mgmt = WPA_KEY_MGMT_NONE;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 void wifi_event_join_status_internal_hdl(u8 *evt_info)
 {
@@ -81,6 +86,9 @@ void wifi_event_join_status_internal_hdl(u8 *evt_info)
 	struct diag_evt_wifi_disconn diag_disconn;
 	struct diag_evt_wifi_join_fail diag_join_fail;
 #endif
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	prev_join_status = rtw_join_status;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	rtw_join_status = join_status;
 
 	/* step 1: internal process for different status*/
@@ -132,6 +140,10 @@ void wifi_event_join_status_internal_hdl(u8 *evt_info)
 		diag_join_fail.reason_code = join_fail->reason_or_status_code;
 		rtk_diag_event_add(RTK_EVENT_LEVEL_INFO, DIAG_EVT_WIFI_JOIN_FAIL, (u8 *)&diag_join_fail, sizeof(struct diag_evt_wifi_join_fail));
 #endif
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+		deauth_reason = join_fail->fail_reason;
+		prev_key_mgmt = join_fail->prev_key_mgmt;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 		at_printf_indicate("wifi connect failed\r\n");
 #else
@@ -145,6 +157,10 @@ void wifi_event_join_status_internal_hdl(u8 *evt_info)
 		diag_disconn.reason = disconnect->disconn_reason;
 		rtk_diag_event_add(RTK_EVENT_LEVEL_INFO, DIAG_EVT_WIFI_DISCONN, (u8 *)&diag_disconn, sizeof(struct diag_evt_wifi_disconn));
 #endif
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+		deauth_reason = disconnect->disconn_reason;
+		prev_key_mgmt = disconnect->prev_key_mgmt;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 		at_printf_indicate("wifi disconnected\r\n");
 #if defined(CONFIG_LWIP_LAYER) && CONFIG_LWIP_LAYER

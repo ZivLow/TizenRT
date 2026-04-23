@@ -663,6 +663,25 @@ s32 wifi_acs_find_ideal_channel(struct rtw_acs_config *acs_config, u8 *ideal_ch)
  */
 s32 wifi_set_tx_advanced_config(struct rtw_tx_advanced_cfg *tx_setting);
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+/**
+ * @brief  Get current bandwidth in current connection
+ * @param[in]  void
+ * @return  s32: The current bandwidth value in MHz
+ */
+s32 wifi_get_current_bw(void);
+
+/**
+ * @brief  Get key_mgmt value of current connection
+ * @param[out] key_mgmt: Pointer to store the key_mgmt value
+ * @return
+ *    - @ref RTK_SUCCESS : The API executed successfully.
+ *    - @ref RTK_FAIL : Failed to get key_mgmt, not connected to AP.
+ *    - @ref RTK_ERR_BADARG : NULL pointer passed for `key_mgmt`.
+ */
+s32 wifi_get_key_mgmt(u32 *key_mgmt);
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
+
 /** @} End of Extended_Functions group */
 /** @} End of WIFI_Exported_Functions group*/
 /** @} End of WIFI_API group*/
