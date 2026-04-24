@@ -29,24 +29,24 @@ extern "C"
 
 #ifndef UUID128_VAL
 #define UUID128_VAL(uuid128) \
-    *(uint32_t*)(uuid128+12), *(uint16_t*)(uuid128+10), \
-    *(uint16_t*)(uuid128+8), *(uint16_t*)(uuid128+6), \
-    *(uint16_t*)(uuid128+4), *(uint32_t*)uuid128
+	*(uint32_t*)(uuid128+12), *(uint16_t*)(uuid128+10), \
+	*(uint16_t*)(uuid128+8), *(uint16_t*)(uuid128+6), \
+	*(uint16_t*)(uuid128+4), *(uint32_t*)uuid128
 #endif
 
 #define APP_PRINT_SEPARATOR()                                                                \
-    do {                                                                                    \
-        printf("############################################################\r\n \r\n");    \
-    } while(0)                                                                             \
+	do {                                                                                    \
+		printf("############################################################\r\n \r\n");    \
+	} while (0)                                                                             \
 
 #define APP_PROMOTE(...)                                                                \
-    do {                                                                                \
-        printf("\r\n");                                                                 \
-        printf("############################################################\r\n");     \
-        printf(__VA_ARGS__);                                                            \
-        printf("############################################################\r\n");     \
-        printf("\r\n");                                                                 \
-    } while (0)
+	do {                                                                                \
+		printf("\r\n");                                                                 \
+		printf("############################################################\r\n");     \
+		printf(__VA_ARGS__);                                                            \
+		printf("############################################################\r\n");     \
+		printf("\r\n");                                                                 \
+	} while (0)
 
 void ble_addr_to_str(void *paddr, char *str, uint32_t len);
 

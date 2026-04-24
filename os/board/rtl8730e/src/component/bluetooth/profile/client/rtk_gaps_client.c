@@ -58,7 +58,7 @@ uint16_t gaps_client_srv_discover(uint16_t conn_handle)
 
 	if (rtk_bt_le_gap_get_conn_id(conn_handle, &conn_id) != RTK_BT_OK)
 		return RTK_BT_FAIL;
-	
+
 	conn_gaps_db = gaps_database[conn_id];
 
 	if (!conn_gaps_db) {
@@ -95,7 +95,7 @@ static uint16_t gaps_client_char_find(uint16_t conn_handle)
 
 	if (rtk_bt_le_gap_get_conn_id(conn_handle, &conn_id) != RTK_BT_OK)
 		return RTK_BT_FAIL;
-	
+
 	conn_gaps_db = gaps_database[conn_id];
 
 	find_param.conn_handle = conn_handle;
@@ -153,7 +153,7 @@ uint16_t gaps_client_char_discover(uint16_t conn_handle)
 
 	if (rtk_bt_le_gap_get_conn_id(conn_handle, &conn_id) != RTK_BT_OK)
 		return RTK_BT_FAIL;
-	
+
 	conn_gaps_db = gaps_database[conn_id];
 
 	if (!conn_gaps_db) {
@@ -182,7 +182,7 @@ static void gaps_client_discover_res_hdl(void *data)
 #if RTK_BLE_MGR_LIB
 	rtk_bt_gattc_discover_ind_t *disc_res = (rtk_bt_gattc_discover_ind_t *)data;
 
-	if(disc_res->is_found) {
+	if (disc_res->is_found) {
 		printf("\r\n[APP] GAPS client discover all success\r\n");
 		gaps_client_attach_conn(disc_res->conn_handle);
 		gaps_client_char_find(disc_res->conn_handle);
@@ -198,7 +198,7 @@ static void gaps_client_discover_res_hdl(void *data)
 
 	if (rtk_bt_le_gap_get_conn_id(conn_handle, &conn_id) != RTK_BT_OK)
 		return;
-	
+
 	conn_gaps_db = gaps_database[conn_id];
 
 	if (!conn_gaps_db || conn_gaps_db->disc_state != DISC_START) {
@@ -215,7 +215,7 @@ static void gaps_client_discover_res_hdl(void *data)
 			uint8_t properties = disc_res->disc_char_all_per.properties;
 			uint16_t value_handle = disc_res->disc_char_all_per.value_handle;
 			if (BT_UUID_TYPE_16 == disc_res->disc_char_all_per.uuid_type) {
-				memcpy(&uuid, disc_res->disc_char_all_per.uuid, 
+				memcpy(&uuid, disc_res->disc_char_all_per.uuid,
 														sizeof(uint16_t));
 			}
 			switch (uuid) {
@@ -241,7 +241,7 @@ static void gaps_client_discover_res_hdl(void *data)
 			break;
 		}
 		default:
-			break; 
+			break;
 		}
 	} else if (RTK_BT_STATUS_DONE == disc_status) {
 		switch (disc_res->type) {
@@ -288,7 +288,7 @@ static void gaps_client_read_res_hdl(void *data)
 
 	if (rtk_bt_le_gap_get_conn_id(conn_handle, &conn_id) != RTK_BT_OK)
 		return;
-	
+
 	conn_gaps_db = gaps_database[conn_id];
 
 	if (!conn_gaps_db) {
@@ -306,43 +306,43 @@ static void gaps_client_read_res_hdl(void *data)
 #endif
 
 	if (att_handle == conn_gaps_db->char_db[GAPS_CHAR_DEVICE_NAME].char_val_handle) {
-		conn_gaps_db->char_db[GAPS_CHAR_DEVICE_NAME].char_data = 
+		conn_gaps_db->char_db[GAPS_CHAR_DEVICE_NAME].char_data =
 							(void *)osif_mem_alloc(RAM_TYPE_DATA_ON, len);
 		memcpy(conn_gaps_db->char_db[GAPS_CHAR_DEVICE_NAME].char_data,
 				value, len);
 		conn_gaps_db->char_db[GAPS_CHAR_DEVICE_NAME].data_len = len;
-		printf("[APP] GAPS client read device name: %s\r\n", 
+		printf("[APP] GAPS client read device name: %s\r\n",
 				(char *)conn_gaps_db->char_db[GAPS_CHAR_DEVICE_NAME].char_data);
 
 	} else if (att_handle == conn_gaps_db->char_db[GAPS_CHAR_APPEARANCE].char_val_handle) {
-		conn_gaps_db->char_db[GAPS_CHAR_APPEARANCE].char_data = 
+		conn_gaps_db->char_db[GAPS_CHAR_APPEARANCE].char_data =
 							(void *)osif_mem_alloc(RAM_TYPE_DATA_ON, len);
 		memcpy(conn_gaps_db->char_db[GAPS_CHAR_APPEARANCE].char_data,
 				value, len);
 		conn_gaps_db->char_db[GAPS_CHAR_APPEARANCE].data_len = len;
-		printf("[APP] GAPS client read appearance: 0x%x\r\n", 
+		printf("[APP] GAPS client read appearance: 0x%x\r\n",
 				*(uint16_t *)conn_gaps_db->char_db[GAPS_CHAR_APPEARANCE].char_data);
 
 	} else if (att_handle == conn_gaps_db->char_db[GAPS_CHAR_PPCP].char_val_handle) {
-		conn_gaps_db->char_db[GAPS_CHAR_PPCP].char_data = 
+		conn_gaps_db->char_db[GAPS_CHAR_PPCP].char_data =
 							(void *)osif_mem_alloc(RAM_TYPE_DATA_ON, len);
 		memcpy(conn_gaps_db->char_db[GAPS_CHAR_PPCP].char_data,
 				value, len);
 		conn_gaps_db->char_db[GAPS_CHAR_PPCP].data_len = len;
 		printf("[APP] GAPS client read peripheral preferred connection parameters, "
-				"conn_interval_max: 0x%x, slave_latency: 0x%x, supervision_timeout: 0x%x\r\n", 
+				"conn_interval_max: 0x%x, slave_latency: 0x%x, supervision_timeout: 0x%x\r\n",
 				*(uint16_t *)conn_gaps_db->char_db[GAPS_CHAR_PPCP].char_data,
 				*(uint16_t *)((char *)conn_gaps_db->char_db[GAPS_CHAR_PPCP].char_data + 2),
 				*(uint16_t *)((char *)conn_gaps_db->char_db[GAPS_CHAR_PPCP].char_data + 4));
 
-	} else if (att_handle == 
+	} else if (att_handle ==
 				conn_gaps_db->char_db[GAPS_CHAR_CEN_ADDR_RES].char_val_handle) {
-		conn_gaps_db->char_db[GAPS_CHAR_CEN_ADDR_RES].char_data = 
+		conn_gaps_db->char_db[GAPS_CHAR_CEN_ADDR_RES].char_data =
 							(void *)osif_mem_alloc(RAM_TYPE_DATA_ON, len);
 		memcpy(conn_gaps_db->char_db[GAPS_CHAR_CEN_ADDR_RES].char_data,
 				value, len);
 		conn_gaps_db->char_db[GAPS_CHAR_CEN_ADDR_RES].data_len = len;
-		printf("[APP] GAPS client read central address resolution: %d\r\n", 
+		printf("[APP] GAPS client read central address resolution: %d\r\n",
 				*(uint16_t *)conn_gaps_db->char_db[GAPS_CHAR_APPEARANCE].char_data);
 	}
 
@@ -378,7 +378,7 @@ static uint16_t gaps_client_database_free(uint8_t conn_id)
 {
 	uint32_t i = 0;
 	void *p_char_data;
-	
+
 	if (!gaps_database[conn_id]) {
 		return RTK_BT_OK;
 	}
@@ -461,7 +461,7 @@ uint16_t gaps_client_char_read(uint16_t conn_handle, gaps_charac_index_t char_in
 
 	if (rtk_bt_le_gap_get_conn_id(conn_handle, &conn_id) != RTK_BT_OK)
 		return RTK_BT_FAIL;
-	
+
 	conn_gaps_db = gaps_database[conn_id];
 
 	if (!conn_gaps_db) {
@@ -476,7 +476,7 @@ uint16_t gaps_client_char_read(uint16_t conn_handle, gaps_charac_index_t char_in
 	read_param.conn_handle = conn_handle;
 	read_param.profile_id = GAPS_CLIENT_PROFILE_ID;
 	read_param.type = RTK_BT_GATT_CHAR_READ_BY_HANDLE;
-	read_param.by_handle.handle = 
+	read_param.by_handle.handle =
 						conn_gaps_db->char_db[char_index].char_val_handle;
 
 	return rtk_bt_gattc_read(&read_param);

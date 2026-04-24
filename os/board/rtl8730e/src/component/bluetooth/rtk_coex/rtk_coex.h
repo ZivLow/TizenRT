@@ -60,10 +60,10 @@
 #undef DBG_BT_COEX
 #define DBG_BT_COEX(...)     do {\
 		_dbgdump(PREFIX __VA_ARGS__);\
-	}while(0)
+	}while (0)
 #endif
 #else
-#define DBG_BT_COEX(x, ...) do {} while(0)
+#define DBG_BT_COEX(x, ...) do {} while (0)
 #endif /* CONFIG_BT_AUDIO_DEBUG */
 
 enum __profile_type {

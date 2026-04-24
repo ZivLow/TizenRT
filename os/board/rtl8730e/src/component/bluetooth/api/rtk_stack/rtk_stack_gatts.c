@@ -50,7 +50,7 @@ static T_APP_RESULT bt_stack_gatts_attr_read_cb(
 #endif
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_server_id(service_id);
-	if(!p_srv_node)
+	if (!p_srv_node)
 		return APP_RESULT_REJECT;
 
 	p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS,RTK_BT_GATTS_EVT_READ_IND,sizeof(rtk_bt_gatts_read_ind_t));
@@ -66,7 +66,7 @@ static T_APP_RESULT bt_stack_gatts_attr_read_cb(
 	p_read_ind->cid = L2C_FIXED_CID_ATT;
 #endif
 
-	if(RTK_BT_OK != rtk_bt_evt_indicate(p_evt, NULL)){
+	if (RTK_BT_OK != rtk_bt_evt_indicate(p_evt, NULL)){
 		return APP_RESULT_REJECT;
 	}
 
@@ -98,11 +98,11 @@ static T_APP_RESULT bt_stack_gatts_attr_write_cb(
 #endif
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_server_id(service_id);
-	if(!p_srv_node)
+	if (!p_srv_node)
 		return APP_RESULT_REJECT;
 
 	p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS, RTK_BT_GATTS_EVT_WRITE_IND, sizeof(rtk_bt_gatts_write_ind_t) + length);
-	if(!p_evt)
+	if (!p_evt)
 		return APP_RESULT_REJECT;
 
 	p_write_ind = p_evt->data;
@@ -140,7 +140,7 @@ static T_APP_RESULT bt_stack_gatts_attr_write_cb(
 			break;
 	}
 
-	if(RTK_BT_OK != rtk_bt_evt_indicate(p_evt, NULL)){
+	if (RTK_BT_OK != rtk_bt_evt_indicate(p_evt, NULL)){
 		return APP_RESULT_REJECT;
 	}
 
@@ -164,11 +164,11 @@ static void bt_stack_gatts_cccd_update_cb(
 #endif
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_server_id(service_id);
-	if(!p_srv_node)
+	if (!p_srv_node)
 		return;
 
 	p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS,RTK_BT_GATTS_EVT_CCCD_IND,sizeof(rtk_bt_gatts_cccd_ind_t));
-	if(!p_evt)
+	if (!p_evt)
 		return;
 
 	p_cccd_ind = (rtk_bt_gatts_cccd_ind_t *)p_evt->data;
@@ -238,7 +238,7 @@ static struct rtk_bt_gatt_service *bt_stack_gatts_find_service_node_by_server_id
 
 static void bt_stack_gatts_insert_service_node(struct rtk_bt_gatt_service *p_srv_node)
 {
-	if(!p_srv_node)
+	if (!p_srv_node)
 		return;
 
 	list_add_tail(&p_srv_node->list, &g_rtk_bt_gatts_priv->service_list);
@@ -387,7 +387,7 @@ static bool _register_service(struct rtk_bt_gatt_service *node)
 
 	if (g_rtk_bt_gatts_priv->srv_registering)
 		return false;
-	
+
 	g_rtk_bt_gatts_priv->srv_registering = 1;
 
 #if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
@@ -428,7 +428,7 @@ static T_APP_RESULT _register_service_complete_cb(T_SERVER_ID srv_id, uint16_t c
 
 	if (cause) {
 		dbg("result is fail: cause = 0x%x \r\n", cause);
-		if(node->user_data){
+		if (node->user_data){
 			bt_stack_gatts_free_srv_tbl(node->user_data, node->attr_count);
 		}
 		bt_stack_gatts_delete_service_node(node);
@@ -573,7 +573,7 @@ static T_APP_RESULT bt_stack_le_gap_service_callback(T_SERVER_ID service_id, voi
 			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS,
 										RTK_BT_GATTS_EVT_CLIENT_SUPPORTED_FEATURES,
 										sizeof(rtk_bt_gatts_client_supported_features_ind_t));
-			if(!p_evt)
+			if (!p_evt)
 				break;
 
 			p_ind = (rtk_bt_gatts_client_supported_features_ind_t *)p_evt->data;
@@ -609,14 +609,14 @@ uint16_t  bt_stack_gatts_init(rtk_bt_app_conf_t *app_conf)
 	uint8_t i = 0;
 
 	g_rtk_bt_gatts_priv = osif_mem_alloc(RAM_TYPE_DATA_ON,sizeof(rtk_bt_gatts_app_priv_t));
-	if(!g_rtk_bt_gatts_priv)
+	if (!g_rtk_bt_gatts_priv)
 		return RTK_BT_ERR_NO_MEMORY;
 
 	memset(g_rtk_bt_gatts_priv,0,sizeof(rtk_bt_gatts_app_priv_t));
 
 	INIT_LIST_HEAD(&g_rtk_bt_gatts_priv->service_list);
 
-	for(i=0;i<RTK_BLE_GAP_MAX_LINKS;i++){
+	for (i=0;i<RTK_BLE_GAP_MAX_LINKS;i++){
 		INIT_LIST_HEAD(&g_rtk_bt_gatts_priv->notify_queue[i].pending_list);
 		g_rtk_bt_gatts_priv->notify_queue[i].pending_ele_num = 0;
 		INIT_LIST_HEAD(&g_rtk_bt_gatts_priv->indicate_queue[i].pending_list);
@@ -758,20 +758,20 @@ static uint16_t bt_stack_uuid16_attr_convert(uint16_t gatt_type, rtk_bt_gatt_att
 		}
 
 		case GATT_UUID_INCLUDE:
-		{			
+		{
 			struct rtk_bt_gatt_service *p_incl_srv = (struct rtk_bt_gatt_service *)(p_app_gatt_attr->user_data);
 			struct rtk_bt_gatt_service *p_gatts_srv_node = NULL;
 			T_ATTRIB_APPL *p_bt_stack_attr_tbl = NULL;
 			p_gatts_srv_node = bt_stack_gatts_find_service_node_by_app_id(p_incl_srv->app_id);
-			if(!p_gatts_srv_node){
+			if (!p_gatts_srv_node){
 				// dbg("include srv is null case \r\n");
 				p_gatts_srv_node = (struct rtk_bt_gatt_service *)osif_mem_alloc(RAM_TYPE_DATA_ON,sizeof(struct rtk_bt_gatt_service));
-				if(!p_gatts_srv_node)
+				if (!p_gatts_srv_node)
 					return RTK_BT_ERR_NO_MEMORY;
 				memset(p_gatts_srv_node,0,sizeof(struct rtk_bt_gatt_service));
 				p_gatts_srv_node->alloc_ind = 1;
 				p_bt_stack_attr_tbl = (T_ATTRIB_APPL *)osif_mem_alloc(RAM_TYPE_DATA_ON, p_incl_srv->attr_count*sizeof(T_ATTRIB_APPL));
-				if(!p_bt_stack_attr_tbl){
+				if (!p_bt_stack_attr_tbl){
 					osif_mem_free(p_gatts_srv_node);
 					return RTK_BT_ERR_NO_MEMORY;
 				}
@@ -874,7 +874,7 @@ static uint16_t bt_stack_uuid16_attr_convert(uint16_t gatt_type, rtk_bt_gatt_att
 				p_stack_gatt_attr->permissions |= GATT_PERM_READ;
 			if ((p_stack_gatt_attr->permissions & 0xf0) == 0)
 				p_stack_gatt_attr->permissions |= GATT_PERM_WRITE;
-			
+
 			break;
 		}
 		case GATT_UUID_CHAR_FORMAT:
@@ -935,8 +935,8 @@ static uint16_t bt_stack_uuid16_attr_convert(uint16_t gatt_type, rtk_bt_gatt_att
 			}
 			p_stack_gatt_attr->permissions = bt_stack_gatts_permission_trans(p_app_gatt_attr->perm);
 			break;
-		} 
-	} 
+		}
+	}
 
 	return RTK_BT_OK;
 }
@@ -945,7 +945,7 @@ static uint16_t bt_stack_uuid128_attr_convert(uint16_t gatt_type, rtk_bt_gatt_at
 {
 	(void)gatt_type;
 	uint8_t* uuid128 = BT_UUID_128(app_attr->uuid)->val;
-	
+
 	attr->flags = ATTRIB_FLAG_UUID_128BIT | ATTRIB_FLAG_VALUE_APPL;
 	memcpy(attr->type_value, (void*)uuid128, 16);
 	attr->value_len = 0;
@@ -972,23 +972,23 @@ static uint16_t bt_stack_gatts_register_service(void  *p_gatts_srv)
 	node = bt_stack_gatts_find_service_node_by_app_id(app_srv->app_id);
 
 	if (node) {
-		if(node->register_status > SRV_ALLOC_FOR_INCLUDE)
+		if (node->register_status > SRV_ALLOC_FOR_INCLUDE)
 			return RTK_BT_ERR_ALREADY_IN_PROGRESS;
 	}
-	
+
 	if (!node) {
 		attrs = (T_ATTRIB_APPL*)osif_mem_alloc(RAM_TYPE_DATA_ON,app_srv->attr_count * sizeof(T_ATTRIB_APPL));
-		if(!attrs){
+		if (!attrs){
 			return RTK_BT_ERR_NO_MEMORY;
 		}
 
 		app_srv->user_data = (void *)attrs;
 		bt_stack_gatts_insert_service_node(app_srv);
-	
+
 	} else {
 		if (node->attr_count < app_srv->attr_count)
 			return RTK_BT_ERR_MISMATCH;
-		
+
 		attrs = (T_ATTRIB_APPL*)node->user_data;
 		app_srv->user_data = attrs;
 		bt_stack_gatts_delete_service_node(node);
@@ -1076,7 +1076,7 @@ static uint16_t bt_stack_gatts_read_rsp(void *param)
 #endif
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_app_id(p_read_rsp->app_id);
-	if(!p_srv_node)
+	if (!p_srv_node)
 		return RTK_BT_ERR_NO_ENTRY;
 
 	cause = att_err_to_app_result(p_read_rsp->err_code);
@@ -1113,7 +1113,7 @@ static uint16_t bt_stack_gatts_write_rsp(void *param)
 #endif
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_app_id(p_write_rsp_t->app_id);
-	if(!p_srv_node)
+	if (!p_srv_node)
 		return RTK_BT_ERR_NO_ENTRY;
 
 	cause = att_err_to_app_result(p_write_rsp_t->err_code);
@@ -1129,7 +1129,7 @@ static uint16_t bt_stack_gatts_write_rsp(void *param)
 	if (!le_get_conn_id_by_handle(p_write_rsp_t->conn_handle, &conn_id))
 		return RTK_BT_ERR_PARAM_INVALID;
 
-	if(RTK_BT_GATTS_WRITE_LONG == p_write_rsp_t->type){
+	if (RTK_BT_GATTS_WRITE_LONG == p_write_rsp_t->type){
 		if (!server_exec_write_confirm(conn_id, cause, 0))
 			return RTK_BT_ERR_LOWER_STACK_API;
 

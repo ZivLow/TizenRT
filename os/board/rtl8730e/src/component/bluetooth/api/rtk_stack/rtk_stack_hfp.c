@@ -133,7 +133,7 @@ static void app_hfp_bt_cback(T_BT_EVENT event_type, void *event_buf, uint16_t bu
 			APP_PRINT_INFO0("HFP p_link is NULL");
 			printf("app_hfp_bt_cback: HFP p_link is NULL \r\n");
 		}
-	} 
+	}
 	break;
 
 	case BT_EVENT_HFP_CONN_IND: {
@@ -882,7 +882,7 @@ static uint16_t bt_stack_hfp_disconnect(void *param)
 static uint16_t bt_stack_hfp_sco_connect(void *param)
 {
 	uint8_t *bd_addr = (uint8_t *)param;
-	
+
 	if (RTK_BT_AUDIO_HFP_ROLE_AG == hfp_role) {
 		if (bt_hfp_ag_audio_connect_req(bd_addr)) {
 			return RTK_BT_OK;
@@ -920,7 +920,7 @@ static uint16_t bt_stack_hfp_sco_disconnect(void *param)
 static uint16_t bt_stack_hfp_call_incoming(void *param)
 {
 	rtk_bt_hfp_call_incoming_t *p_call_incoming_t = (rtk_bt_hfp_call_incoming_t *)param;
-	
+
 	if (RTK_BT_AUDIO_HFP_ROLE_AG == hfp_role) {
 		if (bt_hfp_ag_call_incoming(p_call_incoming_t->bd_addr,
 									p_call_incoming_t->call_num,
@@ -940,7 +940,7 @@ static uint16_t bt_stack_hfp_call_incoming(void *param)
 static uint16_t bt_stack_hfp_call_answer(void *param)
 {
 	uint8_t *bd_addr = (uint8_t *)param;
-	
+
 	if (RTK_BT_AUDIO_HFP_ROLE_AG == hfp_role) {
 		if (bt_hfp_ag_call_answer(bd_addr)) {
 			return RTK_BT_OK;
@@ -957,7 +957,7 @@ static uint16_t bt_stack_hfp_call_answer(void *param)
 static uint16_t bt_stack_hfp_call_terminate(void *param)
 {
 	uint8_t *bd_addr = (uint8_t *)param;
-	
+
 	if (RTK_BT_AUDIO_HFP_ROLE_AG == hfp_role) {
 		if (bt_hfp_ag_call_terminate(bd_addr)) {
 			return RTK_BT_OK;
@@ -986,7 +986,7 @@ static uint16_t bt_stack_hfp_data_send(void *param)
 			return RTK_BT_OK;
 		}
 		osif_delay(1);
-	} while(p_link->sco_handle);
+	} while (p_link->sco_handle);
 	APP_PRINT_INFO0("bt_stack_hfp_data_send fail");
 	printf("send fail %d %d \r\n", p_data_send_t->seq_num, p_data_send_t->len);
 

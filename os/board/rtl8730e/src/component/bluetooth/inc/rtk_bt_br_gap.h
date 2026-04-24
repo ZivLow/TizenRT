@@ -52,11 +52,11 @@ extern "C"
 /* ------------------------------- Data Types ------------------------------- */
 typedef enum
 {
-    RTK_BT_BR_ADDR_TYPE_PUBLIC = 0x00,        /*!< Public Device Address */
-    RTK_BT_BR_ADDR_TYPE_RANDOM = 0x01,        /*!< Random Device Address */
-    RTK_BT_BR_ADDR_TYPE_RPA_PUBLIC = 0x02,    /*!< Public Identity Address (RPA) */
-    RTK_BT_BR_ADDR_TYPE_RPA_RANDOM = 0x03,    /*!< Random (static) Identity Address (RPA)*/
-    RTK_BT_BR_ADDR_TYPE_PEER_ANONYMOUS = 0xFF,/*!< Anonymous Device Address */
+	RTK_BT_BR_ADDR_TYPE_PUBLIC = 0x00,        /*!< Public Device Address */
+	RTK_BT_BR_ADDR_TYPE_RANDOM = 0x01,        /*!< Random Device Address */
+	RTK_BT_BR_ADDR_TYPE_RPA_PUBLIC = 0x02,    /*!< Public Identity Address (RPA) */
+	RTK_BT_BR_ADDR_TYPE_RPA_RANDOM = 0x03,    /*!< Random (static) Identity Address (RPA)*/
+	RTK_BT_BR_ADDR_TYPE_PEER_ANONYMOUS = 0xFF,/*!< Anonymous Device Address */
 } rtk_bt_br_addr_type_t;
 
 typedef enum
@@ -330,7 +330,7 @@ typedef struct
  * @fn        uint16_t rtk_bt_br_gap_set_default_param(rtk_bt_br_gap_default_param_t *param)
  * @brief     Set BR/EDR default parameter.
  * @param[in] param: BR/EDR parameter
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -340,7 +340,7 @@ uint16_t rtk_bt_br_gap_set_default_param(rtk_bt_br_gap_default_param_t *param);
  * @fn        uint16_t rtk_bt_br_gap_get_bd_addr(rtk_bt_br_bd_addr_t *paddr)
  * @brief     Get local device's address.
  * @param[out] paddr: Device address under use
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -350,7 +350,7 @@ uint16_t rtk_bt_br_gap_get_bd_addr(rtk_bt_br_bd_addr_t *paddr);
  * @fn        uint16_t rtk_bt_br_gap_set_device_name(const uint8_t *name)
  * @brief     Set bluetooth Device name.
  * @param[in] name: Device name
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -360,7 +360,7 @@ uint16_t rtk_bt_br_gap_set_device_name(const uint8_t *name);
  * @fn        uint16_t rtk_bt_br_gap_set_page_param(rtk_bt_br_page_param_t *page_param)
  * @brief     Set paging parameter(Init page parameters).
  * @param[in] page_param: page parameter
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -372,7 +372,7 @@ uint16_t rtk_bt_br_gap_set_page_param(rtk_bt_br_page_param_t *page_param);
  * @param[in] type: Page scan type value to set(0 -> STAND, 1 -> INTERLACED)
  * @param[in] interval: Page scan interval value to set.
  * @param[in] window: Page scan window value to set.
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -382,7 +382,7 @@ uint16_t rtk_bt_br_gap_cfg_page_param(uint8_t type, uint16_t interval, uint16_t 
  * @fn        uint16_t rtk_bt_br_gap_set_inquiry_param(rtk_bt_br_inquiry_param_t *inquiry_param)
  * @brief     Set inquiry parameter(Init inquiry parameters)
  * @param[in] inquiry_param: inquiry parameter
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -394,7 +394,7 @@ uint16_t rtk_bt_br_gap_set_inquiry_param(rtk_bt_br_inquiry_param_t *inquiry_para
  * @param[in] type: Inquiry scan type value to set(0 -> STAND, 1 -> INTERLACED)
  * @param[in] interval: Inquiry scan interval value to set.
  * @param[in] window: Inquiry scan window value to set.
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -404,7 +404,7 @@ uint16_t rtk_bt_br_gap_cfg_inquiry_param(uint8_t type, uint16_t interval, uint16
  * @fn        uint16_t rtk_bt_br_sm_set_security_param(rtk_bt_br_security_param_t *p_sec_param)
  * @brief     Set security paramters.
  * @param[in] p_sec_param: Security paramters
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -414,7 +414,7 @@ uint16_t rtk_bt_br_sm_set_security_param(rtk_bt_br_security_param_t *p_sec_param
  * @fn        uint16_t rtk_bt_br_gap_disconnect(uint8_t *bd_addr)
  * @brief     Disconnect bt br link.
  * @param[in] bd_addr: The Bluetooth device address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -424,7 +424,7 @@ uint16_t rtk_bt_br_gap_disconnect(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_br_gap_start_inquiry(rtk_bt_br_inquiry_start_t *inquiry_start_param)
  * @brief     start inquiry.
  * @param[in] inquiry_start_param: inquiry start parameter
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -434,7 +434,7 @@ uint16_t rtk_bt_br_gap_start_inquiry(rtk_bt_br_inquiry_start_t *inquiry_start_pa
  * @fn        uint16_t rtk_bt_br_gap_get_remote_name(uint8_t *bd_addr)
  * @brief     get remote device name.(Return to br gap callback)
  * @param[in] bd_addr: The Bluetooth device address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -444,7 +444,7 @@ uint16_t rtk_bt_br_gap_get_remote_name(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_br_gap_max_bond_num_get(uint8_t *pmax_bond_num)
  * @brief     get supported max bond number.
  * @param[in] pmax_bond_num: max bond number
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -454,7 +454,7 @@ uint16_t rtk_bt_br_gap_max_bond_num_get(uint8_t *pmax_bond_num);
  * @fn        uint16_t rtk_bt_br_gap_bond_num_get(uint8_t *pbond_num)
  * @brief     get used bond number.
  * @param[in] pmax_bond_num: bond number
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -467,7 +467,7 @@ uint16_t rtk_bt_br_gap_bond_num_get(uint8_t *pbond_num);
  * @param[in] bd_addr   The Bluetooth device address got by priority.
  * \note    Bond priority number starts at 1, rather than 0. Bond priority is descending
  *          with the corresponding number increasing.
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -478,7 +478,7 @@ uint16_t rtk_bt_br_gap_bond_addr_get(uint8_t priority, uint8_t *bd_addr);
  * @brief     Get bond index from device address.
  * @param[in] pindex: The bond index.Bond index starts at 0.
  * @param[in] bd_addr   The Bluetooth device address got by priority.
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -490,7 +490,7 @@ uint16_t rtk_bt_br_gap_bond_index_get(uint8_t *pindex, uint8_t *bd_addr);
  * @param[in] bd_addr   The Bluetooth device address got by priority.
  * @param[in] key_type   The type of the key.
  * @param[in] bond_key   The link key.
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -503,7 +503,7 @@ uint16_t rtk_bt_br_gap_bond_key_get(uint8_t *bd_addr, uint8_t *key_type, uint8_t
  *\note    bd_addr   The Bluetooth device address got by priority.
            key_type   The type of the key.
            bond_key   The link key.
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -513,7 +513,7 @@ uint16_t rtk_bt_br_gap_bond_key_set(rtk_bt_br_bond_key_t *pbond_key_t);
  * @fn        uint16_t rtk_bt_br_gap_bond_priority_set(uint8_t *bd_addr)
  * @brief     Adjust priority to highest in bond storage.
  * @param[in] bd_addr   The Bluetooth device address got by priority.
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -523,7 +523,7 @@ uint16_t rtk_bt_br_gap_bond_priority_set(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_br_gap_bond_delete(uint8_t *bd_addr)
  * @brief     Delete bond information in bond storage.
  * @param[in] bd_addr   The Bluetooth device address got by priority.
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -533,7 +533,7 @@ uint16_t rtk_bt_br_gap_bond_delete(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_br_gap_bond_clear()
  * @brief     delete bond information in bond storage
  * @param[in] void: NUll
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -544,7 +544,7 @@ uint16_t rtk_bt_br_gap_bond_clear(void);
  * @brief     set pincode.
  * @param[in] pin_code: pointer of pin code
  * @param[in] length: length
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -552,9 +552,9 @@ uint16_t rtk_bt_br_gap_set_pincode(uint8_t *pin_code, uint32_t length);
 
 /**
  * @fn        uint16_t rtk_bt_br_gap_set_radio_mode(uint8_t radio_mode)
- * @brief     set radio mode(rtk_bt_br_gap_radio_mode_t). 
+ * @brief     set radio mode(rtk_bt_br_gap_radio_mode_t).
  * @param[in] radio_mode: radio mode
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -564,12 +564,12 @@ uint16_t rtk_bt_br_gap_set_radio_mode(uint8_t radio_mode);
  * @fn        uint16_t rtk_bt_br_gap_set_sniff_mode(uint8_t *bd_addr, uint16_t min_interval, uint16_t max_interval, uint16_t sniff_attempt, uint16_t sniff_timeout)
  * @brief     configure sniff mode.
  * @param[in] enable: 0 for disable, 1 for enable.
- * @param[in] bd_addr The Bluetooth device address 
+ * @param[in] bd_addr The Bluetooth device address
  * @param[in] min_interval: (0 for disable)Min sniff interval, only even values between 0x0002 and 0xFFFE are valid.
  * @param[in] max_interval: (0 for disable)Max sniff interval, only even values between 0x0002 and 0xFFFE are valid, should be larger than min_interval.
  * @param[in] sniff_attempt: (0 for disable)Number of baseband receive slots for sniff attempt.
  * @param[in] sniff_timeout: (0 for disable)Number of baseband receive slots for sniff timeout.
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -579,7 +579,7 @@ uint16_t rtk_bt_br_gap_set_sniff_mode(uint8_t enable, uint8_t *bd_addr, uint16_t
  * @fn        uint16_t rtk_bt_br_gap_set_cod(uint32_t *bt_cod)
  * @brief     set bt code of class(should be invoked before rtk_bt_enable).
  * @param[in] bt_cod: pointer of cod
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -590,7 +590,7 @@ uint16_t rtk_bt_br_gap_set_cod(uint32_t *bt_cod);
  * @brief     set supvisiontimeout(should be invoked before rtk_bt_enable).
  * @param[in] pin_code: pointer of supvisiontimeout
  * @param[in] length: length
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */

@@ -39,7 +39,7 @@ static void app_hid_bt_cback(T_BT_EVENT event_type, void *event_buf, uint16_t bu
 	rtk_bt_evt_t *p_evt = NULL;
 
 	switch (event_type) {
-	
+
 	case BT_EVENT_HID_CONN_IND: {
 		rtk_bt_hid_conn_ind_t *p_hid_conn_ind = NULL;
 

@@ -484,8 +484,8 @@ typedef struct {
  */
 typedef enum
 {
-    RTK_BT_MESH_STACK_HB_TIMER_STATE_START,
-    RTK_BT_MESH_STACK_HB_TIMER_STATE_STOP
+	RTK_BT_MESH_STACK_HB_TIMER_STATE_START,
+	RTK_BT_MESH_STACK_HB_TIMER_STATE_STOP
 } rtk_bt_mesh_stack_hb_timer_state_t;
 
 /**
@@ -519,15 +519,15 @@ typedef struct {
  */
 typedef union
 {
-    uint16_t raw;
-    struct
-    {
-        uint16_t relay: 1;
-        uint16_t proxy: 1;
-        uint16_t frnd: 1;
-        uint16_t lpn: 1;
-        uint16_t rfu: 12;
-    };
+	uint16_t raw;
+	struct
+	{
+		uint16_t relay: 1;
+		uint16_t proxy: 1;
+		uint16_t frnd: 1;
+		uint16_t lpn: 1;
+		uint16_t rfu: 12;
+	};
 } _PACKED4_ rtk_bt_mesh_stack_hb_pub_features_t;
 
 /**
@@ -536,10 +536,10 @@ typedef union
  */
 typedef struct
 {
-    uint16_t src;
-    uint8_t init_ttl;
-    rtk_bt_mesh_stack_hb_pub_features_t features;
-    uint8_t ttl;
+	uint16_t src;
+	uint8_t init_ttl;
+	rtk_bt_mesh_stack_hb_pub_features_t features;
+	uint8_t ttl;
 } rtk_bt_mesh_stack_hb_data_sub_receive_t;
 
 /**
@@ -548,34 +548,34 @@ typedef struct
  */
 typedef struct
 {
-    /**
-     * @brief source address for heartbeat messages a node shall process
-     */
-    uint16_t src;
-    /**
-     * @brief determines the destination address for heartbeat messages
-     */
-    uint16_t dst;
-    /**
-     * @brief preiod for processing periodical heartbeat transport control messages
-     * 0: heartbeat messages are not being processed
-     * 1-0xffff: remaining period in seconds for processing periodical heartbeat message
-     */
-    uint16_t period;
-    /**
-     * @brief number of heartbeat messages that received
-     * 0-0xfffe: number of heartbeat messages received
-     * 0xffff: more than 0xfffe messages have been received
-     */
-    uint16_t count;
-    /**
-     * @brief minimum hops in received heartbeat messages
-     */
-    uint8_t min_hops;
-    /**
-     * @brief maximum hops in received heartbeat messages
-     */
-    uint8_t max_hops;
+	/**
+	 * @brief source address for heartbeat messages a node shall process
+	 */
+	uint16_t src;
+	/**
+	 * @brief determines the destination address for heartbeat messages
+	 */
+	uint16_t dst;
+	/**
+	 * @brief preiod for processing periodical heartbeat transport control messages
+	 * 0: heartbeat messages are not being processed
+	 * 1-0xffff: remaining period in seconds for processing periodical heartbeat message
+	 */
+	uint16_t period;
+	/**
+	 * @brief number of heartbeat messages that received
+	 * 0-0xfffe: number of heartbeat messages received
+	 * 0xffff: more than 0xfffe messages have been received
+	 */
+	uint16_t count;
+	/**
+	 * @brief minimum hops in received heartbeat messages
+	 */
+	uint8_t min_hops;
+	/**
+	 * @brief maximum hops in received heartbeat messages
+	 */
+	uint8_t max_hops;
 } rtk_bt_mesh_hb_sub_t;
 
 /**
@@ -584,7 +584,7 @@ typedef struct
  */
 typedef struct
 {
-    uint8_t element_index;
+	uint8_t element_index;
 	uint32_t model_id;
 	uint16_t sub_addr;
 } rtk_bt_mesh_set_model_subscribe_t;
@@ -634,7 +634,7 @@ typedef struct {
  */
 typedef enum
 {
-    RTK_BT_MESH_PROV_CAP_ALGO_FIPS_P256_ELLIPTIC_CURVE = BIT0
+	RTK_BT_MESH_PROV_CAP_ALGO_FIPS_P256_ELLIPTIC_CURVE = BIT0
 } rtk_bt_mesh_stack_prov_cap_algorithm_t;
 
 /**
@@ -643,7 +643,7 @@ typedef enum
  */
 typedef enum
 {
-    RTK_BT_MESH_PROV_CAP_PUBLIC_KEY_OOB = BIT0
+	RTK_BT_MESH_PROV_CAP_PUBLIC_KEY_OOB = BIT0
 } rtk_bt_mesh_stack_prov_cap_public_key_t;
 
 /**
@@ -652,8 +652,8 @@ typedef enum
  */
 typedef enum
 {
-    RTK_BT_MESH_PROV_CAP_NOT_SUPPORT_STATIC_OOB = 0,
-    RTK_BT_MESH_PROV_CAP_SUPPORT_STATIC_OOB = BIT0
+	RTK_BT_MESH_PROV_CAP_NOT_SUPPORT_STATIC_OOB = 0,
+	RTK_BT_MESH_PROV_CAP_SUPPORT_STATIC_OOB = BIT0
 } rtk_bt_mesh_stack_prov_cap_static_oob_t;
 
 /**
@@ -662,12 +662,12 @@ typedef enum
  */
 typedef enum
 {
-    RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_NOT_ENABLE = 0,
-    RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_BLINK = BIT0,
-    RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_BEEP = BIT1,
-    RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_VIBRATE = BIT2,
-    RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_OUTPUT_NUMERIC = BIT3,
-    RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_OUTPUT_ALPHANUMERIC = BIT4
+	RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_NOT_ENABLE = 0,
+	RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_BLINK = BIT0,
+	RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_BEEP = BIT1,
+	RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_VIBRATE = BIT2,
+	RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_OUTPUT_NUMERIC = BIT3,
+	RTK_BT_MESH_PROV_CAP_OUTPUT_OOB_ACTION_OUTPUT_ALPHANUMERIC = BIT4
 } rtk_bt_mesh_stack_prov_cap_output_oob_action_t;
 
 /**
@@ -676,11 +676,11 @@ typedef enum
  */
 typedef enum
 {
-    RTK_BT_MESH_PROV_CAP_INPUT_OOB_ACTION_NOT_ENABLE = 0,
-    RTK_BT_MESH_PROV_CAP_INPUT_OOB_ACTION_BIT_PUSH = BIT0,
-    RTK_BT_MESH_PROV_CAP_INPUT_OOB_ACTION_BIT_TWIST = BIT1,
-    RTK_BT_MESH_PROV_CAP_INPUT_OOB_ACTION_BIT_INPUT_NUMERIC = BIT2,
-    RTK_BT_MESH_PROV_CAP_INPUT_OOB_ACTION_BIT_INPUT_ALPHANUMERIC = BIT3
+	RTK_BT_MESH_PROV_CAP_INPUT_OOB_ACTION_NOT_ENABLE = 0,
+	RTK_BT_MESH_PROV_CAP_INPUT_OOB_ACTION_BIT_PUSH = BIT0,
+	RTK_BT_MESH_PROV_CAP_INPUT_OOB_ACTION_BIT_TWIST = BIT1,
+	RTK_BT_MESH_PROV_CAP_INPUT_OOB_ACTION_BIT_INPUT_NUMERIC = BIT2,
+	RTK_BT_MESH_PROV_CAP_INPUT_OOB_ACTION_BIT_INPUT_ALPHANUMERIC = BIT3
 } rtk_bt_mesh_stack_prov_cap_input_oob_action_t;
 
 /**
@@ -689,14 +689,14 @@ typedef enum
  */
 typedef struct
 {
-    uint8_t element_num; //  element number of unprovisioned device
-    uint16_t algorithm; //!< @ref rtk_bt_mesh_stack_prov_cap_algorithm_t
-    uint8_t public_key; //!< @ref rtk_bt_mesh_stack_prov_cap_public_key_t
-    uint8_t static_oob; //!< @ref rtk_bt_mesh_stack_prov_cap_static_oob_t
-    uint8_t output_oob_size;
-    uint16_t output_oob_action; //!< @ref rtk_bt_mesh_stack_prov_cap_output_oob_action_t
-    uint8_t input_oob_size;
-    uint16_t input_oob_action; //!< @ref rtk_bt_mesh_stack_prov_cap_input_oob_action_t
+	uint8_t element_num; //  element number of unprovisioned device
+	uint16_t algorithm; //!< @ref rtk_bt_mesh_stack_prov_cap_algorithm_t
+	uint8_t public_key; //!< @ref rtk_bt_mesh_stack_prov_cap_public_key_t
+	uint8_t static_oob; //!< @ref rtk_bt_mesh_stack_prov_cap_static_oob_t
+	uint8_t output_oob_size;
+	uint16_t output_oob_action; //!< @ref rtk_bt_mesh_stack_prov_cap_output_oob_action_t
+	uint8_t input_oob_size;
+	uint16_t input_oob_action; //!< @ref rtk_bt_mesh_stack_prov_cap_input_oob_action_t
 } _PACKED4_ rtk_bt_mesh_stack_prov_capabilities_t;
 
 /**
@@ -705,7 +705,7 @@ typedef struct
  */
 typedef enum
 {
-    RTK_BT_MESH_PROV_START_FIPS_P256_ELLIPTIC_CURVE
+	RTK_BT_MESH_PROV_START_FIPS_P256_ELLIPTIC_CURVE
 } rtk_bt_mesh_prov_start_algorithm_t;
 
 /**
@@ -714,8 +714,8 @@ typedef enum
  */
 typedef enum
 {
-    RTK_BT_MESH_PROV_START_NO_OOB_PUBLIC_KEY,
-    RTK_BT_MESH_PROV_START_OOB_PUBLIC_KEY
+	RTK_BT_MESH_PROV_START_NO_OOB_PUBLIC_KEY,
+	RTK_BT_MESH_PROV_START_OOB_PUBLIC_KEY
 } rtk_bt_mesh_prov_start_public_key_t;
 
 /**
@@ -724,10 +724,10 @@ typedef enum
  */
 typedef enum
 {
-    RTK_BT_MESH_PROV_AUTH_METHOD_NO_OOB,
-    RTK_BT_MESH_PROV_AUTH_METHOD_STATIC_OOB,
-    RTK_BT_MESH_PROV_AUTH_METHOD_OUTPUT_OOB,
-    RTK_BT_MESH_PROV_AUTH_METHOD_INPUT_OOB
+	RTK_BT_MESH_PROV_AUTH_METHOD_NO_OOB,
+	RTK_BT_MESH_PROV_AUTH_METHOD_STATIC_OOB,
+	RTK_BT_MESH_PROV_AUTH_METHOD_OUTPUT_OOB,
+	RTK_BT_MESH_PROV_AUTH_METHOD_INPUT_OOB
 } rtk_bt_mesh_prov_auth_method_t;
 
 /**
@@ -736,11 +736,11 @@ typedef enum
  */
 typedef enum
 {
-    RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_BLINK,
-    RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_BEEP,
-    RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_VIBRATE,
-    RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_OUTPUT_NUMERIC,
-    RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_OUTPUT_ALPHANUMERIC
+	RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_BLINK,
+	RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_BEEP,
+	RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_VIBRATE,
+	RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_OUTPUT_NUMERIC,
+	RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_OUTPUT_ALPHANUMERIC
 } rtk_bt_mesh_prov_start_output_oob_action_t;
 
 /**
@@ -749,10 +749,10 @@ typedef enum
  */
 typedef enum
 {
-    RTK_BT_MESH_PROV_START_INPUT_OOB_ACTION_PUSH,
-    RTK_BT_MESH_PROV_START_INPUT_OOB_ACTION_TWIST,
-    RTK_BT_MESH_PROV_START_INPUT_OOB_ACTION_INPUT_NUMERIC,
-    RTK_BT_MESH_PROV_START_INPUT_OOB_ACTION_INPUT_ALPHANUMERIC
+	RTK_BT_MESH_PROV_START_INPUT_OOB_ACTION_PUSH,
+	RTK_BT_MESH_PROV_START_INPUT_OOB_ACTION_TWIST,
+	RTK_BT_MESH_PROV_START_INPUT_OOB_ACTION_INPUT_NUMERIC,
+	RTK_BT_MESH_PROV_START_INPUT_OOB_ACTION_INPUT_ALPHANUMERIC
 } rtk_bt_mesh_prov_start_input_oob_action_t;
 
 /**
@@ -761,9 +761,9 @@ typedef enum
  */
 typedef union
 {
-    uint8_t oob_action;
-    rtk_bt_mesh_prov_start_output_oob_action_t output_oob_action;
-    rtk_bt_mesh_prov_start_input_oob_action_t input_oob_action;
+	uint8_t oob_action;
+	rtk_bt_mesh_prov_start_output_oob_action_t output_oob_action;
+	rtk_bt_mesh_prov_start_input_oob_action_t input_oob_action;
 } _PACKED4_ rtk_bt_mesh_prov_auth_action_t;
 
 /**
@@ -772,9 +772,9 @@ typedef union
  */
 typedef union
 {
-    uint8_t oob_size;
-    uint8_t output_oob_size;
-    uint8_t input_oob_size;
+	uint8_t oob_size;
+	uint8_t output_oob_size;
+	uint8_t input_oob_size;
 } _PACKED4_ rtk_bt_mesh_prov_auth_size_t;
 
 /**
@@ -783,11 +783,11 @@ typedef union
  */
 typedef struct
 {
-    rtk_bt_mesh_prov_start_algorithm_t algorithm;
-    rtk_bt_mesh_prov_start_public_key_t public_key;
-    rtk_bt_mesh_prov_auth_method_t auth_method;
-    rtk_bt_mesh_prov_auth_action_t auth_action;
-    rtk_bt_mesh_prov_auth_size_t auth_size;
+	rtk_bt_mesh_prov_start_algorithm_t algorithm;
+	rtk_bt_mesh_prov_start_public_key_t public_key;
+	rtk_bt_mesh_prov_auth_method_t auth_method;
+	rtk_bt_mesh_prov_auth_action_t auth_action;
+	rtk_bt_mesh_prov_auth_size_t auth_size;
 } _PACKED4_ rtk_bt_mesh_stack_prov_start_t;
 
 /********************************* Functions Declaration *******************************/

@@ -297,8 +297,7 @@ bool osif_task_signal_clear(void *p_handle)
 uint32_t osif_lock(void)
 {
 	uint32_t flags = 0U;
-	if (osif_task_context_check() == true)
-	{
+	if (osif_task_context_check() == true) {
 		flags = enter_critical_section();
 	}
 	return flags;
@@ -309,8 +308,7 @@ uint32_t osif_lock(void)
 /****************************************************************************/
 void osif_unlock(uint32_t flags)
 {
-	if (osif_task_context_check() == true)
-	{
+	if (osif_task_context_check() == true) {
 		leave_critical_section(flags);
 	}
 }
@@ -501,7 +499,7 @@ bool osif_msg_queue_delete(void *p_handle)
 		return _FAIL;
 	}
 
-	if(mq_close((mqd_t) p_handle) != OK) {
+	if (mq_close((mqd_t) p_handle) != OK) {
 		ret = get_errno();
 		dbg("mq 0x%x close fail: %d\n", p_handle, ret);
 		return _FAIL;
@@ -592,8 +590,7 @@ bool osif_msg_recv(void *p_handle, void *p_msg, uint32_t wait_ms)
 		}
 		if (mq_timedreceive((mqd_t) p_handle, p_msg, ((mqd_t) p_handle)->msgq->maxmsgsize, &prio, &ts) == ERROR) {
 			ret = get_errno();
-			if (ETIMEDOUT != ret)
-			{
+			if (ETIMEDOUT != ret) {
 				dbg("mq time receive fail errno: %d\n", ret);
 			}
 			return _FAIL;
@@ -625,8 +622,7 @@ void *osif_mem_alloc(RAM_TYPE ram_type, size_t size)
 {
 	u8 *pbuf = kmm_malloc(size);
 #ifdef CONFIG_DEBUG_MM_HEAPINFO
-	if (pbuf)
-	{
+	if (pbuf) {
 		DEBUG_SET_CALLER_ADDR(pbuf);
 	}
 #endif
@@ -643,8 +639,7 @@ void *osif_mem_aligned_alloc(RAM_TYPE ram_type, size_t size, uint8_t alignment)
 	}
 	u8 *pbuf = kmm_memalign(alignment, size);
 #ifdef CONFIG_DEBUG_MM_HEAPINFO
-	if (pbuf)
-	{
+	if (pbuf) {
 		memset(pbuf, 0, size);
 		DEBUG_SET_CALLER_ADDR(pbuf);
 	}

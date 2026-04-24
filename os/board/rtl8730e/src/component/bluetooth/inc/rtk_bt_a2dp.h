@@ -60,7 +60,7 @@ extern "C"
 
 /**
  * @typedef   rtk_bt_a2dp_role_t
- * @brief     a2dp role 
+ * @brief     a2dp role
  */
 typedef enum {
 	RTK_BT_A2DP_ROLE_SNK = 0x00,					/*!< BT A2DP SINK */
@@ -219,7 +219,7 @@ typedef struct {
  * @param[in] codec_type: codec index
  * @param[in] codec_t: codec struct pointer
  * @param[in] length: data length
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -229,7 +229,7 @@ uint16_t rtk_bt_a2dp_codec_cfg(uint8_t codec_type, void *codec_t, uint32_t lengt
  * @fn        uint16_t rtk_bt_a2dp_connect(uint8_t *bd_addr)
  * @brief     send a2dp connect request.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -239,7 +239,7 @@ uint16_t rtk_bt_a2dp_connect(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_a2dp_disconnect(uint8_t *bd_addr)
  * @brief     disconnect a2dp.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -249,7 +249,7 @@ uint16_t rtk_bt_a2dp_disconnect(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_a2dp_start(uint8_t *bd_addr)
  * @brief     start a2dp stream sending.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -259,7 +259,7 @@ uint16_t rtk_bt_a2dp_start(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_a2dp_suspend(uint8_t *bd_addr)
  * @brief     a2dp suspend.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -269,7 +269,7 @@ uint16_t rtk_bt_a2dp_suspend(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_a2dp_data_send(rtk_bt_a2dp_stream_data_send_t *p_data_send_t)
  * @brief     a2dp data send.
  * @param[in] p_data_send_t: data send data struct pointer
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */

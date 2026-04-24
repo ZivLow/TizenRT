@@ -20,7 +20,7 @@ extern "C"
 
 /**
  * @typedef   rtk_bt_hid_role_t
- * @brief     hid role 
+ * @brief     hid role
  */
 typedef enum {
 	RTK_BT_HID_ROLE_GAMEPAD = 0x00,					/*!< BT HID GAMEPAD */
@@ -72,7 +72,7 @@ typedef struct {
  * @brief     set hid descriptor data.
  * @param[in] des: descriptor data pointer
  * @param[in] length: data length
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -82,7 +82,7 @@ uint16_t rtk_hid_descriptor_add(void *des, uint32_t length);
  * @fn        uint16_t rtk_bt_hid_disconnect(uint8_t *bd_addr)
  * @brief     disconnect hid.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -92,7 +92,7 @@ uint16_t rtk_bt_hid_disconnect(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_hid_get_report_rsp(uint8_t *bd_addr)
  * @brief     get report response.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -104,7 +104,7 @@ uint16_t rtk_bt_hid_get_report_rsp(uint8_t *bd_addr);
  * @param[in] bd_addr: bt address
  * @param[in] data: pointer to input data
  * @param[in] len: input data length
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */

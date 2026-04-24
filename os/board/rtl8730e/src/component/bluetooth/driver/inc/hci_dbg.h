@@ -38,68 +38,68 @@ uint32_t hci_dbg_get_level(void);
 
 #define H_BIT(x)           (1 << (x))
 #define HCI_DEBUG_ALL      (H_BIT(HCI_TP_DEBUG_DEBUG) | \
-                            H_BIT(HCI_TP_DEBUG_INFO)  | \
-                            H_BIT(HCI_TP_DEBUG_WARN)  | \
-                            H_BIT(HCI_TP_DEBUG_ERROR) ) //0xFFFFFFFF
+							H_BIT(HCI_TP_DEBUG_INFO)  | \
+							H_BIT(HCI_TP_DEBUG_WARN)  | \
+							H_BIT(HCI_TP_DEBUG_ERROR) ) //0xFFFFFFFF
 #define CHECK_DBG_SW(x)    (hci_dbg_get_level() & H_BIT(x))
 
 #define HCI_ASSERT(...) \
-    do                  \
-    {                   \
-    } while (0)
+	do                  \
+	{                   \
+	} while (0)
 
 #define HCI_PRINT(fmt, ...)         \
-    do                              \
-    {                               \
-        printf(fmt, ##__VA_ARGS__); \
-    } while (0)
+	do                              \
+	{                               \
+		printf(fmt, ##__VA_ARGS__); \
+	} while (0)
 
 #define HCI_ERR(fmt, ...)                                                        \
-    do                                                                           \
-    {                                                                            \
-        printf("%s:%d(err) " fmt "\r\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
-    } while (0)
+	do                                                                           \
+	{                                                                            \
+		printf("%s:%d(err) " fmt "\r\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+	} while (0)
 
 #define HCI_DBG(fmt, ...)                                                            \
-    do                                                                               \
-    {                                                                                \
-        if (CHECK_DBG_SW(HCI_TP_DEBUG_DEBUG))                                        \
-            printf("%s:%d(dbg) " fmt "\r\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
-    } while (0)
+	do                                                                               \
+	{                                                                                \
+		if (CHECK_DBG_SW(HCI_TP_DEBUG_DEBUG))                                        \
+			printf("%s:%d(dbg) " fmt "\r\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+	} while (0)
 
 #define HCI_INFO(fmt, ...)                                                            \
-    do                                                                                \
-    {                                                                                 \
-        if (CHECK_DBG_SW(HCI_TP_DEBUG_INFO))                                          \
-            printf("%s:%d(info) " fmt "\r\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
-    } while (0)
+	do                                                                                \
+	{                                                                                 \
+		if (CHECK_DBG_SW(HCI_TP_DEBUG_INFO))                                          \
+			printf("%s:%d(info) " fmt "\r\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+	} while (0)
 
 #define HCI_WARN(fmt, ...)                                                            \
-    do                                                                                \
-    {                                                                                 \
-        if (CHECK_DBG_SW(HCI_TP_DEBUG_WARN))                                          \
-            printf("%s:%d(warn) " fmt "\r\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
-    } while (0)
+	do                                                                                \
+	{                                                                                 \
+		if (CHECK_DBG_SW(HCI_TP_DEBUG_WARN))                                          \
+			printf("%s:%d(warn) " fmt "\r\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+	} while (0)
 
 #define HCI_STACK_DBG(fmt, ...)                                                            \
-    do                                                                                     \
-    {                                                                                      \
-        if (CHECK_DBG_SW(HCI_TP_DEBUG_HCI_STACK_DEBUG))                                    \
-            printf("%s:%d(stack_dbg) " fmt "\r\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
-    } while (0)
+	do                                                                                     \
+	{                                                                                      \
+		if (CHECK_DBG_SW(HCI_TP_DEBUG_HCI_STACK_DEBUG))                                    \
+			printf("%s:%d(stack_dbg) " fmt "\r\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+	} while (0)
 
 #define HCI_DUMP(hdr, hdr_len, data, data_len)             \
-    do                                                     \
-    {                                                      \
-        int i = 0;                                         \
-        printf("%s:%d(dump)\r\n", __FUNCTION__, __LINE__); \
-        printf("%02x ", hdr);                              \
-        while(i < data_len) {                              \
-            printf("%02x ", data[i++]);                    \
-            if (i % 16 == 0)                               \
-                printf("\r\n");                            \
-        }                                                  \
-        printf("\r\n");                                    \
-    } while (0)
+	do                                                     \
+	{                                                      \
+		int i = 0;                                         \
+		printf("%s:%d(dump)\r\n", __FUNCTION__, __LINE__); \
+		printf("%02x ", hdr);                              \
+		while (i < data_len) {                              \
+			printf("%02x ", data[i++]);                    \
+			if (i % 16 == 0)                               \
+				printf("\r\n");                            \
+		}                                                  \
+		printf("\r\n");                                    \
+	} while (0)
 
 #endif

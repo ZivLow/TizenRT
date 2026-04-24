@@ -18,7 +18,7 @@ static uint32_t hci_log_level = 0x1FF;
 void hci_dbg_set_level(uint32_t level)
 {
 	/* uint32_t >= HCI_TP_DEBUG_ERROR */
-	if(level > HCI_TP_DEBUG_HCI_STACK_DEBUG)
+	if (level > HCI_TP_DEBUG_HCI_STACK_DEBUG)
 		hci_log_level = 0x1FF;
 	else
 		hci_log_level = level;

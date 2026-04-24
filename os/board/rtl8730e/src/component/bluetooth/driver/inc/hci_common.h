@@ -19,8 +19,8 @@
 
 #if 0
 #define HCI_FAIL_RETURN(func) \
-    if (HCI_FAIL == (func))   \
-        return HCI_FAIL;
+	if (HCI_FAIL == (func))   \
+		return HCI_FAIL;
 #endif
 
 #define H4_HEADER_LEN 1

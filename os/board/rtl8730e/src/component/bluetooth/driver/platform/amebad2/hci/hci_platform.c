@@ -55,7 +55,7 @@ uint32_t hci_cfg_sw_val = 0xFF;    // Open BT Trace log & FW log use 0xDD
 uint8_t hci_mp_flag = 0;
 uint8_t bt_ant_switch = ANT_S1;      // Select BT RF Patch
 
-#ifndef CONFIG_RTK_DATA_BINARY_TO_EXT_FLASH 
+#ifndef CONFIG_RTK_DATA_BINARY_TO_EXT_FLASH
 extern const unsigned char rtlbt_fw[];
 extern unsigned int rtlbt_fw_len;
 #endif
@@ -503,7 +503,7 @@ static uint8_t hci_platform_parse_config(void)
 		case 0x0282:
 			for (i = 0; i < entry_len; i++) {
 				if (bt_manual_tx_power_gain_enable) {
-					if(i == 0) { // br
+					if (i == 0) { // br
 						HCI_PRINT("0x0282 BR gain 0x%02x\r\n", bt_manual_gain_index_br);
 						p[i] = bt_manual_gain_index_br;
 					} else if (i == 1) { // edr 2m
@@ -827,13 +827,13 @@ static void hci_platform_insert_patch_queue(struct list_head *head, HCI_PATCH_NO
 	struct list_head *pos, *next;
 	HCI_PATCH_NODE *node;
 
-	if(!head || !p_patch_node) {
+	if (!head || !p_patch_node) {
 		return;
 	}
 
 	list_for_each_safe(pos, next, head) {
 		node = list_entry(pos, HCI_PATCH_NODE, list);
-		if(node->priority >= p_patch_node->priority)
+		if (node->priority >= p_patch_node->priority)
 			break;
 	}
 
@@ -961,12 +961,12 @@ static uint32_t hci_platform_parse_patch(uint8_t *p_buf, HCI_PATCH_NODE *p_patch
 #ifdef CONFIG_RTK_DATA_BINARY_TO_EXT_FLASH
 static uint8_t* hci_platform_get_btfw_patch(uint32_t *rtlbt_fw_size)
 {
-    /* File structure initialize */
+	/* File structure initialize */
 	struct stat st;
 	int fd = 0;
 	int ret = 0;
 	int rd_length;
-    uint8_t *rtlbt_fw_ptr = NULL;
+	uint8_t *rtlbt_fw_ptr = NULL;
 	/* Retrieve the stat of the BT FW patch */
 	if (stat(BT_FW_PATCH_DIR, &st) < 0) {
 		ret = __LINE__;
@@ -974,8 +974,8 @@ static uint8_t* hci_platform_get_btfw_patch(uint32_t *rtlbt_fw_size)
 	}
 	/* Get BT FW patch length */
 	*rtlbt_fw_size = st.st_size;
-    /* SPI Read Data back */
-    rtlbt_fw_ptr = (uint8_t *)osif_mem_aligned_alloc(RAM_TYPE_DATA_ON, *rtlbt_fw_size, 64);
+	/* SPI Read Data back */
+	rtlbt_fw_ptr = (uint8_t *)osif_mem_aligned_alloc(RAM_TYPE_DATA_ON, *rtlbt_fw_size, 64);
 	if (!rtlbt_fw_ptr) {
 		ret = __LINE__;
 		goto errout;
@@ -1108,7 +1108,7 @@ static uint8_t hci_platform_get_patch_info(void)
 
 EXIT:
 #ifdef CONFIG_RTK_DATA_BINARY_TO_EXT_FLASH
-    /* After patch download complete, free the fw patch space */
+	/* After patch download complete, free the fw patch space */
 	if (rtlbt_fw_ptr) {
 		osif_mem_free(rtlbt_fw_ptr);
 	}

@@ -51,7 +51,7 @@ extern "C"
 
 /**
  * @typedef   rtk_bt_hfp_role_t
- * @brief     hfp role 
+ * @brief     hfp role
  */
 typedef enum {
 	RTK_BT_AUDIO_HFP_ROLE_AG = 0x00,					/*!< HFP Role Audio Gate */
@@ -60,7 +60,7 @@ typedef enum {
 
 /**
  * @typedef   rtk_bt_hfp_call_status_t
- * @brief     hfp call status 
+ * @brief     hfp call status
  */
 typedef enum
 {
@@ -75,7 +75,7 @@ typedef enum
 
 /**
  * @typedef   rtk_bt_hfp_ag_call_status_t
- * @brief     hfp ag call status 
+ * @brief     hfp ag call status
  */
 typedef enum
 {
@@ -89,7 +89,7 @@ typedef enum
 
 /**
  * @typedef   rtk_bt_cvsd_frame_duration
- * @brief     hfp call status 
+ * @brief     hfp call status
  */
 typedef enum
 {
@@ -413,7 +413,7 @@ typedef struct {
  * @brief     hfp configuration.
  * @param[in] role: hfp role (RTK_BT_AUDIO_HFP_ROLE_AG/RTK_BT_AUDIO_HFP_ROLE_HF)
  * @param[in] p_conf_t: pointer of configuration data (rtk_bt_hfp_ag_conf_t/rtk_bt_hfp_hf_conf_t)
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -423,7 +423,7 @@ uint16_t rtk_bt_hfp_cfg(uint8_t role, void *p_conf_t);
  * @fn        uint16_t rtk_bt_hfp_connect(uint8_t *bd_addr)
  * @brief     send hfp connect request.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -433,7 +433,7 @@ uint16_t rtk_bt_hfp_connect(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_hfp_disconnect(uint8_t *bd_addr)
  * @brief     disconnect hfp.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -443,7 +443,7 @@ uint16_t rtk_bt_hfp_disconnect(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_hfp_sco_connect(uint8_t *bd_addr)
  * @brief     start hfp sco connect.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -453,7 +453,7 @@ uint16_t rtk_bt_hfp_sco_connect(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_hfp_sco_disconnect(uint8_t *bd_addr)
  * @brief     disconnect hfp sco.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -466,7 +466,7 @@ uint16_t rtk_bt_hfp_sco_disconnect(uint8_t *bd_addr);
  * @param[in] call_num: call number
  * @param[in] call_num_len: call number length(MAX 20)
  * @param[in] call_num_type: call number type
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -476,7 +476,7 @@ uint16_t rtk_bt_hfp_call_incoming(uint8_t *bd_addr, const char *call_num, uint8_
  * @fn        uint16_t rtk_bt_hfp_call_answer(uint8_t *bd_addr)
  * @brief     answer call.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -486,7 +486,7 @@ uint16_t rtk_bt_hfp_call_answer(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_hfp_call_terminate(uint8_t *bd_addr)
  * @brief     terminate call.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -496,7 +496,7 @@ uint16_t rtk_bt_hfp_call_terminate(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_hfp_data_send(rtk_bt_hfp_sco_data_send_t *p_data_send_t)
  * @brief     hfp sco data send.
  * @param[in] p_data_send_t: send data struct pointer
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -507,7 +507,7 @@ uint16_t rtk_bt_hfp_data_send(rtk_bt_hfp_sco_data_send_t *p_data_send_t);
  * @brief     hfp report battery level.
  * @param[in] bd_addr: bt address
  * @param[in] power_level: battery power level
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -518,7 +518,7 @@ uint16_t rtk_bt_hfp_batt_level_report(uint8_t *bd_addr, uint8_t power_level);
  * @brief     hfp report speaker gain.
  * @param[in] bd_addr: bt address
  * @param[in] gain: speaker gain (0 - 15)
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -529,7 +529,7 @@ uint16_t rtk_bt_hfp_speaker_gain_report(uint8_t *bd_addr, uint8_t gain);
  * @brief     hfp report microphone gain.
  * @param[in] bd_addr: bt address
  * @param[in] gain: microphone gain (0 - 15)
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */

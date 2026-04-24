@@ -162,7 +162,7 @@ bool os_timer_id_get(void **pp_handle, uint32_t *p_timer_id);
  * \ingroup  Timer
  */
 bool os_timer_create(void **pp_handle, const char *p_timer_name, uint32_t timer_id,
-                     uint32_t interval_ms, bool reload, void (*p_timer_callback)(void *));
+					 uint32_t interval_ms, bool reload, void (*p_timer_callback)(void *));
 
 /**
  * os_timer.h
@@ -481,7 +481,7 @@ bool os_timer_dump(void);
  * {
  *   uint32_t timer_state;
  *    os_timer_state_get(&p_handle,&timer_state);
- *     if(timer_state)
+ *     if (timer_state)
  *     {
  *         // Timer is active, do something.
  *     }

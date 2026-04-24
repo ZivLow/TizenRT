@@ -34,7 +34,7 @@ extern "C"
 /* ------------------------------- Data Types ------------------------------- */
 /**
  * @typedef   rtk_bt_spp_role_t
- * @brief     spp role 
+ * @brief     spp role
  */
 typedef enum {
 	RTK_BT_SPP_ROLE_CLIENT = 0x00,			/*!< BT SPP client */
@@ -43,7 +43,7 @@ typedef enum {
 
 /**
  * @typedef   rtk_bt_spp_uuid_type_t
- * @brief     spp uuid type 
+ * @brief     spp uuid type
  */
 typedef enum
 {
@@ -54,7 +54,7 @@ typedef enum
 
 /**
  * @typedef   rtk_bt_spp_uuid_data_t
- * @brief     spp uuid data 
+ * @brief     spp uuid data
  */
 typedef union
 {
@@ -65,11 +65,11 @@ typedef union
 
 /**
  * @typedef   T_SPP_CHANN_DB
- * @brief     SPP channel database 
+ * @brief     SPP channel database
  */
-typedef struct 
+typedef struct
 {
-	bool 					used;					/*!< If true, it indicates that this element has been used */ 
+	bool 					used;					/*!< If true, it indicates that this element has been used */
 	uint8_t 				spp_chann_num;			/*!< SPP channel index */
 	rtk_bt_spp_uuid_data_t	service_uuid;			/*!< Service UUID */
 	bool 					is_spp_sdp_ok;			/*!< Accept sdp disov info flag */
@@ -82,7 +82,7 @@ typedef struct
  * @struct    rtk_bt_spp_sdp_attr_info_t
  * @brief     Bluetooth SPP SDP attribute information struct
  */
-typedef struct 
+typedef struct
 {
 	uint8_t						bd_addr[6];					/**< Address */
 	rtk_bt_spp_uuid_type_t		srv_class_uuid_type;		/**< Service class UUID type */
@@ -100,7 +100,7 @@ typedef struct
  * @struct   rtk_bt_spp_init_cfg_t
  * @brief    SPP service register configuration
  */
-typedef struct 
+typedef struct
 {
 	uint8_t spp_max_link_num;								/**< SPP maximum channel numbers */
 	uint8_t spp_rfc_max_service_num;						/**< SPP maximum service numbers */
@@ -112,7 +112,7 @@ typedef struct
  * @struct   rtk_bt_spp_srv_cfg_t
  * @brief    SPP service register configuration
  */
-typedef struct 
+typedef struct
 {
 	uint8_t local_server_chann;												/**< Server channel number */
 	uint32_t length;														/**< Service class UUID data length*/
@@ -123,7 +123,7 @@ typedef struct
  * @struct   rtk_bt_spp_sdp_discov_cmpl_t
  * @brief    SPP SDP discovery completely
  */
-typedef struct 
+typedef struct
 {
 	uint8_t bd_addr[6];					/**< Address */
 	uint16_t cause;						/**< cause */
@@ -133,7 +133,7 @@ typedef struct
  * @struct   rtk_bt_spp_conn_ind_t
  * @brief    SPP connection connect indication
  */
-typedef struct 
+typedef struct
 {
 	uint8_t bd_addr[6];					/**< Address */
 	uint8_t local_server_chann;			/**< local server channel */
@@ -144,7 +144,7 @@ typedef struct
  * @struct   rtk_bt_spp_disconn_ind_t
  * @brief    SPP connection disconnect indication
  */
-typedef struct 
+typedef struct
 {
 	uint8_t bd_addr[6];					/*!< BT address */
 	uint8_t local_server_chann;			/*!< local server channel */
@@ -155,7 +155,7 @@ typedef struct
  * @struct   rtk_bt_spp_conn_cmpl_t
  * @brief    SPP connection connect completed
  */
-typedef struct 
+typedef struct
 {
 	uint8_t bd_addr[6];					/*!< BT address */
 	uint8_t local_server_chann;			/*!< local server channel */
@@ -167,7 +167,7 @@ typedef struct
  * @struct   rtk_bt_spp_disconn_cmpl_t
  * @brief    SPP connection disconnect completed
  */
-typedef struct 
+typedef struct
 {
 	uint8_t bd_addr[6];					/*!< BT address */
 	uint8_t local_server_chann;			/*!< local server channel */
@@ -178,7 +178,7 @@ typedef struct
  * @struct   rtk_bt_spp_credit_rcvd_t
  * @brief    SPP link credits received
  */
-typedef struct 
+typedef struct
 {
 	uint8_t bd_addr[6];					/*!< BT address */
 	uint8_t local_server_chann;			/*!< local server channel */
@@ -189,7 +189,7 @@ typedef struct
  * @struct   rtk_bt_spp_data_ind_t
  * @brief    SPP data transfer indication
  */
-typedef struct 
+typedef struct
 {
 	uint8_t bd_addr[6];								/*!< BT address */
 	uint8_t local_server_chann;						/*!< local server channel */
@@ -201,7 +201,7 @@ typedef struct
  * @struct   rtk_bt_spp_data_rsp_t
  * @brief    SPP data response with ack flag set
  */
-typedef struct 
+typedef struct
 {
 	uint8_t bd_addr[6];					/*!< BT address */
 	uint8_t local_server_chann;			/*!< local server channel */
@@ -252,7 +252,7 @@ typedef struct {
  * @param[in] max_service_num: max service number
  * @param[in] mtu_size: l2cap mtu size
  * @param[in] credits: link credit
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -264,7 +264,7 @@ uint16_t rtk_bt_spp_init_cfg(uint8_t max_link_num, uint8_t max_service_num, uint
  * @param[in] spp_service_class_uuid: the service uuid needs to be registered
  * @param[in] length: uuid length
  * @param[in] local_server_chann: local server channel
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -274,7 +274,7 @@ uint16_t rtk_bt_service_register_cfg(void *spp_service_class_uuid, uint32_t leng
  * @fn        uint16_t rtk_bt_spp_connect(uint8_t *bd_addr)
  * @brief     Send SPP connect request.
  * @param[in] bd_addr: bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -284,7 +284,7 @@ uint16_t rtk_bt_spp_connect(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_spp_disconnect(rtk_bt_spp_disconn_req_t *p_disconn_req_t)
  * @brief     Send an SPP disconnection request
  * @param[in] p_disconn_req_t: SPP disconnection request struct pointer
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -294,7 +294,7 @@ uint16_t rtk_bt_spp_disconnect(rtk_bt_spp_disconn_req_t *p_disconn_req_t);
  * @fn        uint16_t rtk_bt_spp_disconnect_all(uint8_t *bd_addr);
  * @brief     Send a request to disconnect all SPP connection
  * @param[in] bd_addr: Remote bt address
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -304,7 +304,7 @@ uint16_t rtk_bt_spp_disconnect_all(uint8_t *bd_addr);
  * @fn        uint16_t rtk_bt_spp_send_data(rtk_bt_spp_send_data_t *p_send_data_t)
  * @brief     Send data to peer device on specific rfc channel
  * @param[in] p_send_data_t: SPP send data struct pointer
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */
@@ -314,7 +314,7 @@ uint16_t rtk_bt_spp_send_data(rtk_bt_spp_send_data_t *p_send_data_t);
  * @fn        uint16_t rtk_bt_spp_credits_give(rtk_bt_spp_credits_give_t *p_credits_give_t)
  * @brief     Give SPP credits to remote device
  * @param[in] p_credits_give_t: SPP link credits give struct pointer
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */

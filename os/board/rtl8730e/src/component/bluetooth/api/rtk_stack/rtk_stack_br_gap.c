@@ -98,7 +98,7 @@ static void bt_stack_mgr_cback(T_BT_EVENT event_type, void *event_buf, uint16_t 
 		APP_PRINT_INFO1("bt_stack_mgr_cback: bt_ready, bd_addr %b",
 						TRACE_BDADDR(param->ready.bd_addr));
 		printf("bt_stack_mgr_cback: bt_ready, bd_addr %02x:%02x:%02x:%02x:%02x:%02x \r\n",
-						param->ready.bd_addr[5], param->ready.bd_addr[4], param->ready.bd_addr[3], param->ready.bd_addr[2], 
+						param->ready.bd_addr[5], param->ready.bd_addr[4], param->ready.bd_addr[3], param->ready.bd_addr[2],
 						param->ready.bd_addr[1], param->ready.bd_addr[0]);
 		bt_stack_br_gap_ready = true;
 	}
@@ -545,7 +545,7 @@ static uint16_t bt_stack_br_gap_start_inquiry(void *param)
 	rtk_bt_br_inquiry_start_t *start_inquiry_param = (rtk_bt_br_inquiry_start_t *)param;
 
 	gap_br_start_inquiry(start_inquiry_param->limited_inquiry, start_inquiry_param->timeout);
-	
+
 	return 0;
 }
 
@@ -599,7 +599,7 @@ static uint16_t bt_stack_br_gap_get_remote_name(void *param)
 	uint8_t *bd_addr = (uint8_t *)param;
 
 	gap_br_get_remote_name(bd_addr);
-	
+
 	return 0;
 }
 
@@ -609,7 +609,7 @@ static uint16_t bt_stack_br_gap_max_bond_num_get(void *param)
 	uint8_t *pmax_bond_num = (uint8_t *)param;
 
 	*pmax_bond_num = bt_max_bond_num_get();
-	
+
 	return RTK_BT_OK;
 }
 
@@ -619,7 +619,7 @@ static uint16_t bt_stack_br_gap_bond_num_get(void *param)
 	uint8_t *pbond_num = (uint8_t *)param;
 
 	*pbond_num = bt_bond_num_get();
-	
+
 	return RTK_BT_OK;
 }
 
@@ -630,7 +630,7 @@ static uint16_t bt_stack_br_gap_bond_addr_get(void *param)
 	if (bt_bond_addr_get(pbond_addr_t->priority, pbond_addr_t->bd_addr)) {
 		return RTK_BT_OK;
 	}
-	
+
 	return RTK_BT_FAIL;
 }
 
@@ -641,7 +641,7 @@ static uint16_t bt_stack_br_gap_bond_index_get(void *param)
 	if (bt_bond_index_get(pbond_index_t->bd_addr, &pbond_index_t->index)) {
 		return RTK_BT_OK;
 	}
-	
+
 	return RTK_BT_FAIL;
 }
 
@@ -652,7 +652,7 @@ static uint16_t bt_stack_br_gap_bond_key_get(void *param)
 	if (bt_bond_key_get(pbond_key_t->bd_addr, pbond_key_t->link_key, &pbond_key_t->key_type)) {
 		return RTK_BT_OK;
 	}
-	
+
 	return RTK_BT_FAIL;
 }
 
@@ -663,7 +663,7 @@ static uint16_t bt_stack_br_gap_bond_key_set(void *param)
 	if (bt_bond_key_set(pbond_key_t->bd_addr, pbond_key_t->link_key, pbond_key_t->key_type)) {
 		return RTK_BT_OK;
 	}
-	
+
 	return RTK_BT_FAIL;
 }
 
@@ -674,7 +674,7 @@ static uint16_t bt_stack_br_gap_bond_priority_set(void *param)
 	if (bt_bond_priority_set(bd_addr)) {
 		return RTK_BT_OK;
 	}
-	
+
 	return RTK_BT_FAIL;
 }
 
@@ -685,7 +685,7 @@ static uint16_t bt_stack_br_gap_bond_delete(void *param)
 	if (bt_bond_delete(bd_addr)) {
 		return RTK_BT_OK;
 	}
-	
+
 	return RTK_BT_FAIL;
 }
 
@@ -694,7 +694,7 @@ static uint16_t bt_stack_br_gap_bond_clear(void *param)
 	(void)param;
 
 	bt_bond_clear();
-	
+
 	return 0;
 }
 
@@ -705,7 +705,7 @@ static uint16_t bt_stack_br_gap_set_pincode(void *param, uint32_t length)
 		return 1;
 	}
 	memcpy((void *)pin_code, param, length);
-	
+
 	return 0;
 }
 

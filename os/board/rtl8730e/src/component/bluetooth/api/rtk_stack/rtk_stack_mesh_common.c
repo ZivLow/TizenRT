@@ -52,16 +52,16 @@ extern uint8_t proxy_client_conn_id;
  */
 static uint32_t generic_random_value_for_authentication(uint8_t size)
 {
-    uint8_t i;
-    uint32_t max = 0;
-	if(size > 4) {
+	uint8_t i;
+	uint32_t max = 0;
+	if (size > 4) {
 		printf("[%s] size(%d) > 4, only generic 4 bytes random number", __func__, size);
 		size = 4;
 	}
-    for(i=0; i<size; i++) {
-        max = max*0xff + 0xff;
-    }
-    return platform_random(max);
+	for (i=0; i<size; i++) {
+		max = max*0xff + 0xff;
+	}
+	return platform_random(max);
 }
 
 /******************************************************************
@@ -75,16 +75,15 @@ static uint32_t generic_random_value_for_authentication(uint8_t size)
  */
 static bool store_data_use_big_endian(uint32_t num, uint8_t *p_data, uint8_t size)
 {
-    uint8_t i,*p;
-	if(size > sizeof(uint32_t)) {
+	uint8_t i,*p;
+	if (size > sizeof(uint32_t)) {
 		printf("[%s] The size %d exceed max capability %d, fail\r\n", __func__, size, sizeof(uint32_t));
 		return false;
 	}
-    p = (uint8_t *)&num;
-    for(i=0; i<size; i++)
-    {
-        p_data[i] = p[size-i-1];
-    }
+	p = (uint8_t *)&num;
+	for (i=0; i<size; i++) {
+		p_data[i] = p[size-i-1];
+	}
 	return true;
 }
 
@@ -130,11 +129,10 @@ static bool prov_cb(prov_cb_type_t cb_type, prov_cb_data_t cb_data)
 		if (MESH_ROLE_PROVISIONER == mesh_role) {
 			/* the spec requires to disconnect, but you can remove it as you like! :) */
 #if defined(BT_MESH_ENABLE_REMOTE_PROVISIONING_CLIENT_MODEL) && BT_MESH_ENABLE_REMOTE_PROVISIONING_CLIENT_MODEL
-			if (rmt_prov_client_link_state() == RTK_BT_MESH_RMT_PROV_LINK_STATE_OUTBOUND_PKT_TRANS)
-			{
+			if (rmt_prov_client_link_state() == RTK_BT_MESH_RMT_PROV_LINK_STATE_OUTBOUND_PKT_TRANS) {
 				rmt_prov_link_close(RTK_BT_MESH_RMT_PROV_LINK_CLOSE_SUCCESS);
 			}
-			else 
+			else
 #endif
 			{
 				prov_disconnect(PB_ADV_LINK_CLOSE_SUCCESS);
@@ -248,7 +246,7 @@ static bool prov_cb(prov_cb_type_t cb_type, prov_cb_data_t cb_data)
 			rtk_bt_mesh_stack_set_auth_value_for_static_oob *static_oob;
 			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_STACK, RTK_BT_MESH_STACK_EVT_SET_AUTH_VALUE_FOR_STATIC_OOB, sizeof(rtk_bt_mesh_stack_set_auth_value_for_static_oob));
 			static_oob = (rtk_bt_mesh_stack_set_auth_value_for_static_oob *)p_evt->data;
-			if(!prov_auth_value_set(auth_data, sizeof(auth_data))) {
+			if (!prov_auth_value_set(auth_data, sizeof(auth_data))) {
 				static_oob->status = false;
 			}
 			else{
@@ -275,7 +273,7 @@ static bool prov_cb(prov_cb_type_t cb_type, prov_cb_data_t cb_data)
 					oob_data = (rtk_bt_mesh_stack_set_auth_value_for_oob_data *)p_evt->data;
 					random = generic_random_value_for_authentication(pprov_start->auth_size.oob_size);
 					store_data_use_big_endian(random, auth_data, pprov_start->auth_size.oob_size);
-					if(!prov_auth_value_set(auth_data, pprov_start->auth_size.oob_size)) {
+					if (!prov_auth_value_set(auth_data, pprov_start->auth_size.oob_size)) {
 						oob_data->status = false;
 					}
 					else {
@@ -306,7 +304,7 @@ static bool prov_cb(prov_cb_type_t cb_type, prov_cb_data_t cb_data)
 					oob_data = (rtk_bt_mesh_stack_set_auth_value_for_oob_data *)p_evt->data;
 					random = generic_random_value_for_authentication(pprov_start->auth_size.oob_size);
 					store_data_use_big_endian(random, auth_data, pprov_start->auth_size.oob_size);
-					if(!prov_auth_value_set(auth_data, pprov_start->auth_size.oob_size)) {
+					if (!prov_auth_value_set(auth_data, pprov_start->auth_size.oob_size)) {
 						oob_data->status = false;
 					}
 					else {
@@ -389,47 +387,47 @@ static void device_info_cb(uint8_t bt_addr[6], uint8_t bt_addr_type, int8_t rssi
 static void hb_cb(hb_data_type_t type, void *pargs)
 {
 	rtk_bt_evt_t *p_evt = NULL;
-    switch (type)
-    {
-    case HB_DATA_PUB_TIMER_STATE:
-        {
+	switch (type)
+	{
+	case HB_DATA_PUB_TIMER_STATE:
+		{
 			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_STACK, RTK_BT_MESH_STACK_EVT_HB_PUB_TIMER_STATE, sizeof(rtk_bt_mesh_stack_hb_data_timer_state_t));
 			memcpy(p_evt->data, pargs, sizeof(rtk_bt_mesh_stack_hb_data_timer_state_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
-        }
-        break;
-    case HB_DATA_SUB_TIMER_STATE:
-        {
+		}
+		break;
+	case HB_DATA_SUB_TIMER_STATE:
+		{
 			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_STACK, RTK_BT_MESH_STACK_EVT_HB_SUB_TIMER_STATE, sizeof(rtk_bt_mesh_stack_hb_data_timer_state_t));
 			memcpy(p_evt->data, pargs, sizeof(rtk_bt_mesh_stack_hb_data_timer_state_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
-        }
-        break;
-    case HB_DATA_PUB_COUNT_UPDATE:
-        {
+		}
+		break;
+	case HB_DATA_PUB_COUNT_UPDATE:
+		{
 			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_STACK, RTK_BT_MESH_STACK_EVT_HB_PUB_COUNT_UPDATE, sizeof(rtk_bt_mesh_stack_hb_pub_count_update_t));
 			memcpy(p_evt->data, pargs, sizeof(rtk_bt_mesh_stack_hb_pub_count_update_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
-        }
-        break;
-    case HB_DATA_SUB_PERIOD_UPDATE:
-        {
+		}
+		break;
+	case HB_DATA_SUB_PERIOD_UPDATE:
+		{
 			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_STACK, RTK_BT_MESH_STACK_EVT_HB_SUB_PERIOD_UPDATE, sizeof(rtk_bt_mesh_stack_hb_sub_period_update_t));
 			memcpy(p_evt->data, pargs, sizeof(rtk_bt_mesh_stack_hb_sub_period_update_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
-        }
-        break;
-    case HB_DATA_SUB_RECEIVE:
-        {
+		}
+		break;
+	case HB_DATA_SUB_RECEIVE:
+		{
 			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_STACK, RTK_BT_MESH_STACK_EVT_HB_SUB_RECEIVE, sizeof(rtk_bt_mesh_stack_hb_data_sub_receive_t));
 			memcpy(p_evt->data, pargs, sizeof(rtk_bt_mesh_stack_hb_data_sub_receive_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
-        }
-        break;
-    default:
+		}
+		break;
+	default:
 		printf("[%s] Unknown type:%d\r\n", __func__, type);
-        break;
-    }
+		break;
+	}
 }
 
 #if defined(RTK_BLE_MESH_PROVISIONER_SUPPORT) && RTK_BLE_MESH_PROVISIONER_SUPPORT
@@ -854,7 +852,7 @@ static void rtk_bt_mesh_stack_init(void *data)
 	/** init mesh stack */
 	mesh_init();
 	device_info_cb_reg(device_info_cb);
-    hb_init(hb_cb);
+	hb_init(hb_cb);
 }
 
 void rtk_bt_mesh_set_device_uuid(void)
@@ -985,7 +983,7 @@ uint8_t rtk_bt_mesh_stack_start_adv(rtk_bt_le_adv_param_t *adv_param)
 								sizeof(rtk_bt_mesh_stack_evt_start_adv_t));
 	p_start_adv = (rtk_bt_mesh_stack_evt_start_adv_t *)p_evt->data;
 	default_adv.adv_type = adv_param->type;
-	if(adv_param->own_addr_type > RTK_BT_LE_ADDR_TYPE_RANDOM) {
+	if (adv_param->own_addr_type > RTK_BT_LE_ADDR_TYPE_RANDOM) {
 		printf("[%s] Addr type %d for mesh adv is not support, use the default addr type.\r\n", __func__, default_adv.addr_type);
 	}
 	else {
@@ -1064,7 +1062,7 @@ static uint16_t rtk_stack_set_random_value_for_authentication(rtk_bt_mesh_stack_
 	oob_size = PROV_SUPPORT_INPUT_OOB_SIZE;
 #endif
 	store_data_use_big_endian(random, auth_data, oob_size);
-	if(prov_auth_value_set(auth_data, oob_size)) {
+	if (prov_auth_value_set(auth_data, oob_size)) {
 		return RTK_BT_MESH_STACK_API_SUCCESS;
 	}
 	else {
@@ -1074,29 +1072,28 @@ static uint16_t rtk_stack_set_random_value_for_authentication(rtk_bt_mesh_stack_
 
 static uint16_t rtk_stack_get_heartbeat_subscribe_result(rtk_bt_mesh_hb_sub_t *hb_sub)
 {
-    *(hb_sub_t *)hb_sub = hb_subscription_get();
+	*(hb_sub_t *)hb_sub = hb_subscription_get();
 	return RTK_BT_MESH_STACK_API_SUCCESS;
 }
 
 static uint16_t rtk_stack_set_model_subscribe(rtk_bt_mesh_set_model_subscribe_t *model_sub)
 {
-    mesh_element_p p_element = mesh_element_get(model_sub->element_index);
-    mesh_model_p pmodel = mesh_model_get_by_model_id(p_element, model_sub->model_id);
-    if (pmodel == NULL || MESH_NOT_SUBSCRIBE_ADDR(model_sub->sub_addr))
-    {
+	mesh_element_p p_element = mesh_element_get(model_sub->element_index);
+	mesh_model_p pmodel = mesh_model_get_by_model_id(p_element, model_sub->model_id);
+	if (pmodel == NULL || MESH_NOT_SUBSCRIBE_ADDR(model_sub->sub_addr)) {
 		printf("[%s] Can not get model info or sub addr(0x%x) is not correct!\r\n", __func__, model_sub->sub_addr);
-        return RTK_BT_MESH_STACK_API_FAIL;
-    }
-    else
-    {
-        if(mesh_model_sub(pmodel, model_sub->sub_addr)) {
-            return RTK_BT_MESH_STACK_API_SUCCESS;
-        }
+		return RTK_BT_MESH_STACK_API_FAIL;
+	}
+	else
+	{
+		if (mesh_model_sub(pmodel, model_sub->sub_addr)) {
+			return RTK_BT_MESH_STACK_API_SUCCESS;
+		}
 		else {
 			printf("[%s] Set model subscribe fail!\r\n", __func__);
 			return RTK_BT_MESH_STACK_API_FAIL;
 		}
-    }
+	}
 }
 
 #if defined(RTK_BLE_MESH_FN_SUPPORT) && RTK_BLE_MESH_FN_SUPPORT
@@ -1191,11 +1188,11 @@ static uint16_t rtk_stack_method_choose_for_prov(rtk_bt_mesh_stack_prov_start_t 
 {
 	prov_start_t prov_start;
 	memcpy(&prov_start, method, sizeof(prov_start_t));
-	if(RTK_BT_MESH_PROV_AUTH_METHOD_OUTPUT_OOB==method->auth_method && \
+	if (RTK_BT_MESH_PROV_AUTH_METHOD_OUTPUT_OOB==method->auth_method && \
 		RTK_BT_MESH_PROV_START_OUTPUT_OOB_ACTION_OUTPUT_NUMERIC==method->auth_action.oob_action) {
 		output_oob_size_of_udb = method->auth_size.oob_size;
 	}
-	if(prov_path_choose(&prov_start)) {
+	if (prov_path_choose(&prov_start)) {
 		return RTK_BT_MESH_STACK_API_SUCCESS;
 	}
 	else {
@@ -1207,7 +1204,7 @@ static uint16_t rtk_stack_prov_service_discovery(rtk_bt_mesh_stack_act_prov_dis_
 {
 	uint16_t ret;
 	uint8_t conn_id;
-	if(bt_stack_le_gap_get_conn_id(prov_dis->conn_handle, &conn_id)) {
+	if (bt_stack_le_gap_get_conn_id(prov_dis->conn_handle, &conn_id)) {
 		printf("[%s] Get connection id fail\r\n", __func__);
 		return RTK_BT_MESH_STACK_API_FAIL;
 	}
@@ -1240,7 +1237,7 @@ static uint16_t rtk_stack_proxy_service_discovery(rtk_bt_mesh_stack_act_proxy_di
 {
 	uint16_t ret;
 	uint8_t conn_id;
-	if(bt_stack_le_gap_get_conn_id(proxy_dis->conn_handle, &conn_id)) {
+	if (bt_stack_le_gap_get_conn_id(proxy_dis->conn_handle, &conn_id)) {
 		printf("[%s] Get connection id fail\r\n", __func__);
 		return RTK_BT_MESH_STACK_API_FAIL;
 	}

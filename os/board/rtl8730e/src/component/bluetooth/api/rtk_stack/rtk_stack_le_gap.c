@@ -381,7 +381,7 @@ static void bt_stack_le_gap_handle_ext_adv_state_evt(uint8_t adv_handle, T_GAP_E
 			if (cause == (HCI_ERR | HCI_ERR_OPERATION_CANCELLED_BY_HOST)) {
 				p_ext_adv_ind->stop_reason = RTK_BT_LE_ADV_STOP_BY_HOST;
 				p_ext_adv_ind->err = 0;
-			} else if (cause == (HCI_ERR | HCI_ERR_DIRECTED_ADV_TIMEOUT) || 
+			} else if (cause == (HCI_ERR | HCI_ERR_DIRECTED_ADV_TIMEOUT) ||
 					   cause == (HCI_ERR | HCI_ERR_LIMIT_REACHED)) {
 				p_ext_adv_ind->stop_reason = RTK_BT_LE_ADV_STOP_BY_DURATION;
 				p_ext_adv_ind->err = 0;
@@ -939,7 +939,7 @@ static T_APP_RESULT bt_stack_le_gap_callback(uint8_t type, void *data)
 				  p_data->p_le_ext_adv_start_setting_rsp->cause, p_data->p_le_ext_adv_start_setting_rsp->flag,
 				  p_data->p_le_ext_adv_start_setting_rsp->adv_handle);
 
-		/* start_setting is called by bt_stack_le_gap_start_ext_adv */ 
+		/* start_setting is called by bt_stack_le_gap_start_ext_adv */
 		p_cmd = bt_stack_pending_cmd_search(RTK_BT_LE_GAP_ACT_START_EXT_ADV << 8);
 		if (p_cmd) {
 			bt_stack_pending_cmd_delete(p_cmd);
@@ -955,7 +955,7 @@ static T_APP_RESULT bt_stack_le_gap_callback(uint8_t type, void *data)
 		}
 		/* start_setting is called by _ext_adv_param_take_effect */
 		p_cmd = bt_stack_pending_cmd_search(type);
-		if (p_cmd) { 
+		if (p_cmd) {
 			bt_stack_pending_cmd_delete(p_cmd);
 			p_cmd->ret = p_data->p_le_ext_adv_start_setting_rsp->cause;
 			osif_sem_give(p_cmd->psem);
@@ -1564,7 +1564,7 @@ static void bt_stack_le_gap_handle_conn_state_evt(T_LE_GAP_MSG *p_gap_msg)
 
 			p_conn_ind = (rtk_bt_le_conn_ind_t *)p_evt->data;
 			/*  when create connection hci cmd is issued, but cannot establish connection before
-			    <rtk_bt_le_create_conn_param_t::scan_timeout>, here will report an timeout err */
+				<rtk_bt_le_create_conn_param_t::scan_timeout>, here will report an timeout err */
 			if (GAP_ERR_TOUT  == disc_cause) {
 				p_conn_ind->err = RTK_BT_ERR_CREATE_CONN_TIMEOUT;
 			} else {
@@ -2133,7 +2133,7 @@ static uint16_t bt_stack_le_gap_set_ext_scan_rsp_data(void *param)
 	}
 
 	API_PRINT("bt_stack_le_gap_set_ext_scan_rsp_data: handle = %d, len = %d\r\n", pscan_rsp->adv_handle, pscan_rsp->len);
-	
+
 #if defined(RTK_BLE_MGR_LIB_EADV) && RTK_BLE_MGR_LIB_EADV
 	cause = ble_ext_adv_mgr_set_scan_response_data(pscan_rsp->adv_handle, pscan_rsp->len, pscan_rsp->pdata);
 #else
@@ -2414,13 +2414,13 @@ static uint16_t bt_stack_le_gap_stop_ext_adv(void *param)
 	}
 
 	for (idx = 0; idx < GAP_MAX_EXT_ADV_SETS; idx++) {
-		if (bt_stack_ext_adv_tbl[idx].used && 
+		if (bt_stack_ext_adv_tbl[idx].used &&
 			bt_stack_ext_adv_tbl[idx].adv_handle == handle) {
 #if defined(RTK_BLE_MGR_LIB_EADV) && RTK_BLE_MGR_LIB_EADV
 			if (bt_stack_ext_adv_tbl[idx].ext_adv_state == BLE_EXT_ADV_MGR_ADV_DISABLED)
-#else 
+#else
 			if (bt_stack_ext_adv_tbl[idx].ext_adv_state == EXT_ADV_STATE_IDLE)
-#endif 
+#endif
 			{
 				return RTK_BT_ERR_ALREADY_DONE;
 			}
@@ -2429,9 +2429,9 @@ static uint16_t bt_stack_le_gap_stop_ext_adv(void *param)
 
 #if defined(RTK_BLE_MGR_LIB_EADV) && RTK_BLE_MGR_LIB_EADV
 	cause = ble_ext_adv_mgr_disable(handle, 0);
-#else 
+#else
 	cause = le_ext_adv_disable(1, &handle);
-#endif 
+#endif
 	if (cause) {
 		API_PRINT("bt_stack_le_gap_stop_ext_adv: cause = %x \r\n", cause);
 		return RTK_BT_ERR_LOWER_STACK_API;
@@ -2461,22 +2461,22 @@ static uint16_t bt_stack_le_gap_remove_ext_adv(void *param)
 #endif
 }
 
-static uint16_t bt_stack_le_gap_get_ext_adv_handle_by_conn_handle(void *param) 
-{ 
-#if defined(RTK_BLE_MGR_LIB_EADV) && RTK_BLE_MGR_LIB_EADV 
-	(void)param; 
-	return RTK_BT_ERR_UNSUPPORTED; 
-#else 
+static uint16_t bt_stack_le_gap_get_ext_adv_handle_by_conn_handle(void *param)
+{
+#if defined(RTK_BLE_MGR_LIB_EADV) && RTK_BLE_MGR_LIB_EADV
+	(void)param;
+	return RTK_BT_ERR_UNSUPPORTED;
+#else
 	rtk_bt_le_get_eadv_by_conn_handle_param_t *get_eadv_hdl = (rtk_bt_le_get_eadv_by_conn_handle_param_t *)param;
-	uint8_t conn_id = 0; 
+	uint8_t conn_id = 0;
 
-	if (!le_get_conn_id_by_handle(get_eadv_hdl->conn_handle, &conn_id)) { 
-		return RTK_BT_ERR_NO_CONNECTION; 
-	} 
-	*(get_eadv_hdl->adv_handle) = le_ext_adv_get_adv_handle_by_conn_id(conn_id); 
+	if (!le_get_conn_id_by_handle(get_eadv_hdl->conn_handle, &conn_id)) {
+		return RTK_BT_ERR_NO_CONNECTION;
+	}
+	*(get_eadv_hdl->adv_handle) = le_ext_adv_get_adv_handle_by_conn_id(conn_id);
 
-	return 0; 
-#endif 
+	return 0;
+#endif
 }
 #endif /* RTK_BLE_5_0_AE_ADV_SUPPORT && F_BT_LE_5_0_AE_ADV_SUPPORT */
 
@@ -2860,7 +2860,7 @@ static bool bt_stack_le_gap_adv_is_idle(void)
 
 	return false;
 
-#endif		
+#endif
 }
 
 #if (defined(RTK_BLE_5_0_PA_ADV_SUPPORT) && RTK_BLE_5_0_PA_ADV_SUPPORT) && (defined(F_BT_LE_5_0_PA_ADV_SUPPORT) && F_BT_LE_5_0_PA_ADV_SUPPORT)
@@ -3947,14 +3947,14 @@ static void privacy_handle_resolv_list(bool indicate)
 			dev_state.gap_scan_state == GAP_SCAN_STATE_IDLE)) {
 		privacy_handle_resolv_list_int();
 		return;
-	} 
+	}
 
 	if (indicate) { /* Indicate APP if there is modification pending. */
 		int i;
 		bool pending = false;
 		uint8_t bond_storage_num;
 
-		if (privacy_clear_pending) 
+		if (privacy_clear_pending)
 			pending = true;
 
 		if (pending == false) {
@@ -4363,8 +4363,7 @@ static uint16_t bt_stack_le_sm_passkey_confirm(void *param)
 		return RTK_BT_ERR_PARAM_INVALID;
 	}
 
-	if (key_cfm->confirm == 1)
-	{
+	if (key_cfm->confirm == 1) {
 		confirm = GAP_CFM_CAUSE_ACCEPT;
 	}
 	else if (key_cfm->confirm == 0)
@@ -4478,8 +4477,8 @@ static uint16_t bt_stack_le_gap_get_tx_pending_num(void *param)
 	//get gatts queue number
 	bt_stack_le_gatts_get_tx_pending_num(get_tx_pending_num_param->conn_handle, &gatts_tx_pending_num);
 
-#if !defined(RTK_BLE_MGR_LIB) || !RTK_BLE_MGR_LIB 	
-	//get gattc queue number 
+#if !defined(RTK_BLE_MGR_LIB) || !RTK_BLE_MGR_LIB
+	//get gattc queue number
 	bt_stack_le_gattc_get_tx_pending_num(get_tx_pending_num_param->conn_handle, &gattc_tx_pending_num);
 #endif
 
@@ -4622,7 +4621,7 @@ static uint16_t bt_stack_le_gap_coc_get_chan_param(void *param)
 
 	cause = le_coc_get_chann_param((T_LE_COC_CHANN_PARAM_TYPE)(param_get->param_type + COC_CHANN_PARAM_CUR_CREDITS),
 								   (void *)param_get->value, param_get->cid);
-	
+
 	if (cause) {
 		return RTK_BT_ERR_LOWER_STACK_API;
 	}
@@ -4724,7 +4723,7 @@ uint16_t bt_stack_le_gap_act_handle(rtk_bt_cmd_t *p_cmd)
 	case RTK_BT_LE_GAP_ACT_ADV_STATE:
 		API_PRINT("RTK_BT_LE_GAP_ACT_ADV_STATE \r\n");
 		ret = (uint16_t)bt_stack_le_gap_adv_is_idle();
-		break;		
+		break;
 #if (defined(RTK_BLE_5_0_AE_ADV_SUPPORT) && RTK_BLE_5_0_AE_ADV_SUPPORT) && (defined(F_BT_LE_5_0_AE_ADV_SUPPORT) && F_BT_LE_5_0_AE_ADV_SUPPORT)
 	case RTK_BT_LE_GAP_ACT_SET_EXT_ADV_DATA:
 		API_PRINT("RTK_BT_LE_GAP_ACT_SET_EXT_ADV_DATA \r\n");
@@ -4779,10 +4778,10 @@ uint16_t bt_stack_le_gap_act_handle(rtk_bt_cmd_t *p_cmd)
 		goto async_handle;
 #endif
 		break;
-	case RTK_BT_LE_GAP_ACT_GET_EXT_ADV_HANDLE_BY_CONN_HANDLE: 
+	case RTK_BT_LE_GAP_ACT_GET_EXT_ADV_HANDLE_BY_CONN_HANDLE:
 		API_PRINT("RTK_BT_LE_GAP_ACT_GET_EXT_ADV_HANDLE_BY_CONN_HANDLE \r\n");
 		ret = bt_stack_le_gap_get_ext_adv_handle_by_conn_handle(p_cmd->param);
-		break; 
+		break;
 #endif
 #if (defined(RTK_BLE_5_0_AE_ADV_SUPPORT) && RTK_BLE_5_0_AE_ADV_SUPPORT) || (defined(RTK_BLE_5_0_AE_SCAN_SUPPORT) && RTK_BLE_5_0_AE_SCAN_SUPPORT)
 	case RTK_BT_LE_GAP_ACT_EXT_CONN:
@@ -4946,7 +4945,7 @@ uint16_t bt_stack_le_gap_act_handle(rtk_bt_cmd_t *p_cmd)
 	case RTK_BT_LE_GAP_ACT_GET_MTU_SIZE:
 		ret = bt_stack_le_gap_get_mtu_size(p_cmd->param);
 		break;
-	
+
 	case RTK_BT_LE_GAP_ACT_SET_MAX_MTU_SIZE:
 		ret = bt_stack_le_gap_set_max_mtu_size(p_cmd->param);
 		break;

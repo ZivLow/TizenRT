@@ -118,7 +118,7 @@ static void bt_stack_api_taskentry(void *ctx)
 						}
 					}
 				}
-			} 
+			}
 //			else if (EVENT_GROUP_FRAMEWORK == EVENT_GROUP(event)) {
 //				rtk_stack_framework_event_handler(event);
 //			}
@@ -965,25 +965,25 @@ rtk_bt_cmd_t *bt_stack_pending_cmd_search(uint32_t msg_type)
 	rtk_bt_cmd_t *cmd;
 
 	list_for_each_entry(cmd, &g_cmd_pending_list, list, rtk_bt_cmd_t) {
-        if (cmd->user_data == msg_type) {
-            return cmd;
-        }
+		if (cmd->user_data == msg_type) {
+			return cmd;
+		}
 	}
 
-    return NULL;
+	return NULL;
 }
 
 void bt_stack_pending_cmd_insert(rtk_bt_cmd_t *p_cmd)
 {
-    API_PRINT("insert cmd: msg_type = 0x%x\r\n", (unsigned int)p_cmd->user_data);
-    list_add_tail(&p_cmd->list, &g_cmd_pending_list);
+	API_PRINT("insert cmd: msg_type = 0x%x\r\n", (unsigned int)p_cmd->user_data);
+	list_add_tail(&p_cmd->list, &g_cmd_pending_list);
 }
 
 void bt_stack_pending_cmd_delete(rtk_bt_cmd_t *p_cmd)
 {
 	rtk_bt_cmd_t *cmd, *next;
-    API_PRINT("delete cmd: msg_type = 0x%x\r\n", (unsigned int)p_cmd->user_data);
- 	list_for_each_entry_safe(cmd, next, &g_cmd_pending_list, list, rtk_bt_cmd_t) {
+	API_PRINT("delete cmd: msg_type = 0x%x\r\n", (unsigned int)p_cmd->user_data);
+	list_for_each_entry_safe(cmd, next, &g_cmd_pending_list, list, rtk_bt_cmd_t) {
 		if (p_cmd == cmd)
 			list_del(&p_cmd->list);
 	}
@@ -992,17 +992,17 @@ void bt_stack_pending_cmd_delete(rtk_bt_cmd_t *p_cmd)
 void bt_stack_pending_cmd_deinit(void)
 {
 	rtk_bt_cmd_t *cmd, *next;
-    API_PRINT("delete cmd pending list\r\n");
+	API_PRINT("delete cmd pending list\r\n");
 
 	list_for_each_entry_safe(cmd, next, &g_cmd_pending_list, list, rtk_bt_cmd_t) {
-        osif_sem_give(cmd->psem);
+		osif_sem_give(cmd->psem);
 		list_del(&cmd->list);
 	}
 }
 
 void bt_stack_pending_cmd_init(void)
 {
-    INIT_LIST_HEAD(&g_cmd_pending_list);
+	INIT_LIST_HEAD(&g_cmd_pending_list);
 }
 
 #if defined(CONFIG_BT_API_DEBUG) && CONFIG_BT_API_DEBUG

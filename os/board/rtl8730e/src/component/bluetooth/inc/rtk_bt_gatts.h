@@ -46,7 +46,7 @@ struct rtk_bt_gatt_chrc
 	const struct bt_uuid *uuid;				/*!< Characteristic UUID. */
 	uint16_t value_handle;					/*!< Characteristic Value handle. */
 	uint8_t	properties;						/*!< Characteristic properties. */
-}; 
+};
 
 /**
  * @def       RTK_BT_GATT_ATTRIBUTE
