@@ -17,10 +17,6 @@
 #ifndef GAP_PAST_SENDER_H
 #define GAP_PAST_SENDER_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -185,8 +181,6 @@ T_GAP_CAUSE le_past_sender_periodic_adv_sync_transfer(uint8_t conn_id, uint16_t 
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_PAST_SENDER_H */

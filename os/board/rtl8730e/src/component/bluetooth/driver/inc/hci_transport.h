@@ -26,8 +26,8 @@ typedef struct
     /* Set Targte where HCI send to */
     void (*set_recv)(HCI_RECV hci_recv);
 
-    /* Set HCI buffer Source */
-    void (*set_get_buf)(HCI_RECV_GET_BUF get_buf);
+    /* Set HCI buffer Operation */
+    void (*set_buf_ops)(HCI_GET_BUF get_buf, HCI_FREE_BUF free_buf);
 
     /* Recv bus buffer to HCI drv */
     uint8_t (*recv_ind)(void);
@@ -41,9 +41,9 @@ static inline void hci_transport_set_recv(HCI_RECV hci_recv)
     hci_transport_ops.set_recv(hci_recv);
 }
 
-static inline void hci_transport_set_get_buf(HCI_RECV_GET_BUF get_buf)
+static inline void hci_transport_set_buf_ops(HCI_GET_BUF get_buf, HCI_FREE_BUF free_buf)
 {
-    hci_transport_ops.set_get_buf(get_buf);
+    hci_transport_ops.set_buf_ops(get_buf, free_buf);
 }
 
 static inline uint8_t hci_transport_recv_ind(void)

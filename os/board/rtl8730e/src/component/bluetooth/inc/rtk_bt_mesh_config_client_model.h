@@ -288,8 +288,8 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint8_t state;
-	uint8_t count;
-	uint8_t steps;
+	uint8_t count : 3;
+	uint8_t steps : 5;
 } rtk_bt_mesh_config_client_model_relay_set_t;
 
 /**
@@ -306,8 +306,8 @@ typedef struct {
  */
 typedef struct {
 	uint16_t dst;
-	uint8_t count;
-	uint8_t steps;
+	uint8_t count : 3;
+	uint8_t steps : 5;
 } rtk_bt_mesh_config_client_model_net_transmit_set_t;
 
 /**

@@ -17,10 +17,6 @@
 #ifndef __GAP_ECFC_H__
 #define __GAP_ECFC_H__
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 /*============================================================================*
  *                        Header Files
  *============================================================================*/
@@ -794,7 +790,4 @@ bool gap_ecfc_send_reconfigure_req(uint16_t conn_handle, uint16_t *p_cid, uint8_
 #ifdef  __cplusplus
 }
 #endif
-
-#endif
-
 #endif  /*  __GAP_ECFC_H__ */

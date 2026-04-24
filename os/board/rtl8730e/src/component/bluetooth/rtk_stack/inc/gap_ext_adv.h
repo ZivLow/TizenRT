@@ -17,10 +17,6 @@
 #ifndef GAP_EXT_ADV_H
 #define GAP_EXT_ADV_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -910,8 +906,6 @@ void le_ext_adv_gap_msg_info_way(bool use_msg);
 #endif
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_EXT_ADV_H */

@@ -18,20 +18,19 @@ extern "C"
 
 /**
  * @def   	  RTK_BT_GATT_INTERNAL
- * @brief     The attribute value is defined as a static(or global) variable in user APP,  
- *            and the variable's pointer will be passed into lower stack. If this attribute is 
+ * @brief     The attribute value is defined as a static(or global) variable in user APP,
+ *            and the variable's pointer will be passed into lower stack. If this attribute is
  *            read by remote, lower stack will auto send this attribute value to response
- *            to read request, if this attribute is write by remote, lower stack will auto 
- * 	          write the attribute value into this variable and response to write request. 
+ *            to read request, if this attribute is write by remote, lower stack will auto
+ * 	          write the attribute value into this variable and response to write request.
  *            User APP layer need not to care it.
- *            
  */
 #define RTK_BT_GATT_INTERNAL                0
 
 /**
  * @def       RTK_BT_GATT_APP
- * @brief     This attribute will be handled by User APP. ALL read/write to this attribute 
- *            will be indicated to user app by a callback, and user App need to call 
+ * @brief     This attribute will be handled by User APP. ALL read/write to this attribute
+ *            will be indicated to user app by a callback, and user App need to call
  *            @ref rtk_bt_gatts_read_resp or @ref rtk_bt_gatts_write_resp to response to
  *            read/write request from remote and modify the attribute value maintained
  *            in user APP when recevie write request.
@@ -316,11 +315,11 @@ typedef struct {
 typedef struct
 {
 	uint16_t seq;							/*!< Sequence number, for convinience, not mandatory */
-	uint8_t app_id;							/*!< Every service has a app_id. */
+	uint16_t app_id;							/*!< Every service has a app_id. */
 	uint16_t conn_handle;					/*!< Connection handle for a client */
 	uint16_t cid;							/*!< ID of L2CAP channel to send the response, MUST be same as cid in @ref rtk_bt_gatts_read_ind_t. Ignored when RTK_BT_5_2_EATT_SUPPORT is 0. */
 	uint16_t index;							/*!< Attribute index in service */
-	uint8_t err_code;						/*!< Error code, if NOT ERR_RESP, equals 0 */
+	uint8_t err_code;						/*!< Error code, @ref rtk_bt_err_att , if NOT ERR_RESP, equals 0 */
 	uint16_t len;							/*!< Response Value length, when err_code == 0 */
 	const void *data;						/*!< Response Value data, when err_code == 0 */
 } rtk_bt_gatts_read_resp_param_t;
@@ -332,12 +331,12 @@ typedef struct
 typedef struct
 {
 	uint16_t seq;							/*!< Sequence number, for convinience, not mandatory */
-	uint8_t app_id;							/*!< Every service has a app_id. */
+	uint16_t app_id;							/*!< Every service has a app_id. */
 	uint16_t conn_handle;					/*!< Connection handle for a client */
 	uint16_t cid;							/*!< ID of L2CAP channel to send the response, 0 indicates auto-select. Ignored when RTK_BT_5_2_EATT_SUPPORT is 0. */
 	uint16_t index;							/*!< Attribute index in service */
 	uint8_t type;							/*!< Write type */
-	uint8_t err_code;						/*!< Error code, if NOT ERR_RESP, equals 0 */
+	uint8_t err_code;						/*!< Error code, @ref rtk_bt_err_att , if NOT ERR_RESP, equals 0 */
 } rtk_bt_gatts_write_resp_param_t;
 
 /**
@@ -366,13 +365,13 @@ struct rtk_bt_gatt_service
 	uint16_t app_id;						/*!< Service app_id */
 	rtk_bt_gatt_attr_t *attrs;				/*!< Service Attributes */
 	uint16_t attr_count;						/*!< Service Attribute count */
-#if !RTK_BLE_MGR_LIB
-	bool assgin_handle_flag;				/*!< Flag of if the service start attr handle is assigned by user */		
+#if !defined(RTK_BLE_MGR_LIB) || !RTK_BLE_MGR_LIB
+	bool assgin_handle_flag;				/*!< Flag of if the service start attr handle is assigned by user */
 	uint16_t start_handle;					/*!< User assigned start attr handle of service */
 #endif
-	rtk_bt_gatts_srv_type_t type;			/*!< Service type */			
+	rtk_bt_gatts_srv_type_t type;			/*!< Service type */
 	uint8_t register_status;				/*!< Service register status */
-	void * user_data;						/*!< Service user data */			
+	void * user_data;						/*!< Service user data */
 	uint32_t server_info;					/*!< Service info */
 };
 
@@ -427,7 +426,7 @@ typedef enum
  */
 typedef struct
 {
-	uint8_t app_id;							/*!< Every service has a app_id. */
+	uint16_t app_id;							/*!< Every service has a app_id. */
 	uint16_t conn_handle;					/*!< Connection handle for a client */
 	uint16_t cid;							/*!< L2CAP channel ID to indicate which channel the request is received from */
 	uint16_t index;							/*!< Attribute index in service */
@@ -443,7 +442,7 @@ typedef struct
  */
 typedef struct
 {
-	uint8_t app_id;							/*!< Every service has a app_id. */
+	uint16_t app_id;							/*!< Every service has a app_id. */
 	uint16_t conn_handle;					/*!< Connection handle for a client */
 	uint16_t cid;							/*!< L2CAP channel ID to indicate which channel the request is received from */
 	uint16_t index;							/*!< Attribute index in service */
@@ -456,7 +455,7 @@ typedef struct
  */
 typedef struct
 {
-	uint8_t app_id;							/*!< Every service has a app_id. */
+	uint16_t app_id;							/*!< Every service has a app_id. */
 	uint16_t conn_handle;					/*!< Connection handle for a client */
 	uint16_t cid;							/*!< L2CAP channel ID to indicate which channel the data is sent to */
 	uint16_t index;							/*!< Attribute index in service */
@@ -496,8 +495,7 @@ uint16_t rtk_bt_gatts_register_service(struct rtk_bt_gatt_service *param);
 /**
  * @fn         uint16_t rtk_bt_gatts_notify(rtk_bt_gatts_ntf_and_ind_param_t *param)
  * @brief      Notify action initiated by server, will cause event @ref RTK_BT_GATTS_EVT_NOTIFY_COMPLETE_IND.
- *             If attribute value is longer than ATT_MTU-3 octects, then only
- *             the first ATT_MTU-3 octects can be sent in a notification.
+ *             If attribute value is longer than ATT_MTU-3 octects, it will fail.
  * @param[in]  param: The parameters for notification.
  * @return
  *            - 0  : Succeed
@@ -508,8 +506,7 @@ uint16_t rtk_bt_gatts_notify(rtk_bt_gatts_ntf_and_ind_param_t *param);
 /**
  * @fn         uint16_t rtk_bt_gatts_indicate(rtk_bt_gatts_ntf_and_ind_param_t *param)
  * @brief      Indicate action initiated by server, will cause event @ref RTK_BT_GATTS_EVT_INDICATE_COMPLETE_IND
- *             If attribute value is longer than ATT_MTU-3 octects, then only 
- *             the first ATT_MTU-3 octects can be sent in a indication.
+ *             If attribute value is longer than ATT_MTU-3 octects, it will fail.
  * @param[in]  param: The parameters for indication.
  * @return
  *            - 0  : Succeed

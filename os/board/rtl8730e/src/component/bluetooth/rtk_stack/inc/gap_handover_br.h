@@ -5,10 +5,6 @@
 #ifndef _GAP_HANDOVER_BR_H_
 #define _GAP_HANDOVER_BR_H_
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #include <gap.h>
 
 #ifdef __cplusplus
@@ -389,7 +385,4 @@ T_GAP_CAUSE gap_br_vendor_role_switch(uint16_t ctrl_handle,
 #ifdef __cplusplus
 }
 #endif    /*  __cplusplus */
-
-#endif
-
 #endif    /*  _GAP_HANDOVER_BR_H_*/

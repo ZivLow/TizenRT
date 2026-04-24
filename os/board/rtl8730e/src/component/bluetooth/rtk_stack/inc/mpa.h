@@ -5,10 +5,6 @@
 #ifndef __MPA_H__
 #define __MPA_H__
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #include <stdint.h>
 #include "gap.h"
 
@@ -994,7 +990,4 @@ void mpa_deinit(void);
 #ifdef  __cplusplus
 }
 #endif
-
-#endif
-
 #endif  /*  __MPA_H__ */

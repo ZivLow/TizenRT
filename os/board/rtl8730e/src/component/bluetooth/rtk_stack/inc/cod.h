@@ -13,10 +13,6 @@
 #ifndef __COD_H__
 #define __COD_H__
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef  __cplusplus
 extern "C" {
 #endif
@@ -232,7 +228,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif
-
 #endif /* __COD_H__ */

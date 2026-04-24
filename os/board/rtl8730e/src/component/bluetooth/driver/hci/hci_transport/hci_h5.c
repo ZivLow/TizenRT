@@ -22,7 +22,7 @@
 
 //#include "string.h"
 /* Private macro -------------------------------------------------------------*/
-#ifdef USE_HCI_H5
+#if defined(USE_HCI_H5) && USE_HCI_H5
 #if 1
 #define HCI_H5_ERR  hci_tp_err
 #define HCI_H5_WARN hci_tp_warn
@@ -38,17 +38,17 @@
 /* Private define ------------------------------------------------------------*/
 #define H5_Tx_Retransmit_Timeout    200
 /* Used by upper layer */
-#ifdef INTERNAL_UPPER_STACK
+#if defined(INTERNAL_UPPER_STACK) && INTERNAL_UPPER_STACK
 #define HCI_H5_RX_ACL_PKT_BUF_OFFSET               (HCI_RX_ACL_PKT_BUF_OFFSET+1)
 #define HCI_H5_TX_ACL_PKT_BUF_OFFSET               8
-#if HCI_ISO_DATA_PACKET
+#if defined(HCI_ISO_DATA_PACKET) && HCI_ISO_DATA_PACKET
 #define H5_RESERVED1                               (HCI_RX_ACL_PKT_BUF_OFFSET+1)
 #define HCI_STACK_TX_ISO_RSVD_SIZE                 8
 #endif
 #else
 #define HCI_H5_RX_ACL_PKT_BUF_OFFSET               1
 #define HCI_H5_TX_ACL_PKT_BUF_OFFSET               0
-#if HCI_ISO_DATA_PACKET
+#if defined(HCI_ISO_DATA_PACKET) && HCI_ISO_DATA_PACKET
 #define H5_RESERVED1                               1
 #define HCI_STACK_TX_ISO_RSVD_SIZE                 0
 #endif
@@ -401,7 +401,7 @@ uint8_t h5_unslip_one_byte(struct h5buf *rx_h5b, unsigned char byte)
             byte = 0xdb;
             break;
 
-#ifdef CONFIG_OOF_FLOW_CONTROL
+#if defined(CONFIG_OOF_FLOW_CONTROL) && CONFIG_OOF_FLOW_CONTROL
         case 0xde:
             byte = 0x11;
             break;
@@ -564,7 +564,7 @@ bool hci_h5_unpack(uint8_t *p_data_buf, uint16_t count)
             {
                 h5_item = h5buf_alloc(4 + h5_parse_remainder + 2, HCI_H5_RX_ACL_PKT_BUF_OFFSET + H5_RESERVEDALIGN);
             }
-#if HCI_ISO_DATA_PACKET
+#if defined(HCI_ISO_DATA_PACKET) && HCI_ISO_DATA_PACKET
             else if ((header_data[1] & 0x0f) == HCI_ISO_PKT)
             {
                 h5_item = h5buf_alloc(4 + h5_parse_remainder + 2, H5_RESERVED1 + H5_RESERVEDALIGN);
@@ -669,7 +669,7 @@ void h5_complete_rx_pkt(struct h5buf *rx_h5b)
     case HCI_EVENT_PKT:
     case HCI_SCODATA_PKT:
     case HCI_COMMAND_PKT:
-#if HCI_ISO_DATA_PACKET
+#if defined(HCI_ISO_DATA_PACKET) && HCI_ISO_DATA_PACKET
     case HCI_ISO_PKT:
 #endif
     case H5_LINK_CTL_PKT:
@@ -780,12 +780,12 @@ bool hci_h5_get_package_rx(uint8_t **pp_data_buf, uint16_t *p_data_length)
             h5b->data_cnt = h5b->data_cnt + HCI_H5_RX_ACL_PKT_BUF_OFFSET;
             //hci_tp_err("ACL_DATA:THOMAS2:p_buf %p, sizeof(%d), pbuf:%x, reserved:%d, allock %x\r\n", buf, sizeof(struct h5buf), pbuf, HCI_H5_RX_ACL_PKT_BUF_OFFSET, temp_buffer);
             // HCI_PRINT_TRACE5("AS2:p_buf %p, sizeof(%d), pbuf:%x, reserved:%d, allock %x\r\n", buf, sizeof(struct h5buf), pbuf, HCI_H5_RX_ACL_PKT_BUF_OFFSET, temp_buffer);
-#ifdef      RTK_COEX
+#if defined(RTK_COEX) && RTK_COEX
             rtl_coex_hci_process_acl(pbuf, len);
 #endif
 
         }
-#if HCI_ISO_DATA_PACKET
+#if defined(HCI_ISO_DATA_PACKET) && HCI_ISO_DATA_PACKET
         else if (h5b->pkt_type == HCI_ISO_PKT)
         {
             h5b->data = h5b->data - H5_RESERVED1;
@@ -883,7 +883,7 @@ static void h5_slip_one_byte(struct h5buf *h5b, uint8_t c)
 {
     const char esc_c0[2] = { 0xdb, 0xdc };
     const char esc_db[2] = { 0xdb, 0xdd };
-#ifdef CONFIG_OOF_FLOW_CONTROL
+#if defined(CONFIG_OOF_FLOW_CONTROL) && CONFIG_OOF_FLOW_CONTROL
     const char esc_11[2] = { 0xdb, 0xde };
     const char esc_13[2] = { 0xdb, 0xdf };
 #endif
@@ -898,7 +898,7 @@ static void h5_slip_one_byte(struct h5buf *h5b, uint8_t c)
         memcpy(h5buf_put(h5b, 2), &esc_db, 2);
         break;
 
-#ifdef CONFIG_OOF_FLOW_CONTROL
+#if defined(CONFIG_OOF_FLOW_CONTROL) && CONFIG_OOF_FLOW_CONTROL
     case 0x11:
         memcpy(h5buf_put(h5b, 2), &esc_11, 2);
         break;
@@ -942,7 +942,7 @@ struct h5buf *h5_prepare_pkt(uint8_t *data, int32_t len, int32_t pkt_type)
     case HCI_ACLDATA_PKT:
     case HCI_COMMAND_PKT:
     case HCI_EVENT_PKT:
-#if HCI_ISO_DATA_PACKET
+#if defined(HCI_ISO_DATA_PACKET) && HCI_ISO_DATA_PACKET
     case HCI_ISO_PKT:
 #endif
         rel = 1;
@@ -1163,11 +1163,11 @@ bool hci_h5_pack(uint8_t *p_data_buf, uint16_t data_length)
         //  hci_tp_info("\r\n====h5_tx_buffer=%p==%x, old_buf %p=\r\n", h5b, len, p_buf);
         head = p_data_buf + HCI_H5_TX_ACL_PKT_BUF_OFFSET;
         length  = data_length - HCI_H5_TX_ACL_PKT_BUF_OFFSET;
-#ifdef  RTK_COEX
+#if defined(RTK_COEX) && RTK_COEX
         rtl_coex_hci_process_txacl(head + 1, length - 1);
 #endif
     }
-#if HCI_ISO_DATA_PACKET
+#if defined(HCI_ISO_DATA_PACKET) && HCI_ISO_DATA_PACKET
     else if (p_data_buf[0] == HCI_ISO_PKT)
     {
         head = p_data_buf + HCI_STACK_TX_ISO_RSVD_SIZE;
@@ -1224,11 +1224,11 @@ void tx_time_out_event(void *xtimer)
 /* #######################################################################*/
 /* ###########       buffer & pool  control           ####################*/
 /* #######################################################################*/
-//#define OS_H5_POOL
+//#if defined(OS_H5_POOL) && OS_H5_POOL
 static int hci_h5_allocator_init(void)
 {
 
-#ifdef OS_H5_POOL
+#if defined(OS_H5_POOL) && OS_H5_POOL
     bool ret;
     int size, count;
     size = MAX_BUF1_LEN;
@@ -1441,7 +1441,7 @@ bool h5_enqueue(struct h5buf *h5b)
     {
     case HCI_ACLDATA_PKT:
     case HCI_COMMAND_PKT:
-#if HCI_ISO_DATA_PACKET
+#if defined(HCI_ISO_DATA_PACKET) && HCI_ISO_DATA_PACKET
     case HCI_ISO_PKT:
 #endif
         h5buf_queue_tail(&hci_h5_protocol_ctrl.tx_rel, h5b);
@@ -1582,7 +1582,7 @@ bool hci_h5_connect_response(void *para)
                 break;
             case HCI_ACLDATA_PKT:
             case HCI_SCODATA_PKT:
-#if HCI_ISO_DATA_PACKET
+#if defined(HCI_ISO_DATA_PACKET) && HCI_ISO_DATA_PACKET
             case HCI_ISO_PKT:
 #endif
             default:
@@ -1645,4 +1645,3 @@ void baudrate_send_the_ack(void)
 }
 
 #endif //USE_HCI_H5
-

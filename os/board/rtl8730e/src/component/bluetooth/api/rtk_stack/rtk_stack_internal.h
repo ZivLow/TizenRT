@@ -240,9 +240,9 @@ static inline void bt_stack_le_audio_deinit(void)
 #endif
 
 //for debug
-#define CONFIG_BT_API_DEBUG
+#define CONFIG_BT_API_DEBUG 1
 
-#ifdef CONFIG_BT_API_DEBUG
+#if defined(CONFIG_BT_API_DEBUG) && CONFIG_BT_API_DEBUG
 enum {
 	BT_API_ERROR, BT_API_WARNING, BT_API_INFO, BT_API_DEBUG, BT_API_DUMP
 };

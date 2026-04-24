@@ -242,7 +242,9 @@ typedef enum {
 	RTK_BT_LE_GAP_ACT_START_SCAN,
 	RTK_BT_LE_GAP_ACT_STOP_SCAN,
 	RTK_BT_LE_GAP_ACT_CONN,
+	RTK_BT_LE_GAP_ACT_CONN_CANCEL,
 	RTK_BT_LE_GAP_ACT_DISCONN,
+	RTK_BT_LE_GAP_ACT_DISCONN_WITH_REASON,
 	RTK_BT_LE_GAP_ACT_UPDATE_CONN_PARAM,
 	RTK_BT_LE_GAP_ACT_READ_RSSI,
 	RTK_BT_LE_GAP_ACT_MODIFY_WHITELIST,
@@ -251,10 +253,14 @@ typedef enum {
 	RTK_BT_LE_GAP_ACT_GET_ACTIVE_CONN,
 	RTK_BT_LE_GAP_ACT_GET_CONN_HANDLE_BY_ADDR,
 	RTK_BT_LE_GAP_ACT_GET_MTU_SIZE,
+	RTK_BT_LE_GAP_ACT_SET_MAX_MTU_SIZE,
 	RTK_BT_LE_GAP_ACT_SET_CHANNELS,
 	RTK_BT_LE_GAP_ACT_SET_DATA_LEN,
 	RTK_BT_LE_GAP_ACT_SET_PHY,
 	RTK_BT_LE_GAP_ACT_PRIVACY_INIT,
+	RTK_BT_LE_GAP_ACT_SET_PRIVACY_MODE,
+	RTK_BT_LE_GAP_ACT_READ_LOCAL_RESOLV_ADDR,
+	RTK_BT_LE_GAP_ACT_READ_PEER_RESOLV_ADDR,
 	RTK_BT_LE_GAP_ACT_SET_PAIRING_MODE,
 	RTK_BT_LE_GAP_ACT_SET_SEC_PARAM,
 	RTK_BT_LE_GAP_ACT_START_SECURITY,
@@ -600,12 +606,12 @@ typedef enum {
 	RTK_BT_LE_AUDIO_EVT_BASS_GET_PREFER_BIS_SYNC_IND,      /* Direct calling, BT api shall not be called in this event case. */
 	RTK_BT_LE_AUDIO_EVT_BASS_CP_IND,
 	RTK_BT_LE_AUDIO_EVT_BASS_BRS_MODIFY_IND,
-	RTK_BT_LE_AUDIO_EVT_BASS_BA_ADD_SOURCE_IND,	
+	RTK_BT_LE_AUDIO_EVT_BASS_BA_ADD_SOURCE_IND,
 	RTK_BT_LE_AUDIO_EVT_BASS_CLIENT_SYNC_INFO_REQ_IND,
 	RTK_BT_LE_AUDIO_EVT_BASS_CLIENT_BRS_DATA_IND, //0x10
 	RTK_BT_LE_AUDIO_EVT_GROUP_DEV_MSG_IND,
 	RTK_BT_LE_AUDIO_EVT_ASCS_CP_CODEC_CFG_IND,
-	RTK_BT_LE_AUDIO_EVT_ASCS_CP_QOS_CFG_IND, 
+	RTK_BT_LE_AUDIO_EVT_ASCS_CP_QOS_CFG_IND,
 	RTK_BT_LE_AUDIO_EVT_ASCS_CP_ENABLE_IND,
 	RTK_BT_LE_AUDIO_EVT_ASCS_CP_DISABLE_IND,
 	RTK_BT_LE_AUDIO_EVT_ASCS_CP_UPDATE_METADATA_IND,
@@ -621,9 +627,9 @@ typedef enum {
 	RTK_BT_LE_AUDIO_EVT_BROADCAST_SOURCE_STATE_IND,	 //0x20
 	RTK_BT_LE_AUDIO_EVT_CAP_DISCOVERY_DONE_IND,
 	RTK_BT_LE_AUDIO_EVT_CSIS_CLIENT_DISCOVERY_DONE_IND,
-	RTK_BT_LE_AUDIO_EVT_CSIS_CLIENT_READ_RESULT_IND, 
-	RTK_BT_LE_AUDIO_EVT_CSIS_CLIENT_SEARCH_DONE_IND, 
-	RTK_BT_LE_AUDIO_EVT_CSIS_CLIENT_SET_MEM_FOUND_IND,  
+	RTK_BT_LE_AUDIO_EVT_CSIS_CLIENT_READ_RESULT_IND,
+	RTK_BT_LE_AUDIO_EVT_CSIS_CLIENT_SEARCH_DONE_IND,
+	RTK_BT_LE_AUDIO_EVT_CSIS_CLIENT_SET_MEM_FOUND_IND,
 	RTK_BT_LE_AUDIO_EVT_MCP_SERVER_WRITE_MEDIA_CP_IND,
 	RTK_BT_LE_AUDIO_EVT_MCP_SERVER_READ_IND,
 	RTK_BT_LE_AUDIO_EVT_MCP_CLIENT_DISCOVERY_DONE_IND,
@@ -1086,6 +1092,15 @@ struct evt_ret_mem_option {
 void rtk_bt_le_addr_to_str(void *paddr, char *str, uint32_t len);
 
 /**
+ * @fn        void rtk_bt_addr_val_to_str(uint8_t *paddr, char *str, uint32_t len)
+ * @brief     Convert bt address value hexnum to normal format string.
+ * @param[in] paddr: Device address
+ * @param[out] str: String buf to get the normal format address
+ * @param[in] len: Length of string buf
+ */
+void rtk_bt_addr_val_to_str(uint8_t *paddr, char *str, uint32_t len);
+
+/**
  * @fn        void rtk_bt_br_addr_to_str(uint8_t *paddr, char *str, uint32_t len)
  * @brief     Convert bt address hexnum to normal format string.
  * @param[in] paddr: Device address
@@ -1151,6 +1166,40 @@ void rtk_bt_event_free(rtk_bt_evt_t *pevt);
 #else
 #define API_PRINT   printf
 #endif
+
+#ifndef HI_WORD
+#define HI_WORD(x)      ((uint8_t)((x & 0xFF00) >> 8))
+#endif
+	
+#ifndef LO_WORD
+#define LO_WORD(x)      ((uint8_t)(x))
+#endif
+	
+#ifndef UUID128_STR
+#define UUID128_STR "%08lx-%04x-%04x-%04x-%04x%08lx"
+#endif
+	
+	/* uuid128 shall be a pointer of (uint8_t *) */
+#ifndef UUID128_VAL
+#define UUID128_VAL(uuid128) \
+		*(uint32_t*)(uuid128+12), *(uint16_t*)(uuid128+10), \
+		*(uint16_t*)(uuid128+8), *(uint16_t*)(uuid128+6), \
+		*(uint16_t*)(uuid128+4), *(uint32_t*)uuid128
+#endif
+	
+#define APP_PRINT_SEPARATOR()                                                               \
+		do {																					\
+			printf("############################################################\r\n \r\n");	\
+		} while (0)
+	
+#define APP_PROMOTE(...)                                                                \
+		do {																				\
+			printf("\r\n"); 																\
+			printf("############################################################\r\n"); 	\
+			printf(__VA_ARGS__);															\
+			printf("############################################################\r\n"); 	\
+			printf("\r\n"); 																\
+		} while (0)
 
 #ifdef __cplusplus
 }

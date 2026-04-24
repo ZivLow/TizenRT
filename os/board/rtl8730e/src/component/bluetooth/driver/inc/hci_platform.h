@@ -10,12 +10,13 @@
 #include "hci_common.h"
 #include "hci_uart.h"
 #include "ameba_soc.h"
+#include "platform_stdlib.h"
 
-#define hci_platform_DOWNLOAD_PATCH
-#define hci_platform_MP_RESET_BAUDRATE
-#define hci_platform_WRITE_PHY_EFUSE
+#define hci_platform_DOWNLOAD_PATCH    1
+#define hci_platform_MP_RESET_BAUDRATE 1
+#define hci_platform_WRITE_PHY_EFUSE   1
 
-#ifdef hci_platform_WRITE_PHY_EFUSE
+#if defined(hci_platform_WRITE_PHY_EFUSE) && hci_platform_WRITE_PHY_EFUSE
 #define HCI_WRITE_PHY_EFUSE_LEN    0x6D
 #endif
 
@@ -24,6 +25,7 @@
 
 #define HCI_BT_COEX_ENABLE         1
 #define HCI_BT_COEX_SW_MAILBOX     0
+
 
 #define HCI_BT_KEEP_WAKE           0
 

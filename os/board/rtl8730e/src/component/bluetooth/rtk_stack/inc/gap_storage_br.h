@@ -5,10 +5,6 @@
 #ifndef _GAP_STORAGE_BR_H_
 #define _GAP_STORAGE_BR_H_
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -303,8 +299,6 @@ bool gap_br_adjust_dev_priority(uint8_t *bd_addr);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* _GAP_STORAGE_BR_H_ */

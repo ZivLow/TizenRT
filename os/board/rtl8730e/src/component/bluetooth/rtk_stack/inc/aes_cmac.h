@@ -5,10 +5,6 @@
 #ifndef _AES_CMAC_H_
 #define _AES_CMAC_H_
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -29,8 +25,6 @@ void aes_cmac(uint8_t key[16], uint8_t *msg,
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* _AES_CMAC_H_ */

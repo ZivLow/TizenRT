@@ -15,10 +15,6 @@
 #ifndef PROFILE_CLIENT_DEF_H
 #define PROFILE_CLIENT_DEF_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef  __cplusplus
 extern "C" {
 #endif      /* __cplusplus */
@@ -319,8 +315,6 @@ bool client_cfg_use_ext_api(bool use_ext);
 #ifdef  __cplusplus
 }
 #endif      /*  __cplusplus */
-
-#endif
 
 #endif /* PROFILE_CLIENT_DEF_H */
 

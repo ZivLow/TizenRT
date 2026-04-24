@@ -46,6 +46,8 @@ void bt_stack_vendor_callback(uint8_t cb_type, void *p_cb_data)
 		switch (cb_data.p_gap_vendor_cmd_rsp->command) {
 #if defined(VENDOR_CMD_READ_BT_REGISTER_SUPPORT) && VENDOR_CMD_READ_BT_REGISTER_SUPPORT
 		case VENDOR_CMD_READ_BT_REGISTER_OPCODE: {
+		ase VENDOR_CMD_READ_PI_BT_RF_REGISTER_OPCODE:
+		case VENDOR_CMD_READ_BT_RF_REGISTER_OPCODE: {
 				uint16_t bt_reg = 0;
 				uint16_t buf = 0;
 				uint8_t *pdata = &(cmd_rsp->param[0]);

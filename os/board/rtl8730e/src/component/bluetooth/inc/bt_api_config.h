@@ -13,15 +13,13 @@ extern "C"
 {
 #endif
 
-#include <platform_opts_bt.h>
-
 /*
  * PLATFORM_AMEBAD2 (AmebaSmart)
  */
 #if defined(CONFIG_PLATFORM_AMEBAD2)
 #define RTK_BLE_GAP_MAX_LINKS               4
 #define RTK_BLE_SUPPORT                     1
-#define RTK_BREDR_SUPPORT                   1
+#define RTK_BREDR_SUPPORT                   0
 #define RTK_BT_POWER_CONTROL_SUPPORT        1
 #define RTK_BLE_SET_TX_QUEUE_NUM            0
 #define RTK_BLE_TX_SOF_EOF_INDICATION       0
@@ -66,11 +64,11 @@ extern "C"
 #define RTK_BT_5_2_EATT_SUPPORT             0
 #define RTK_BT_5_2_L2C_ECFC_SUPPORT         (RTK_BT_5_2_EATT_SUPPORT)
 
-#define RTK_BLE_AUDIO_BROADCAST_SINK_SUPPORT           0    //must set 1 as CAP Acceptor role, can set 0 as CAP other role 
-#define RTK_BLE_AUDIO_BROADCAST_SOURCE_SUPPORT         0    //must set 1 when CAP Initiator role, can set 0 as CAP other role 
-#define RTK_BLE_AUDIO_UNICAST_SERVER_SUPPORT           0    //must set 1 when CAP Acceptor role, can set 0 as CAP other role 
-#define RTK_BLE_AUDIO_UNICAST_CLIENT_SUPPORT           0    //must set 1 when CAP Initiator role, can set 0 as CAP other role 
-#define RTK_BLE_AUDIO_BROADCAST_ASSISTANT_SUPPORT      0    //must set 1 when CAP Commander role, can set 0 as CAP other role  
+#define RTK_BLE_AUDIO_BROADCAST_SINK_SUPPORT           0    //must set 1 as CAP Acceptor role, can set 0 as CAP other role
+#define RTK_BLE_AUDIO_BROADCAST_SOURCE_SUPPORT         0    //must set 1 when CAP Initiator role, can set 0 as CAP other role
+#define RTK_BLE_AUDIO_UNICAST_SERVER_SUPPORT           0    //must set 1 when CAP Acceptor role, can set 0 as CAP other role
+#define RTK_BLE_AUDIO_UNICAST_CLIENT_SUPPORT           0    //must set 1 when CAP Initiator role, can set 0 as CAP other role
+#define RTK_BLE_AUDIO_BROADCAST_ASSISTANT_SUPPORT      0    //must set 1 when CAP Commander role, can set 0 as CAP other rol
 #define RTK_BLE_AUDIO_SCAN_DELEGATOR_SUPPORT           0    //must set 1 when CAP Acceptor or Commander role, can set 0 as CAP other role 
 #define RTK_BLE_AUDIO_VCP_VOLUME_CONTROLLER_SUPPORT    0    //can set 1 when CAP Commander role
 #define RTK_BLE_AUDIO_VCP_VOLUME_RENDERER_SUPPORT      0    //can set 1 when CAP Acceptor role
@@ -83,22 +81,22 @@ extern "C"
 #define RTK_BLE_AUDIO_MCP_MEDIA_CONTROL_SERVER_SUPPORT 0    //can set 1 when CAP Initiator role
 #define RTK_BLE_AUDIO_MCP_MEDIA_CONTROL_CLIENT_SUPPORT 0    //can set 1 when CAP Acceptor or Commander role
 #define RTK_BLE_AUDIO_CSIP_SET_COORDINATOR_SUPPORT     0    //can set 1 when CAP Initiator or Commander role
-#define RTK_BLE_AUDIO_CSIP_SET_MEMBER_SUPPORT          0    //can set 1 when CAP Acceptor role 
+#define RTK_BLE_AUDIO_CSIP_SET_MEMBER_SUPPORT          0    //can set 1 when CAP Acceptor role
 
 #define RTK_BLE_AUDIO_TMAP_SUPPORT                              0    //must set when test TMAP example
 #define RTK_BLE_AUDIO_TMAP_CALL_TERMINAL_SUPPORT                0    //not support now
 #define RTK_BLE_AUDIO_TMAP_CALL_GATEWAY_SUPPORT                 0    //not support now
 #define RTK_BLE_AUDIO_TMAP_UNICAST_MEDIA_SENDER_SUPPORT         0    //must set CAP Initiator && Commander role
 #define RTK_BLE_AUDIO_TMAP_UNICAST_MEDIA_RECEIVER_SUPPORT       0    //must set CAP Acceptor role
-#define RTK_BLE_AUDIO_TMAP_BROADCAST_MEDIA_SENDER_SUPPORT       0    
-#define RTK_BLE_AUDIO_TMAP_BROADCAST_MEDIA_RECEIVER_SUPPORT     0    
+#define RTK_BLE_AUDIO_TMAP_BROADCAST_MEDIA_SENDER_SUPPORT       0
+#define RTK_BLE_AUDIO_TMAP_BROADCAST_MEDIA_RECEIVER_SUPPORT     0
 
 #define RTK_BLE_AUDIO_PBP_SUPPORT                               0
 #define RTK_BLE_AUDIO_PBP_BROADCAST_SOURCE_SUPPORT              0    //must set RTK_BLE_AUDIO_BROADCAST_SOURCE_SUPPORT 1
 #define RTK_BLE_AUDIO_PBP_BROADCAST_SINK_SUPPORT                0
 #define RTK_BLE_AUDIO_PBP_BROADCAST_ASSISTANT_SUPPORT           0
 
-#define RTK_BLE_AUDIO_BIRDS_SING_PCM_SUPPORT            1    //audio data tx from birds_sing[] when set 1, otherwise from audio record 
+#define RTK_BLE_AUDIO_BIRDS_SING_PCM_SUPPORT            1    //audio data tx from birds_sing[] when set 1, otherwise from audio record
 #define RTK_BLE_AUDIO_RECORD_SUPPORT                    0
 #define RTK_BLE_AUDIO_A2DP_PBP_TEST_SUPPORT             0
 
@@ -160,8 +158,8 @@ extern "C"
 
 #if defined(RTK_BLE_5_0_SUPPORT) && RTK_BLE_5_0_SUPPORT
 #define RTK_BLE_5_0_SET_PHYS_SUPPORT        1
-#define RTK_BLE_5_0_AE_ADV_SUPPORT          0
-#define RTK_BLE_5_0_AE_SCAN_SUPPORT         0
+#define RTK_BLE_5_0_AE_ADV_SUPPORT          1
+#define RTK_BLE_5_0_AE_SCAN_SUPPORT         1
 #define RTK_BLE_5_0_PA_ADV_SUPPORT         (0 && RTK_BLE_5_0_AE_ADV_SUPPORT)
 #define RTK_BLE_5_0_PA_SYNC_SUPPORT        (0 && RTK_BLE_5_0_AE_SCAN_SUPPORT)
 #endif /* RTK_BLE_5_0_SUPPORT */
@@ -253,7 +251,7 @@ extern "C"
 #endif /* RTK_BLE_5_0_SUPPORT */
 
 /*
- * PLATFORM_RTL8720F (AmebaLite2)
+ * PLATFORM_RTL8720F (AmebaGreen2)
  */
 #elif defined(CONFIG_PLATFORM_RTL8720F)
 #define RTK_BLE_GAP_MAX_LINKS               4
@@ -284,11 +282,13 @@ extern "C"
  * Error Platform
  */
 #else
-#error Please choose a corret platform
+#error "Please choose a corret platform"
 #endif
 
-#if ((!defined(CONFIG_BT_ZEPHYR)) && ((defined(RTK_BT_5_2_EATT_SUPPORT) && RTK_BT_5_2_EATT_SUPPORT) || (defined(RTK_BLE_AUDIO_SUPPORT) && RTK_BLE_AUDIO_SUPPORT)))
+#if ((!defined(CONFIG_BT_ZEPHYR) || !CONFIG_BT_ZEPHYR) && \
+    ((defined(RTK_BT_5_2_EATT_SUPPORT) && RTK_BT_5_2_EATT_SUPPORT) || (defined(RTK_BLE_AUDIO_SUPPORT) && RTK_BLE_AUDIO_SUPPORT)))
 #define RTK_BLE_MGR_LIB             1
+
 #define GATTC_TBL_STORAGE_SUPPORT   0
 #else
 #define RTK_BLE_MGR_LIB             0
@@ -317,15 +317,15 @@ extern "C"
 #if (defined(CONFIG_BT_ISO_TEST) && CONFIG_BT_ISO_TEST) && (defined(RTK_BLE_ISO_BIS_SUPPORT) && RTK_BLE_ISO_BIS_SUPPORT) && \
     ((!defined(RTK_BLE_5_0_AE_ADV_SUPPORT) || !RTK_BLE_5_0_AE_ADV_SUPPORT) || (!defined(RTK_BLE_5_0_AE_SCAN_SUPPORT) || !RTK_BLE_5_0_AE_SCAN_SUPPORT) || \
      (!defined(RTK_BLE_5_0_PA_ADV_SUPPORT) || !RTK_BLE_5_0_PA_ADV_SUPPORT) || (!defined(RTK_BLE_5_0_PA_SYNC_SUPPORT) || !RTK_BLE_5_0_PA_SYNC_SUPPORT))
-#error Please enable AE, AE Scan, PA, PA Sync for corret platform when enable ISO BIS!
+#error "Please enable AE, AE Scan, PA, PA Sync for corret platform when enable ISO BIS"
 #endif
 
 #if (defined(CONFIG_BT_LE_AUDIO) && CONFIG_BT_LE_AUDIO) && (defined(RTK_BLE_AUDIO_SUPPORT) && RTK_BLE_AUDIO_SUPPORT) && \
     ((!defined(RTK_BLE_5_0_AE_ADV_SUPPORT) || !RTK_BLE_5_0_AE_ADV_SUPPORT) || (!defined(RTK_BLE_5_0_AE_SCAN_SUPPORT) || !RTK_BLE_5_0_AE_SCAN_SUPPORT))
-#error Please enable AE, AE Scan for corret platform when enable LE AUDIO!
+#error "Please enable AE, AE Scan for corret platform when enable LE AUDIO"
 #endif
 
-#if defined(CONFIG_PLATFORM_AMEBAD2) && defined(__ICCARM__) && defined(RTK_BREDR_SUPPORT)
+#if defined(CONFIG_PLATFORM_AMEBAD2) && defined(__ICCARM__) && (defined(RTK_BREDR_SUPPORT) && RTK_BREDR_SUPPORT)
 #undef RTK_BREDR_SUPPORT
 #define RTK_BREDR_SUPPORT  0
 #endif

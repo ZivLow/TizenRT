@@ -98,13 +98,6 @@ void rtk_bt_hci_debug_enable(void);
 void rtk_bt_sleep_mode(unsigned int mode);
 
 /**
- * @brief     Read BT register.
- * @param[in] address: BT register address.
- * @return    None
- */
-void rtk_bt_read_register(unsigned int address);
-
-/**
  * @brief     Set BT TX power.
  * @param[in] tx_power: Pointer to TX power parameter.
  * @return

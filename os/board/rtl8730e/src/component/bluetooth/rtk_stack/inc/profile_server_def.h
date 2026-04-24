@@ -15,10 +15,6 @@
 #ifndef PROFILE_SERVER_DEF_H
 #define PROFILE_SERVER_DEF_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef  __cplusplus
 extern "C" {
 #endif      /* __cplusplus */
@@ -297,7 +293,5 @@ bool server_clear_service(void);
 #ifdef  __cplusplus
 }
 #endif      /*  __cplusplus */
-
-#endif
 
 #endif /* PROFILE_SERVER_DEF_H */

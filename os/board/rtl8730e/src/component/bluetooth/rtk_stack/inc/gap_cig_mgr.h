@@ -17,10 +17,6 @@
 #ifndef _CIG_MGR_H_
 #define _CIG_MGR_H_
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef  __cplusplus
 extern "C"
 {
@@ -2135,8 +2131,6 @@ T_GAP_CAUSE cig_mgr_acceptor_config_sdu_param(uint16_t cis_conn_handle,
 
 #ifdef  __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* _CIG_MGR_H_ */

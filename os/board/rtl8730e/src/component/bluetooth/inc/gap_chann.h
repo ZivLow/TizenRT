@@ -17,10 +17,6 @@
 #ifndef GAP_CHANN_H
 #define GAP_CHANN_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -140,8 +136,6 @@ bool gap_chann_get_cid(uint16_t conn_handle, uint8_t cid_record_num, uint16_t *p
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_CHANN_H */

@@ -12,13 +12,40 @@ extern "C" {
   * @brief BT GATT Service
   * @{
   */
+/*============================================================================*
+ *                              Macros
+ *============================================================================*/
+/** @defgroup BT_GATT_SERVICE_Exported_Macros BT GATT Service Macros
+  * @{
+  */
+
+/** @defgroup GATT_SVC_MODE  GATT Service Mode.
+  * @{
+  */
+#define GATT_SVC_DISABLE                        0x00  /**< Not use BT GATT service APIs*/
+#define GATT_SVC_USE_NORMAL_SERVER              0x01  /**< GATT service use normal profile service APIs*/
+#define GATT_SVC_USE_EXT_SERVER                 0x02  /**< GATT service use extended profile service APIs*/
+/**
+  * @}
+  */
+/** End of BT_GATT_SERVICE_Exported_Macros
+  * @}
+  */
 
 /*============================================================================*
  *                              Types
  *============================================================================*/
 /** @defgroup BT_GATT_SERVICE_Exported_Types BT GATT Service Types
-    * @{
-    */
+  * @{
+  */
+/**
+ * @brief Define GATT service event type
+ */
+typedef enum
+{
+    GATT_SVC_EVENT_REG_RESULT = 0x01,      /**< Result for register GATT services */
+    GATT_SVC_EVENT_REG_AFTER_INIT_RESULT   /**< Result for Register GATT services after init */
+} T_GATT_SVC_EVENT;
 
 /**
  * @brief BT GATT service characteristic UUID
@@ -35,14 +62,30 @@ typedef struct
 } T_CHAR_UUID;
 
 /**
- * @brief GATT service mode
+ * @brief GATT service register result type
  */
 typedef enum
 {
-    GATT_SVC_DISABLE,             /**< Not use BT GATT service APIs*/
-    GATT_SVC_USE_NORMAL_SERVER,   /**< GATT service use normal profile service APIs*/
-    GATT_SVC_USE_EXT_SERVER       /**< GATT service use extended profile service APIs*/
-} T_GATT_SVC_MODE;
+    GATT_SVC_SUCCESS,
+    GATT_SVC_FAIL
+} T_GATT_SVC_RESULT;
+/**
+ * @brief GATT service register result
+ *        The message type for GATT_SVC_EVENT_REG_RESULT.
+ */
+typedef struct
+{
+    T_GATT_SVC_RESULT result;
+} T_GATT_SVC_REG_RESULT;
+/**
+ * @brief GATT service register after initialization result
+ *        The message type for GATT_SVC_EVENT_REG_AFTER_INIT_RESULT.
+ */
+typedef struct
+{
+    uint16_t          cause;
+    T_SERVER_ID       service_id;
+} T_GATT_SVC_REG_AFTER_INIT_RESULT;
 
 /**
  * @brief Define GATT service send data callback function point
@@ -50,16 +93,22 @@ typedef enum
  */
 typedef void(*P_FUN_GATT_EXT_SEND_DATA_CB)(T_EXT_SEND_DATA_RESULT result);
 
+/**
+ * @brief Define GATT service general callback function point
+ *        Function pointer used to handle the event @ref T_GATT_SVC_EVENT.
+ */
+typedef void(*P_FUNC_GATT_SVC_GENERAL_CB)(uint8_t type, void *p_data);
+
 /** End of BT_GATT_SERVICE_Exported_Types
-    * @}
-    */
+  * @}
+  */
 
 /*============================================================================*
  *                              Functions
  *============================================================================*/
 /** @defgroup BT_GATT_SERVICE_Exported_Functions BT GATT Service Functions
-    * @{
-    */
+  * @{
+  */
 
 /**
 *@brief    Register specific service.
@@ -292,7 +341,7 @@ bool gatt_svc_send_data(uint16_t conn_handle, uint16_t cid, T_SERVER_ID service_
 
 /**
 *@brief    Initialize the GATT Service mode and service number.
-*@param[in]  mode     GATT Service mode. @ref T_GATT_SVC_MODE
+*@param[in]  mode     GATT Service mode. @ref GATT_SVC_MODE
 *@param[in]  svc_num  Set the number of services that needs to register.
 * \arg    0       Application shall call server_register_app_cb and server_init to register callback
                   and set service number.
@@ -304,24 +353,57 @@ bool gatt_svc_send_data(uint16_t conn_handle, uint16_t cid, T_SERVER_ID service_
 * <b>Example usage</b>
 * \code{.c}
 
-//case 1
-void app_ble_service_init(void)
-{
-    uint8_t server_num = 1;
-    server_register_app_cb(app_ble_service_general_srv_cb);
-    server_init(server_num);
-    gatt_svc_init(GATT_SVC_USE_NORMAL_SERVER, 0);
-}
+    //case 1
+    void app_ble_service_init(void)
+    {
+        uint8_t server_num = 1;
+        server_register_app_cb(app_ble_service_general_srv_cb);
+        server_init(server_num);
+        gatt_svc_init(GATT_SVC_USE_NORMAL_SERVER, 0);
+    }
 
-//case 2
-void app_ble_service_init(void)
-{
-    uint8_t server_num = 1;
-    gatt_svc_init(GATT_SVC_USE_NORMAL_SERVER, server_num);
-}
+    //case 2
+    void app_ble_service_init(void)
+    {
+        uint8_t server_num = 1;
+        gatt_svc_init(GATT_SVC_USE_NORMAL_SERVER, server_num);
+    }
 * \endcode
 */
-bool gatt_svc_init(T_GATT_SVC_MODE mode, uint8_t svc_num);
+bool gatt_svc_init(uint16_t mode, uint8_t svc_num);
+
+/**
+*@brief    Register gatt service general callback function.
+*\xrefitem Added_API_2_14_1_0 "Added Since 2.14.1.0" "Added API"
+*@param[in]  svc_cb  GATT Service general callback function: @ref P_FUNC_GATT_SVC_GENERAL_CB.
+*
+* <b>Example usage</b>
+* \code{.c}
+
+    void app_ble_service_init(void)
+    {
+        gatt_svc_init(GATT_SVC_USE_NORMAL_SERVER, 1);
+        gatt_svc_register_general_cb(app_gatt_svc_general_cb);
+    }
+
+    void app_gatt_svc_general_cb(uint8_t type, void *p_data)
+    {
+        if (type == GATT_SVC_EVENT_REG_RESULT)
+        {
+            T_GATT_SVC_REG_RESULT *p_result = (T_GATT_SVC_REG_RESULT *)p_data;
+
+            APP_PRINT_INFO1("GATT_SVC_EVENT_REG_RESULT: result 0x%x", p_result->result);
+        }
+        else if (type == GATT_SVC_EVENT_REG_AFTER_INIT_RESULT)
+        {
+            T_GATT_SVC_REG_AFTER_INIT_RESULT *p_result = (T_GATT_SVC_REG_AFTER_INIT_RESULT *)p_data;
+            APP_PRINT_INFO2("GATT_SVC_EVENT_REG_AFTER_INIT_RESULT: service_id %d, cause 0x%x",
+                            p_result->service_id, p_result->cause);
+        }
+    }
+* \endcode
+*/
+void gatt_svc_register_general_cb(P_FUNC_GATT_SVC_GENERAL_CB svc_cb);
 
 /**
 *@brief    Handle profile send data complete event. Used when receive the message
@@ -370,12 +452,14 @@ bool gatt_svc_init(T_GATT_SVC_MODE mode, uint8_t svc_num);
 */
 bool gatt_svc_handle_profile_data_cmpl(uint16_t conn_handle, uint16_t cid,
                                        T_SERVER_ID service_id, uint16_t attrib_idx,
-                                       uint16_t credits, uint16_t cause);
+                                       uint16_t credits, uint16_t cause,
+                                       T_GATT_PDU_TYPE type);
 
 /**
 *@brief    Find service characteristic uuid by attribute index.
-*@param[in]  p_srv  Pointer to service table. @ref T_ATTRIB_APPL.
-*@param[in]  index  Attribute index of characteristic.
+*@param[in]  p_srv     Pointer to service table. @ref T_ATTRIB_APPL.
+*@param[in]  index     Attribute index of characteristic.
+*@param[in]  attr_num  Total attribute numer of service.
 *@return   The characteristic uuid. @ref T_CHAR_UUID.
 *
 * <b>Example usage</b>
@@ -389,7 +473,8 @@ bool gatt_svc_handle_profile_data_cmpl(uint16_t conn_handle, uint16_t cid,
 
         PROTOCOL_PRINT_INFO2("tmas_attr_read_cb: attrib_index %d, offset %x", attrib_index, offset);
 
-        T_CHAR_UUID char_uuid = gatt_svc_find_char_uuid_by_index(tmas_attr_tbl, attrib_index);
+        T_CHAR_UUID char_uuid = gatt_svc_find_char_uuid_by_index(tmas_attr_tbl, attrib_index,
+                                                                 sizeof(tmas_attr_tbl) / sizeof(T_ATTRIB_APPL));
         if (char_uuid.uuid_size != UUID_16BIT_SIZE)
         {
             PROTOCOL_PRINT_ERROR1("tmas_attr_read_cb Error: attrib_index 0x%x", attrib_index);
@@ -413,7 +498,8 @@ bool gatt_svc_handle_profile_data_cmpl(uint16_t conn_handle, uint16_t cid,
     }
 * \endcode
 */
-T_CHAR_UUID gatt_svc_find_char_uuid_by_index(const T_ATTRIB_APPL *p_srv, uint16_t index);
+T_CHAR_UUID gatt_svc_find_char_uuid_by_index(const T_ATTRIB_APPL *p_srv, uint16_t index,
+                                             uint16_t attr_num);
 
 /**
 *@brief    Find service characteristic attribute index by uuid.
@@ -440,7 +526,7 @@ T_CHAR_UUID gatt_svc_find_char_uuid_by_index(const T_ATTRIB_APPL *p_srv, uint16_
         char_uuid.uu.char_uuid16 = uuid;
 
         if (!gatt_svc_find_char_index_by_uuid(p_entry->p_attr_tbl, char_uuid,
-                                         p_entry->attr_tbl_size / sizeof(T_ATTRIB_APPL),
+                                         p_entry->attr_num,
                                          &attrib_idx))
         {
             PROTOCOL_PRINT_ERROR1("[CCP]ccp_send_all_notify: find index failed, uuid 0x%x", uuid);
@@ -496,6 +582,12 @@ bool gatt_svc_find_char_index_by_uuid(const T_ATTRIB_APPL *p_srv, T_CHAR_UUID ch
 */
 uint8_t gatt_svc_find_char_index_by_uuid16(const T_ATTRIB_APPL *p_srv, uint16_t char_uuid16,
                                            uint16_t attr_num);
+/** End of BT_GATT_SERVICE_Exported_Functions
+  * @}
+  */
+/** End of BT_GATT_SVC
+  * @}
+  */
 
 #ifdef  __cplusplus
 }
