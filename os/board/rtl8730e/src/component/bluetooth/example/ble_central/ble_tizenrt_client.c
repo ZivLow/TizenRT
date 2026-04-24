@@ -35,22 +35,20 @@ uint16_t scan_timeout = 0;
 static uint16_t general_profile_id = GCS_CLIENT_PROFILE_ID;
 
 trble_result_e rtw_ble_client_init(trble_client_init_config* init_parm)
-{ 
-    if (init_parm == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+{
+	if (init_parm == NULL) {
+		return TRBLE_FAIL;
+	}
 
-    client_init_parm = (trble_client_init_config *)osif_mem_alloc(0, sizeof(trble_client_init_config));
+	client_init_parm = (trble_client_init_config *)osif_mem_alloc(0, sizeof(trble_client_init_config));
 	ble_tizenrt_conn_ind = (rtk_bt_le_conn_ind_t *)osif_mem_alloc(0, sizeof(rtk_bt_le_conn_ind_t));
-	
-    if(client_init_parm == NULL)
-    {
-       dbg("Memory allocation failed \n");
-        return TRBLE_FAIL;
-    }
-    
-    client_init_parm->trble_scan_state_changed_cb = init_parm->trble_scan_state_changed_cb;
+
+	if (client_init_parm == NULL) {
+	dbg("Memory allocation failed \n");
+		return TRBLE_FAIL;
+	}
+
+	client_init_parm->trble_scan_state_changed_cb = init_parm->trble_scan_state_changed_cb;
 	client_init_parm->trble_device_scanned_cb = init_parm->trble_device_scanned_cb;
 	client_init_parm->trble_device_connected_cb = init_parm->trble_device_connected_cb;
 	client_init_parm->trble_device_disconnected_cb = init_parm->trble_device_disconnected_cb;
@@ -59,113 +57,102 @@ trble_result_e rtw_ble_client_init(trble_client_init_config* init_parm)
 	ble_read_results = ble_tizenrt_read_result;
 	ble_write_request_result = &g_write_result;
 	ble_write_no_rsp_result = &g_write_no_rsp_result;
-	
-    ble_tizenrt_central_main(1);
-    return TRBLE_SUCCESS; 
+
+	ble_tizenrt_central_main(1);
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_scan_whitelist_add(trble_addr *addr)
 {
-    if (client_init_parm == NULL || client_init_parm->trble_device_scanned_cb == NULL || addr == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+	if (client_init_parm == NULL || client_init_parm->trble_device_scanned_cb == NULL || addr == NULL) {
+		return TRBLE_FAIL;
+	}
 
-    rtk_bt_le_modify_wl_param_t op_param;
-    memcpy(op_param.addr.addr_val, addr->mac, GAP_BD_ADDR_LEN);
-    op_param.op = RTK_BT_LE_WHITELIST_ADD;
-    if (addr->type == TRBLE_ADDR_TYPE_PUBLIC)
-    {
-        op_param.addr.type = GAP_REMOTE_ADDR_LE_PUBLIC;    /* Public Address */
-    } else if ((TRBLE_ADDR_TYPE_RANDOM_STATIC <= addr->type) && (TRBLE_ADDR_TYPE_RANDOM_NON_RESOLVABLE >= addr->type)) {
-        op_param.addr.type = GAP_REMOTE_ADDR_LE_RANDOM;    /* Random Address */
-    } else {
-       dbg("Unknown Address Type \n");
-        return TRBLE_FAIL;
-    }
+	rtk_bt_le_modify_wl_param_t op_param;
+	memcpy(op_param.addr.addr_val, addr->mac, GAP_BD_ADDR_LEN);
+	op_param.op = RTK_BT_LE_WHITELIST_ADD;
+	if (addr->type == TRBLE_ADDR_TYPE_PUBLIC) {
+		op_param.addr.type = GAP_REMOTE_ADDR_LE_PUBLIC;		/* Public Address */
+	} else if ((TRBLE_ADDR_TYPE_RANDOM_STATIC <= addr->type) && (TRBLE_ADDR_TYPE_RANDOM_NON_RESOLVABLE >= addr->type)) {
+		op_param.addr.type = GAP_REMOTE_ADDR_LE_RANDOM;		/* Random Address */
+	} else {
+		dbg("Unknown Address Type \n");
+		return TRBLE_FAIL;
+	}
 
-    if (RTK_BT_FAIL == rtk_bt_le_gap_modify_whitelist(&op_param))
-    {
-       dbg("modify whitelist fail \n");
-        return TRBLE_FAIL;
-    }
+	if (RTK_BT_FAIL == rtk_bt_le_gap_modify_whitelist(&op_param)) {
+		dbg("modify whitelist fail \n");
+		return TRBLE_FAIL;
+	}
 
-    return TRBLE_SUCCESS;
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_scan_whitelist_delete(trble_addr *addr)
 {
-    if (client_init_parm == NULL || client_init_parm->trble_device_scanned_cb == NULL || addr == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+	if (client_init_parm == NULL || client_init_parm->trble_device_scanned_cb == NULL || addr == NULL) {
+		return TRBLE_FAIL;
+	}
 
-    rtk_bt_le_modify_wl_param_t op_param;
-    memcpy(op_param.addr.addr_val, addr->mac, GAP_BD_ADDR_LEN);
-    op_param.op = RTK_BT_LE_WHITELIST_REMOVE;
-    if (addr->type == TRBLE_ADDR_TYPE_PUBLIC)
-    {
-        op_param.addr.type = GAP_REMOTE_ADDR_LE_PUBLIC;    /* Public Address */
-    } else if ((TRBLE_ADDR_TYPE_RANDOM_STATIC <= addr->type) && (TRBLE_ADDR_TYPE_RANDOM_NON_RESOLVABLE >= addr->type)) {
-        op_param.addr.type = GAP_REMOTE_ADDR_LE_RANDOM;    /* Random Address */
-    } else {
-       dbg("Unknown Address Type \n");
-        return TRBLE_FAIL;
-    }
+	rtk_bt_le_modify_wl_param_t op_param;
+	memcpy(op_param.addr.addr_val, addr->mac, GAP_BD_ADDR_LEN);
+	op_param.op = RTK_BT_LE_WHITELIST_REMOVE;
+	if (addr->type == TRBLE_ADDR_TYPE_PUBLIC) {
+		op_param.addr.type = GAP_REMOTE_ADDR_LE_PUBLIC;		/* Public Address */
+	} else if ((TRBLE_ADDR_TYPE_RANDOM_STATIC <= addr->type) && (TRBLE_ADDR_TYPE_RANDOM_NON_RESOLVABLE >= addr->type)) {
+		op_param.addr.type = GAP_REMOTE_ADDR_LE_RANDOM;		/* Random Address */
+	} else {
+		dbg("Unknown Address Type \n");
+		return TRBLE_FAIL;
+	}
 
 
-    if (RTK_BT_FAIL == rtk_bt_le_gap_modify_whitelist(&op_param))
-    {
-       dbg("modify whitelist fail \n");
-        return TRBLE_FAIL;
-    }
-	
-    return TRBLE_SUCCESS;
+	if (RTK_BT_FAIL == rtk_bt_le_gap_modify_whitelist(&op_param)) {
+		dbg("modify whitelist fail \n");
+		return TRBLE_FAIL;
+	}
+
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_scan_whitelist_clear_all(void)
 {
-    if (client_init_parm == NULL || client_init_parm->trble_device_scanned_cb == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+	if (client_init_parm == NULL || client_init_parm->trble_device_scanned_cb == NULL) {
+		return TRBLE_FAIL;
+	}
 
-    rtk_bt_le_modify_wl_param_t op_param = {0};
-    op_param.op = RTK_BT_LE_WHITELIST_CLEAR;
+	rtk_bt_le_modify_wl_param_t op_param = {0};
+	op_param.op = RTK_BT_LE_WHITELIST_CLEAR;
 
-    if (RTK_BT_OK != rtk_bt_le_gap_modify_whitelist(&op_param))
-    {
-       dbg("whitelist clear failed!");
-        return TRBLE_FAIL;
-    }
+	if (RTK_BT_OK != rtk_bt_le_gap_modify_whitelist(&op_param)) {
+		dbg("whitelist clear failed!");
+		return TRBLE_FAIL;
+	}
 
-    return TRBLE_SUCCESS;
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_start_scan(void)
-{ 
-    if (client_init_parm == NULL || client_init_parm->trble_device_scanned_cb == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+{
+	if (client_init_parm == NULL || client_init_parm->trble_device_scanned_cb == NULL) {
+		return TRBLE_FAIL;
+	}
 
-    rtk_bt_le_gap_dev_state_t new_state;
-    if(RTK_BT_OK != rtk_bt_le_gap_get_dev_state(&new_state))
-    {
-        dbg("get dev state fail \n");
-    }
+	rtk_bt_le_gap_dev_state_t new_state;
+	if (RTK_BT_OK != rtk_bt_le_gap_get_dev_state(&new_state)) {
+		dbg("get dev state fail \n");
+	}
 
 	if (new_state.gap_scan_state != GAP_SCAN_STATE_IDLE) {
 		return TRBLE_INVALID_STATE;
 	}
-	
-    if (RTK_BT_FAIL == rtk_bt_le_gap_start_scan())
-    {
-        dbg("start scan failed! \n");
-        return TRBLE_FAIL;
-    }
 
-    return TRBLE_SUCCESS;
+	if (RTK_BT_FAIL == rtk_bt_le_gap_start_scan()) {
+		dbg("start scan failed! \n");
+		return TRBLE_FAIL;
+	}
+
+	return TRBLE_SUCCESS;
 }
 
 void *scan_filter_tmr_handle = NULL;
@@ -193,8 +180,7 @@ trble_result_e rtw_ble_client_set_scan(uint16_t scan_interval, uint16_t scan_win
 	gap_scan_param.own_addr_type = RTK_BT_LE_ADDR_TYPE_PUBLIC;
 	gap_scan_param.filter_policy = RTK_BT_LE_SCAN_FILTER_ALLOW_ALL;
 	gap_scan_param.duplicate_opt = RTK_BT_LE_SCAN_DUPLICATE_DISABLE;
-	if(RTK_BT_OK != rtk_bt_le_gap_set_scan_param(&gap_scan_param))
-	{
+	if (RTK_BT_OK != rtk_bt_le_gap_set_scan_param(&gap_scan_param)) {
 		dbg("rtw_ble_client_set_scan set scan fail !! \n");
 		return TRBLE_FAIL;
 	} else {
@@ -204,49 +190,45 @@ trble_result_e rtw_ble_client_set_scan(uint16_t scan_interval, uint16_t scan_win
 }
 
 trble_result_e rtw_ble_client_start_scan_with_filter(trble_scan_filter* scan_parm, bool whitelist_enable)
-{ 
-    if (client_init_parm == NULL || client_init_parm->trble_device_scanned_cb == NULL || scan_parm == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+{
+	if (client_init_parm == NULL || client_init_parm->trble_device_scanned_cb == NULL || scan_parm == NULL) {
+		return TRBLE_FAIL;
+	}
 
-    rtk_bt_le_gap_dev_state_t new_state;
-    if(RTK_BT_OK != rtk_bt_le_gap_get_dev_state(&new_state))
-    {
-        dbg("get dev state fail \n");
-    }
+	rtk_bt_le_gap_dev_state_t new_state;
+	if (RTK_BT_OK != rtk_bt_le_gap_get_dev_state(&new_state)) {
+		dbg("get dev state fail \n");
+	}
 
 	if (new_state.gap_scan_state != GAP_SCAN_STATE_IDLE) {
 		dbg("Scan already started!! \n");
 		return TRBLE_INVALID_STATE;
 	}
 	rtk_bt_le_scan_info_filter_param_t scan_info;
-    if (scan_parm->raw_data_length != 0) {
+	if (scan_parm->raw_data_length != 0) {
 		scan_info.len = scan_parm->raw_data_length;
 		scan_info.enable = true;
 		scan_info.p_filter = scan_parm->raw_data;
 		scan_info.offset = 0;
-        if(RTK_BT_OK != rtk_bt_le_gap_scan_info_filter(&scan_info))
-        {
-            dbg("set scan info fail !! \n");
-            return TRBLE_FAIL;
-        } else {
-            dbg("set scan info success \n");
-        }
-    } else {
-    	scan_info.enable = false;
+		if (RTK_BT_OK != rtk_bt_le_gap_scan_info_filter(&scan_info)) {
+			dbg("set scan info fail !! \n");
+			return TRBLE_FAIL;
+		} else {
+			dbg("set scan info success \n");
+		}
+	} else {
+		scan_info.enable = false;
 		scan_info.len = 0;
 		scan_info.p_filter = NULL;
 		scan_info.offset = 0;
-        if(RTK_BT_OK == rtk_bt_le_gap_scan_info_filter(&scan_info))
-        {
-            dbg("disable scan info filter success \n");
-        } else {
-            dbg("disable scan info filter fail!!! \n");
-        }
-    }
+		if (RTK_BT_OK == rtk_bt_le_gap_scan_info_filter(&scan_info)) {
+			dbg("disable scan info filter success \n");
+		} else {
+			dbg("disable scan info filter fail!!! \n");
+		}
+	}
 
-	if(whitelist_enable){
+	if (whitelist_enable){
 		rtk_bt_le_scan_param_t gap_scan_param;
 		gap_scan_param.type = RTK_BT_LE_SCAN_TYPE_ACTIVE;
 		gap_scan_param.interval = 0x60;
@@ -254,128 +236,115 @@ trble_result_e rtw_ble_client_start_scan_with_filter(trble_scan_filter* scan_par
 		gap_scan_param.own_addr_type = RTK_BT_LE_ADDR_TYPE_PUBLIC;
 		gap_scan_param.filter_policy = RTK_BT_LE_SCAN_FILTER_ALLOW_ONLY_WLST;
 		gap_scan_param.duplicate_opt = RTK_BT_LE_SCAN_DUPLICATE_DISABLE;
-        if(RTK_BT_OK != rtk_bt_le_gap_set_scan_param(&gap_scan_param))
-        {
-            dbg("set scan param fail \n");
-        }
+		if (RTK_BT_OK != rtk_bt_le_gap_set_scan_param(&gap_scan_param)) {
+			dbg("set scan param fail \n");
+		}
 	}
-    if (RTK_BT_OK != rtk_bt_le_gap_start_scan())
-    {
-        dbg("start scan failed! \n");
-        return TRBLE_FAIL;
-    }
+	if (RTK_BT_OK != rtk_bt_le_gap_start_scan()) {
+		dbg("start scan failed! \n");
+		return TRBLE_FAIL;
+	}
 
-    if(scan_parm->scan_duration != 0)
-    {
-        if(NULL == scan_filter_tmr_handle)
-        {
-            if(!osif_timer_create(&scan_filter_tmr_handle, "scan_with_filter", 0, scan_parm->scan_duration, 0, scan_stop_cb))
-            {
-                dbg("timer creat fail!! \n");
-                return TRBLE_FAIL;
-            } else {
-                dbg("timer creat success \n");
-            }
+	if (scan_parm->scan_duration != 0) {
+		if (NULL == scan_filter_tmr_handle) {
+			if (!osif_timer_create(&scan_filter_tmr_handle, "scan_with_filter", 0, scan_parm->scan_duration, 0, scan_stop_cb)) {
+				dbg("timer creat fail!! \n");
+				return TRBLE_FAIL;
+			} else {
+				dbg("timer creat success \n");
+			}
 
-            if(!osif_timer_start(&scan_filter_tmr_handle))
-            {
-                dbg("timer start fail!! \n");
-                return TRBLE_FAIL;
-            } else {
-                dbg("timer start success \n");
-            }
-        } else {
-            if(!osif_timer_restart(&scan_filter_tmr_handle, scan_parm->scan_duration))
-            {
-                dbg("timer restart fail!! \n");
-                return TRBLE_FAIL;
-            } else {
-                dbg("timer restart success \n");
-            }
-        }
-    }
-    return TRBLE_SUCCESS;  
+			if (!osif_timer_start(&scan_filter_tmr_handle)) {
+				dbg("timer start fail!! \n");
+				return TRBLE_FAIL;
+			} else {
+				dbg("timer start success \n");
+			}
+		} else {
+			if (!osif_timer_restart(&scan_filter_tmr_handle, scan_parm->scan_duration)) {
+				dbg("timer restart fail!! \n");
+				return TRBLE_FAIL;
+			} else {
+				dbg("timer restart success \n");
+			}
+		}
+	}
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_stop_scan(void)
-{ 
-    rtk_bt_le_gap_dev_state_t new_state;
-    if(RTK_BT_OK != rtk_bt_le_gap_get_dev_state(&new_state))
-    {
-        dbg("get dev state fail \n");
-    }
+{
+	rtk_bt_le_gap_dev_state_t new_state;
+	if (RTK_BT_OK != rtk_bt_le_gap_get_dev_state(&new_state)) {
+		dbg("get dev state fail \n");
+	}
 
 	if (new_state.gap_scan_state != GAP_SCAN_STATE_SCANNING) {
 		return TRBLE_INVALID_STATE;
 	}
 
-    if (RTK_BT_OK != rtk_bt_le_gap_stop_scan())
-    {
-        dbg("stop scan failed! \n");
-        return TRBLE_FAIL;
-    }
+	if (RTK_BT_OK != rtk_bt_le_gap_stop_scan()) {
+		dbg("stop scan failed! \n");
+		return TRBLE_FAIL;
+	}
 
-    return TRBLE_SUCCESS;
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_connect(trble_conn_info* conn_info, bool is_secured_connect)
 {
-    if(ble_client_connect_is_running)
-    {
-        dbg("ble_client_connect is running \n");
-        return TRBLE_FAIL;
-    } else
-        ble_client_connect_is_running = 1;
+	if (ble_client_connect_is_running) {
+		dbg("ble_client_connect is running \n");
+		return TRBLE_FAIL;
+	} else
+		ble_client_connect_is_running = 1;
 
-    if(conn_info == NULL)
-    {
-        dbg("invalid \n");
-        ble_client_connect_is_running = 0;
-        return TRBLE_FAIL;
-    }
+	if (conn_info == NULL) {
+		dbg("invalid \n");
+		ble_client_connect_is_running = 0;
+		return TRBLE_FAIL;
+	}
 
 	is_secured = is_secured_connect;
-	
-    rtk_bt_le_create_conn_param_t conn_param;
-    memcpy(conn_param.peer_addr.addr_val, conn_info->addr.mac, GAP_BD_ADDR_LEN);
-    conn_param.peer_addr.type = conn_info->addr.type;
-    conn_param.conn_interval_max = conn_info->conn_interval;
+
+	rtk_bt_le_create_conn_param_t conn_param;
+	memcpy(conn_param.peer_addr.addr_val, conn_info->addr.mac, GAP_BD_ADDR_LEN);
+	conn_param.peer_addr.type = conn_info->addr.type;
+	conn_param.conn_interval_max = conn_info->conn_interval;
 	conn_param.conn_interval_min = conn_info->conn_interval;
-    conn_param.conn_latency = conn_info->slave_latency;
-    conn_param.supv_timeout = 1000;
+	conn_param.conn_latency = conn_info->slave_latency;
+	conn_param.supv_timeout = 1000;
 	conn_param.scan_timeout = conn_info->scan_timeout / 10;
 	scan_timeout = conn_param.scan_timeout;
 	conn_param.own_addr_type = 0;
 	conn_param.scan_interval = 0x60;
 	conn_param.scan_window = 0x30;
 	conn_param.filter_policy = RTK_BT_LE_CONN_FILTER_WITHOUT_WHITELIST;
-    dbg("DestAddr: 0x%02X:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X \n", 
-                       conn_param.peer_addr.addr_val[5], conn_param.peer_addr.addr_val[4], conn_param.peer_addr.addr_val[3],
-                       conn_param.peer_addr.addr_val[2], conn_param.peer_addr.addr_val[1], conn_param.peer_addr.addr_val[0]);
-    dbg("ci: %d si: %d \n", conn_info->conn_interval, conn_info->slave_latency);
-    if (RTK_BT_OK != rtk_bt_le_gap_connect(&conn_param))
-    {
-        if(ble_client_connect_is_running)
-    		ble_client_connect_is_running = 0;
+	dbg("DestAddr: 0x%02X:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X \n",
+					conn_param.peer_addr.addr_val[5], conn_param.peer_addr.addr_val[4], conn_param.peer_addr.addr_val[3],
+					conn_param.peer_addr.addr_val[2], conn_param.peer_addr.addr_val[1], conn_param.peer_addr.addr_val[0]);
+	dbg("ci: %d si: %d \n", conn_info->conn_interval, conn_info->slave_latency);
+	if (RTK_BT_OK != rtk_bt_le_gap_connect(&conn_param)) {
+		if (ble_client_connect_is_running)
+			ble_client_connect_is_running = 0;
 
-        dbg("connect failed! \n");
- 	   return TRBLE_FAIL;
-    }
-    return TRBLE_SUCCESS;
+		dbg("connect failed! \n");
+		return TRBLE_FAIL;
+	}
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_bond(trble_conn_handle conn_handle)
 {
-    uint16_t ret = rtk_bt_le_sm_start_security(conn_handle);
-    return ret;
+	uint16_t ret = rtk_bt_le_sm_start_security(conn_handle);
+	return ret;
 }
 
 trble_result_e rtw_ble_client_conn_param_update(trble_conn_handle *conn_handle, trble_conn_param *conn_param)
 {
-    rtk_bt_le_update_conn_param_t param;
+	rtk_bt_le_update_conn_param_t param;
 
-	if(conn_handle == NULL || conn_param == NULL)
-	{
+	if (conn_handle == NULL || conn_param == NULL) {
 		dbg("Invalid input \n");
 		return TRBLE_INVALID_ARGS;
 	}
@@ -386,190 +355,175 @@ trble_result_e rtw_ble_client_conn_param_update(trble_conn_handle *conn_handle, 
 	param.conn_latency = conn_param->slave_latency;
 	param.supv_timeout = conn_param->supervision_timeout;
 
-	if(RTK_BT_FAIL == rtk_bt_le_gap_update_conn_param(&param))
-	{
+	if (RTK_BT_FAIL == rtk_bt_le_gap_update_conn_param(&param)) {
 		dbg("connection update fail \n");
 		return TRBLE_FAIL;
 	}
-	return TRBLE_SUCCESS; 
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_read_connected_device_list(trble_connected_list* out_connected_list)
-{ 
-    if (out_connected_list == NULL)
-    {
-        return TRBLE_FAIL;
-    }
-    
-    memset(out_connected_list, 0, sizeof(trble_connected_list));
+{
+	if (out_connected_list == NULL) {
+		return TRBLE_FAIL;
+	}
+
+	memset(out_connected_list, 0, sizeof(trble_connected_list));
 	uint16_t ret = 0;
 	rtk_bt_le_get_active_conn_t active_conn = {0};
 	ret = rtk_bt_le_gap_get_active_conn(&active_conn);
-    if (ret) {
-        dbg("GAP get active conn num failed! err: 0x%x", ret);
-        return TRBLE_FAIL;
-    }
-    for(uint16_t i = 0; i < active_conn.conn_num; i++)
-    {
-        out_connected_list->conn_handle[i] = active_conn.conn_handle[i];
-    }
+	if (ret) {
+		dbg("GAP get active conn num failed! err: 0x%x", ret);
+		return TRBLE_FAIL;
+	}
+	for (uint16_t i = 0; i < active_conn.conn_num; i++) {
+		out_connected_list->conn_handle[i] = active_conn.conn_handle[i];
+	}
 	out_connected_list->connected_count = active_conn.conn_num;
-    return TRBLE_SUCCESS; 
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_read_connected_info(trble_conn_handle conn_handle, trble_device_connected* out_connected_device)
-{ 
-    if (out_connected_device == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+{
+	if (out_connected_device == NULL) {
+		return TRBLE_FAIL;
+	}
 
 	rtk_bt_le_conn_info_t conn_info;
 	uint8_t bond_size;
 	bool is_bonded = false;
 	uint16_t mtu_size = 0;
-	
-	if (RTK_BT_OK != rtk_bt_le_sm_get_bond_num(&bond_size))
-    {
-        dbg("get bond number failed! \n");
-        return TRBLE_FAIL;
-    }
 
-	if (RTK_BT_OK != rtk_bt_le_gap_get_conn_info((uint8_t)conn_handle, &conn_info))
-    {
- 	   dbg("get connenct info failed! \n");
- 	   return TRBLE_FAIL;
-    } 
+	if (RTK_BT_OK != rtk_bt_le_sm_get_bond_num(&bond_size)) {
+		dbg("get bond number failed! \n");
+		return TRBLE_FAIL;
+	}
 
-	if (RTK_BT_OK != rtk_bt_le_gap_get_mtu_size(conn_handle, &mtu_size))
-    {
-        dbg("get mtu size failed! \n");
-        return TRBLE_FAIL;
-    }
+	if (RTK_BT_OK != rtk_bt_le_gap_get_conn_info((uint8_t)conn_handle, &conn_info)) {
+		dbg("get connenct info failed! \n");
+		return TRBLE_FAIL;
+	}
 
-    rtk_bt_le_bond_info_t* bond_info = (rtk_bt_le_bond_info_t*)osif_mem_alloc(RAM_TYPE_DATA_ON, bond_size * sizeof(rtk_bt_le_bond_info_t));
-	if(!bond_info){
+	if (RTK_BT_OK != rtk_bt_le_gap_get_mtu_size(conn_handle, &mtu_size)) {
+		dbg("get mtu size failed! \n");
+		return TRBLE_FAIL;
+	}
+
+	rtk_bt_le_bond_info_t* bond_info = (rtk_bt_le_bond_info_t*)osif_mem_alloc(RAM_TYPE_DATA_ON, bond_size * sizeof(rtk_bt_le_bond_info_t));
+	if (!bond_info){
 		dbg("bond info malloc failed! \n");
 		return TRBLE_FAIL;
 	}
-    memset(bond_info, 0, bond_size * sizeof(rtk_bt_le_bond_info_t));
-	if (RTK_BT_OK != rtk_bt_le_sm_get_bond_info(bond_info, &bond_size))
-    {
-    	osif_mem_free(bond_info);
-        dbg("get bond info failed! \n");
-        return TRBLE_FAIL;
-    }
-		
-    out_connected_device->conn_handle = conn_handle;
-    out_connected_device->conn_info.addr.type = conn_info.remote.type;
-	out_connected_device->conn_info.conn_interval = conn_info.interval;
-    out_connected_device->conn_info.slave_latency = conn_info.latency;
-    out_connected_device->conn_info.mtu = mtu_size;
-    memcpy(out_connected_device->conn_info.addr.mac, conn_info.remote.addr_val, GAP_BD_ADDR_LEN);
+	memset(bond_info, 0, bond_size * sizeof(rtk_bt_le_bond_info_t));
+	if (RTK_BT_OK != rtk_bt_le_sm_get_bond_info(bond_info, &bond_size)) {
+		osif_mem_free(bond_info);
+		dbg("get bond info failed! \n");
+		return TRBLE_FAIL;
+	}
 
-	for(int i = 0; i < bond_size; i++){
-		if(!memcmp(conn_info.remote.addr_val, bond_info[i].remote_addr.addr_val, GAP_BD_ADDR_LEN)){
+	out_connected_device->conn_handle = conn_handle;
+	out_connected_device->conn_info.addr.type = conn_info.remote.type;
+	out_connected_device->conn_info.conn_interval = conn_info.interval;
+	out_connected_device->conn_info.slave_latency = conn_info.latency;
+	out_connected_device->conn_info.mtu = mtu_size;
+	memcpy(out_connected_device->conn_info.addr.mac, conn_info.remote.addr_val, GAP_BD_ADDR_LEN);
+
+	for (int i = 0; i < bond_size; i++){
+		if (!memcmp(conn_info.remote.addr_val, bond_info[i].remote_addr.addr_val, GAP_BD_ADDR_LEN)){
 			is_bonded = true;
 			break;
-		}		
+		}
 	}
-    out_connected_device->is_bonded = is_bonded;
+	out_connected_device->is_bonded = is_bonded;
 
-    if (bond_info)
-        osif_mem_free(bond_info);
+	if (bond_info)
+		osif_mem_free(bond_info);
 
-    return TRBLE_SUCCESS;
+	return TRBLE_SUCCESS;
 }
 
 uint8_t *del_bond_addr = NULL;
 trble_result_e rtw_ble_client_delete_bond(trble_addr* addr)
 {
-    if(addr == NULL)
-    {
-        dbg("Invalid input \n");
-        return TRBLE_INVALID_ARGS;
-    }
-	
+	if (addr == NULL) {
+		dbg("Invalid input \n");
+		return TRBLE_INVALID_ARGS;
+	}
+
 	uint16_t device_count;
-    trble_result_e ret = TRBLE_FAIL;
-    rtk_bt_le_addr_t del_addr;
+	trble_result_e ret = TRBLE_FAIL;
+	rtk_bt_le_addr_t del_addr;
 	bool bond_addr_found = false;
-	
+
 	del_bond_addr = addr->mac;
-    if(RTK_BT_OK != rtk_bt_le_sm_get_bond_num((uint8_t *)&device_count)){
+	if (RTK_BT_OK != rtk_bt_le_sm_get_bond_num((uint8_t *)&device_count)){
 		dbg("get bond num failed \n");
-    }
-    dbg("bonded num : %d \n", device_count);
+	}
+	dbg("bonded num : %d \n", device_count);
 
-	if (!device_count)
-    {
-        dbg("no bond device! \n");
-        return TRBLE_FAIL;
-    }
+	if (!device_count) {
+		dbg("no bond device! \n");
+		return TRBLE_FAIL;
+	}
 
-    rtk_bt_le_bond_info_t* bond_info = (rtk_bt_le_bond_info_t *)osif_mem_alloc(RAM_TYPE_DATA_ON, device_count * sizeof(rtk_bt_le_bond_info_t));
-	if(!bond_info){
+	rtk_bt_le_bond_info_t* bond_info = (rtk_bt_le_bond_info_t *)osif_mem_alloc(RAM_TYPE_DATA_ON, device_count * sizeof(rtk_bt_le_bond_info_t));
+	if (!bond_info){
 		dbg("bond info malloc failed \n");
 		return TRBLE_FAIL;
 	}
-    memset(bond_info, 0, device_count * sizeof(rtk_bt_le_bond_info_t));
-	if(RTK_BT_OK != rtk_bt_le_sm_get_bond_info(bond_info, (uint8_t *)&device_count)){
+	memset(bond_info, 0, device_count * sizeof(rtk_bt_le_bond_info_t));
+	if (RTK_BT_OK != rtk_bt_le_sm_get_bond_info(bond_info, (uint8_t *)&device_count)){
 		dbg("get bond info failed \n");
 		osif_mem_free(bond_info);
 		return TRBLE_FAIL;
 	}
 
-	for(int i = 0; i < (device_count); i++)
-	{
-		if(!memcmp(bond_info[i].remote_addr.addr_val, addr->mac, TRBLE_BD_ADDR_MAX_LEN)){
+	for (int i = 0; i < (device_count); i++) {
+		if (!memcmp(bond_info[i].remote_addr.addr_val, addr->mac, TRBLE_BD_ADDR_MAX_LEN)){
 			del_addr.type = bond_info[i].remote_addr.type;
 			bond_addr_found = true;
 			break;
 		}
 	}
-	if(!bond_addr_found)
-	{
+	if (!bond_addr_found) {
 		dbg("bond addr not found! \n");
 		osif_mem_free(bond_info);
 		return TRBLE_FAIL;
 	}
-	
+
 	memcpy(del_addr.addr_val, addr->mac, TRBLE_BD_ADDR_MAX_LEN);
-	
-    if(RTK_BT_OK == rtk_bt_le_sm_delete_bond_device(&del_addr))
-    {
-       dbg("success \n");
-        ret = TRBLE_SUCCESS;
-    }else{
-       dbg("delete bonded device failed \n");
-    }
+
+	if (RTK_BT_OK == rtk_bt_le_sm_delete_bond_device(&del_addr)) {
+		dbg("success \n");
+		ret = TRBLE_SUCCESS;
+	} else {
+		dbg("delete bonded device failed \n");
+	}
 
 	if (bond_info)
-        osif_mem_free(bond_info);
-	
-    return ret;
+		osif_mem_free(bond_info);
+
+	return ret;
 
 }
 
 trble_result_e rtw_ble_client_delete_bond_all(void)
 {
-    if(RTK_BT_OK != rtk_bt_le_sm_clear_bond_list())
-    {
-       dbg("delete bonded device all fail \n");
-        return TRBLE_FAIL;
-    }
-    return TRBLE_SUCCESS;
+	if (RTK_BT_OK != rtk_bt_le_sm_clear_bond_list()) {
+		dbg("delete bonded device all fail \n");
+		return TRBLE_FAIL;
+	}
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_disconnect(trble_conn_handle conn_handle)
 {
-    if (RTK_BT_OK != rtk_bt_le_gap_disconnect(conn_handle))
-    {
-        dbg("disconnect failed! \n");
-        return TRBLE_FAIL;
-    }
+	if (RTK_BT_OK != rtk_bt_le_gap_disconnect(conn_handle)) {
+		dbg("disconnect failed! \n");
+		return TRBLE_FAIL;
+	}
 
-    return TRBLE_SUCCESS;
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_disconnect_all(void)
@@ -577,133 +531,122 @@ trble_result_e rtw_ble_client_disconnect_all(void)
 	uint16_t ret = 0;
 	rtk_bt_le_get_active_conn_t active_conn = {0};
 	ret = rtk_bt_le_gap_get_active_conn(&active_conn);
-    if (ret) {
-       dbg("GAP get active conn num failed! err: 0x%x", ret);
-        return TRBLE_FAIL;
-    }
-	
-    for(uint16_t i = 0; i < active_conn.conn_num; i++)
-    {
-        if (RTK_BT_OK != rtk_bt_le_gap_disconnect(active_conn.conn_handle[i]))
-	    {
-	        dbg("conn id %d disconnect failed! \n",active_conn.conn_handle[i]);
-	        return TRBLE_FAIL;
-	    }
-    }
-    return TRBLE_SUCCESS; 
+	if (ret) {
+		dbg("GAP get active conn num failed! err: 0x%x", ret);
+		return TRBLE_FAIL;
+	}
+
+	for (uint16_t i = 0; i < active_conn.conn_num; i++) {
+		if (RTK_BT_OK != rtk_bt_le_gap_disconnect(active_conn.conn_handle[i])) {
+			dbg("conn id %d disconnect failed! \n",active_conn.conn_handle[i]);
+			return TRBLE_FAIL;
+		}
+	}
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_operation_read(trble_operation_handle* handle, trble_data* out_data)
-{ 
-    if (handle == NULL || out_data == NULL || out_data->data == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+{
+	if (handle == NULL || out_data == NULL || out_data->data == NULL) {
+		return TRBLE_FAIL;
+	}
 
 	rtk_bt_le_get_active_conn_t active_conn = {0};
-    if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn))
-    {
-        dbg("get active connection failed! \n");
-        return TRBLE_FAIL;
-    }
-	if(!active_conn.conn_num){
+	if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn)) {
+		dbg("get active connection failed! \n");
+		return TRBLE_FAIL;
+	}
+	if (!active_conn.conn_num){
 		dbg("No active connection \r\n");
 		return TRBLE_FAIL;
 	}
 
-    rtk_bt_gattc_read_param_t read_param;
+	rtk_bt_gattc_read_param_t read_param;
 	read_param.profile_id = general_profile_id;
-    read_param.conn_handle = handle->conn_handle;
-    read_param.type = RTK_BT_GATT_CHAR_READ_BY_HANDLE;
+	read_param.conn_handle = handle->conn_handle;
+	read_param.type = RTK_BT_GATT_CHAR_READ_BY_HANDLE;
 	read_param.by_handle.handle = handle->attr_handle;
-    if (RTK_BT_OK != rtk_bt_gattc_read(&read_param))
-    {
-        dbg("read failed! \n");
-        return TRBLE_FAIL;
-    }
+	if (RTK_BT_OK != rtk_bt_gattc_read(&read_param)) {
+		dbg("read failed! \n");
+		return TRBLE_FAIL;
+	}
 	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_operation_write(trble_operation_handle* handle, trble_data* in_data)
 {
-    if (handle == NULL || in_data == NULL || in_data->data == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+	if (handle == NULL || in_data == NULL || in_data->data == NULL) {
+		return TRBLE_FAIL;
+	}
 
 	rtk_bt_le_get_active_conn_t active_conn = {0};
-    if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn))
-    {
-        dbg("get active connection failed! \n");
-        return TRBLE_FAIL;
-    }
-	if(!active_conn.conn_num){
+	if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn)) {
+		dbg("get active connection failed! \n");
+		return TRBLE_FAIL;
+	}
+	if (!active_conn.conn_num){
 		dbg("No active connection \r\n");
 		return TRBLE_FAIL;
 	}
 
-    rtk_bt_gattc_write_param_t write_param;;
-    dbg("att_handle 0x%x len 0x%x data \n", handle->attr_handle, in_data->length);
+	rtk_bt_gattc_write_param_t write_param;;
+	dbg("att_handle 0x%x len 0x%x data \n", handle->attr_handle, in_data->length);
 	write_param.profile_id = general_profile_id;
-    write_param.length = in_data->length;
-    write_param.conn_handle = handle->conn_handle;
-    write_param.handle = handle->attr_handle;
+	write_param.length = in_data->length;
+	write_param.conn_handle = handle->conn_handle;
+	write_param.handle = handle->attr_handle;
 	write_param.type = RTK_BT_GATT_CHAR_WRITE_REQ;
 	write_param.data = in_data->data;
-	
-	if(!write_param.data){
+
+	if (!write_param.data){
 		dbg("write failed: cannot alloc memory \n");
 	}
-	
-    ble_write_request_result->status = 0xff;
-    if (RTK_BT_OK != rtk_bt_gattc_write(&write_param))
-    {
-        dbg("write failed! \n");
-        return TRBLE_FAIL;
-    }
-    
-    return TRBLE_SUCCESS;
+
+	ble_write_request_result->status = 0xff;
+	if (RTK_BT_OK != rtk_bt_gattc_write(&write_param)) {
+		dbg("write failed! \n");
+		return TRBLE_FAIL;
+	}
+
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_operation_write_no_response(trble_operation_handle* handle, trble_data* in_data)
 {
-    if (handle == NULL || in_data == NULL || in_data->data == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+	if (handle == NULL || in_data == NULL || in_data->data == NULL) {
+		return TRBLE_FAIL;
+	}
 
 	rtk_bt_le_get_active_conn_t active_conn = {0};
-    if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn))
-    {
-       dbg("get active connection failed! \n");
-        return TRBLE_FAIL;
-    }
-	if(!active_conn.conn_num){
+	if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn)) {
+		dbg("get active connection failed! \n");
+		return TRBLE_FAIL;
+	}
+	if (!active_conn.conn_num){
 		dbg("No active connection \r\n");
 		return TRBLE_FAIL;
 	}
 
-    rtk_bt_gattc_write_param_t write_param;;
-    dbg("att_handle 0x%x len 0x%x data \n", handle->attr_handle, in_data->length);
+	rtk_bt_gattc_write_param_t write_param;;
+	dbg("att_handle 0x%x len 0x%x data \n", handle->attr_handle, in_data->length);
 	write_param.profile_id = general_profile_id;
-    write_param.length = in_data->length;
-    write_param.conn_handle = handle->conn_handle;
-    write_param.handle = handle->attr_handle;
+	write_param.length = in_data->length;
+	write_param.conn_handle = handle->conn_handle;
+	write_param.handle = handle->attr_handle;
 	write_param.type = RTK_BT_GATT_CHAR_WRITE_NO_RSP;
 	write_param.data = in_data->data;
-	
-	if(!write_param.data){
+
+	if (!write_param.data){
 		dbg("write failed: cannot alloc memory \n");
 	}
 
-    ble_write_no_rsp_result->status = 0xff;
-    if (RTK_BT_OK != rtk_bt_gattc_write(&write_param))
-    {
-        dbg("read failed! \n");
-        return TRBLE_FAIL;
-    }
+	ble_write_no_rsp_result->status = 0xff;
+	if (RTK_BT_OK != rtk_bt_gattc_write(&write_param)) {
+		dbg("read failed! \n");
+		return TRBLE_FAIL;
+	}
 
-    return TRBLE_SUCCESS;
+	return TRBLE_SUCCESS;
 }
 
 extern rtk_bt_gattc_app_priv_t *gattc_priv;
@@ -711,14 +654,13 @@ trble_result_e rtw_ble_client_write_read_queue_cnt(trble_conn_handle* handle, ui
 {
 	uint8_t con_id;
 
-	rtk_bt_le_gap_get_conn_id(*handle, &con_id); 
+	rtk_bt_le_gap_get_conn_id(*handle, &con_id);
 	rtk_bt_gatt_queue_t *queue;
 	queue = &gattc_priv->request_queue[con_id];
 	*write_read_count = queue->pending_ele_num;
 	/* The number of element in pending queue should be limited, otherwise
 		the notification of high frequnce will use up memory */
-	if (queue->pending_ele_num >= BT_QUEUE_PENDING_ELEMENT_MAX)
-	{
+	if (queue->pending_ele_num >= BT_QUEUE_PENDING_ELEMENT_MAX) {
 		debug_print("Error: Client write/read pending queue full, wait a moment to send data again !!!\r\n");
 		return TRBLE_BUSY;
 	}
@@ -727,108 +669,97 @@ trble_result_e rtw_ble_client_write_read_queue_cnt(trble_conn_handle* handle, ui
 }
 
 trble_result_e rtw_ble_client_operation_enable_notification(trble_operation_handle* handle)
-{ 
-    if (handle == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+{
+	if (handle == NULL) {
+		return TRBLE_FAIL;
+	}
 
 	rtk_bt_le_get_active_conn_t active_conn = {0};
-    if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn))
-    {
-        dbg("get active connection failed! \n");
-        return TRBLE_FAIL;
-    }
-	if(!active_conn.conn_num){
+	if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn)) {
+		dbg("get active connection failed! \n");
+		return TRBLE_FAIL;
+	}
+	if (!active_conn.conn_num){
 		dbg("No active connection \r\n");
 		return TRBLE_FAIL;
 	}
 
 
-    if (client_init_parm == NULL || client_init_parm->trble_operation_notification_cb == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+	if (client_init_parm == NULL || client_init_parm->trble_operation_notification_cb == NULL) {
+		return TRBLE_FAIL;
+	}
 
-    rtk_bt_gattc_update_cccd_param_t p_update_cccd_param = {0};
+	rtk_bt_gattc_update_cccd_param_t p_update_cccd_param = {0};
 	p_update_cccd_param.conn_handle = handle->conn_handle;
 	p_update_cccd_param.profile_id = general_profile_id;
 	p_update_cccd_param.cccd_handle = handle->attr_handle;
 	p_update_cccd_param.char_val_handle = handle->attr_handle - 1;
 	p_update_cccd_param.bnotify = true;
 
-	if (RTK_BT_OK != rtk_bt_gattc_enable_notify_or_indicate(&p_update_cccd_param))
-    {
-        dbg("enable notify failed! \n");
-        return TRBLE_FAIL;
-    }
-    return TRBLE_SUCCESS;
+	if (RTK_BT_OK != rtk_bt_gattc_enable_notify_or_indicate(&p_update_cccd_param)) {
+		dbg("enable notify failed! \n");
+		return TRBLE_FAIL;
+	}
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_operation_enable_indication(trble_operation_handle* handle)
-{ 
-    if (handle == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+{
+	if (handle == NULL) {
+		return TRBLE_FAIL;
+	}
 
 	rtk_bt_le_get_active_conn_t active_conn = {0};
-    if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn))
-    {
-        dbg("get active connection failed! \n");
-        return TRBLE_FAIL;
-    }
-	if(!active_conn.conn_num){
+	if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn)) {
+		dbg("get active connection failed! \n");
+		return TRBLE_FAIL;
+	}
+	if (!active_conn.conn_num){
 		dbg("No active connection \r\n");
 		return TRBLE_FAIL;
 	}
 
 
-    if (client_init_parm == NULL || client_init_parm->trble_operation_notification_cb == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+	if (client_init_parm == NULL || client_init_parm->trble_operation_notification_cb == NULL) {
+		return TRBLE_FAIL;
+	}
 
-    rtk_bt_gattc_update_cccd_param_t p_update_cccd_param = {0};
+	rtk_bt_gattc_update_cccd_param_t p_update_cccd_param = {0};
 	p_update_cccd_param.conn_handle = handle->conn_handle;
 	p_update_cccd_param.profile_id = general_profile_id;
 	p_update_cccd_param.cccd_handle = handle->attr_handle;
 	p_update_cccd_param.char_val_handle = handle->attr_handle - 1;
 	p_update_cccd_param.bindicate = true;
 
-	if (RTK_BT_OK != rtk_bt_gattc_enable_notify_or_indicate(&p_update_cccd_param))
-    {
-        dbg("enable notify failed! \n");
-        return TRBLE_FAIL;
-    }
-    return TRBLE_SUCCESS;
+	if (RTK_BT_OK != rtk_bt_gattc_enable_notify_or_indicate(&p_update_cccd_param)) {
+		dbg("enable notify failed! \n");
+		return TRBLE_FAIL;
+	}
+	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_client_operation_enable_notification_and_indication(trble_operation_handle* handle)
-{ 
-    if (handle == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+{
+	if (handle == NULL) {
+		return TRBLE_FAIL;
+	}
 
 	rtk_bt_le_get_active_conn_t active_conn = {0};
-    if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn))
-    {
-        dbg("get active connection failed! \n");
-        return TRBLE_FAIL;
-    }
-	if(!active_conn.conn_num){
+	if (RTK_BT_OK != rtk_bt_le_gap_get_active_conn(&active_conn)) {
+		dbg("get active connection failed! \n");
+		return TRBLE_FAIL;
+	}
+	if (!active_conn.conn_num){
 		dbg("No active connection \r\n");
 		return TRBLE_FAIL;
 	}
 
 
-    if (client_init_parm == NULL || client_init_parm->trble_operation_notification_cb == NULL)
-    {
-        return TRBLE_FAIL;
-    }
+	if (client_init_parm == NULL || client_init_parm->trble_operation_notification_cb == NULL) {
+		return TRBLE_FAIL;
+	}
 
-    rtk_bt_gattc_update_cccd_param_t p_update_cccd_param = {0};
+	rtk_bt_gattc_update_cccd_param_t p_update_cccd_param = {0};
 	p_update_cccd_param.conn_handle = handle->conn_handle;
 	p_update_cccd_param.profile_id = general_profile_id;
 	p_update_cccd_param.cccd_handle = handle->attr_handle;
@@ -836,25 +767,24 @@ trble_result_e rtw_ble_client_operation_enable_notification_and_indication(trble
 	p_update_cccd_param.bnotify = true;
 	p_update_cccd_param.bindicate = true;
 
-	if (RTK_BT_OK != rtk_bt_gattc_enable_notify_or_indicate(&p_update_cccd_param))
-    {
-        dbg("enable notify failed! \n");
-        return TRBLE_FAIL;
-    }
-    return TRBLE_SUCCESS;
+	if (RTK_BT_OK != rtk_bt_gattc_enable_notify_or_indicate(&p_update_cccd_param)) {
+		dbg("enable notify failed! \n");
+		return TRBLE_FAIL;
+	}
+	return TRBLE_SUCCESS;
 }
 
 
 trble_result_e rtw_ble_client_deinit(void)
 {
-    ble_tizenrt_central_main(0);
+	ble_tizenrt_central_main(0);
 
-    osif_mem_free(client_init_parm);
-    client_init_parm = NULL;
-    osif_mem_free(ble_tizenrt_conn_ind);
+	osif_mem_free(client_init_parm);
+	client_init_parm = NULL;
+	osif_mem_free(ble_tizenrt_conn_ind);
 	ble_tizenrt_conn_ind = NULL;
 
-    return TRBLE_SUCCESS; 
+	return TRBLE_SUCCESS;
 }
 
 #endif /* TRBLE_CLIENT_C_ */

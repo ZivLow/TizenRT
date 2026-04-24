@@ -34,12 +34,10 @@ static uint8_t client_addr[6];// SPP client bd addr
 T_SPP_CHANN_DB *bt_stack_alloc_spp_chann(uint8_t server_chann, uint8_t* service_uuid, uint16_t uuid_length)
 {
 	T_SPP_CHANN_DB *p_chann = NULL;
-	for (int i = 0; i < SPP_CAHNN_DB_MAX_LINK_NUM; i++)
-	{
-		if (spp_chann_db[i].used == false) 
-		{
+	for (int i = 0; i < SPP_CAHNN_DB_MAX_LINK_NUM; i++) {
+		if (spp_chann_db[i].used == false) {
 			p_chann = &spp_chann_db[i];
-			
+
 			p_chann->used = true;
 			p_chann->spp_chann_num = server_chann;
 			memcpy(p_chann->service_uuid.uuid_128, service_uuid, uuid_length);
@@ -52,12 +50,10 @@ T_SPP_CHANN_DB *bt_stack_alloc_spp_chann(uint8_t server_chann, uint8_t* service_
 static T_SPP_CHANN_DB *bt_stack_find_spp_chann(uint8_t server_chann)
 {
 	T_SPP_CHANN_DB *p_chann = NULL;
-	for (int i = 0; i < SPP_CAHNN_DB_MAX_LINK_NUM; i++)
-	{
-		if (spp_chann_db[i].used == true && spp_chann_db[i].spp_chann_num == server_chann)
-		{
+	for (int i = 0; i < SPP_CAHNN_DB_MAX_LINK_NUM; i++) {
+		if (spp_chann_db[i].used == true && spp_chann_db[i].spp_chann_num == server_chann) {
 			p_chann = &spp_chann_db[i];
-			break;	
+			break;
 		}
 	}
 	return p_chann;
@@ -66,10 +62,8 @@ static T_SPP_CHANN_DB *bt_stack_find_spp_chann(uint8_t server_chann)
 /*
 static bool app_free_spp_chann(T_SPP_CHANN_DB *p_chann)
 {
-	if (p_chann != NULL) 
-	{
-		if (p_chann->used == true)
-		{
+	if (p_chann != NULL) {
+		if (p_chann->used == true) {
 			memset(p_chann, 0, sizeof(T_SPP_CHANN_DB));
 			return true;
 		}
@@ -78,7 +72,7 @@ static bool app_free_spp_chann(T_SPP_CHANN_DB *p_chann)
 }
 */
 
-static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, uint16_t buf_len) 
+static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, uint16_t buf_len)
 {
 	(void)buf_len;
 	T_BT_EVENT_PARAM *param = (T_BT_EVENT_PARAM *)event_buf;
@@ -87,22 +81,21 @@ static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, u
 	T_SPP_CHANN_DB *p_chann = NULL;
 	switch (event_type) {
 	//sdp client(spp server) accept BT_EVENT_SDP_ATTR_INFO from sdp server(spp client)
-	case BT_EVENT_SDP_ATTR_INFO: 
+	case BT_EVENT_SDP_ATTR_INFO:
 	{
 		rtk_bt_spp_attr_info_t *p_info = NULL;
 		T_BT_SDP_ATTR_INFO *sdp_info = &param->sdp_attr_info.info;
-		
+
 		uint8_t temp_local_server_chann = 0;
 		//Remote SPP UUID check and get local SPP server channel
 		T_BT_SPP_UUID_DATA p_data;
 		memcpy((void *)&p_data, &sdp_info->srv_class_uuid_data, sizeof(sdp_info->srv_class_uuid_data));
 		if (bt_spp_registered_uuid_check((T_BT_SPP_UUID_TYPE)sdp_info->srv_class_uuid_type,
-										&p_data, &temp_local_server_chann)) 
+										&p_data, &temp_local_server_chann))
 			{
 				printf("bt_stack_spp_evt_ind_cback: BT_EVENT_SDP_ATTR_INFO The uuid is registered and the local server channel is bonded\r\n");
 				p_chann = bt_stack_find_spp_chann(sdp_info->server_channel);
-				if (p_chann == NULL) 
-				{
+				if (p_chann == NULL) {
 					return ;
 				}
 				p_chann->is_spp_sdp_ok = true;
@@ -138,27 +131,23 @@ static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, u
 	}
 	break;
 
-	case BT_EVENT_SDP_DISCOV_CMPL: 
+	case BT_EVENT_SDP_DISCOV_CMPL:
 	{
 		rtk_bt_spp_sdp_discov_cmpl_t *p_discov = NULL;
 
 		// Traverse the spp_chann_db[] to find the registered element which satisfy is_ spp_ sdp_ ok == true && is_on_connection == false
-		for (int i = 0; i < SPP_CAHNN_DB_MAX_LINK_NUM; i++)
-		{
-			if (spp_chann_db[i].used == true && spp_chann_db[i].is_spp_sdp_ok == true && spp_chann_db[i].is_on_connection == false)
-			{
+		for (int i = 0; i < SPP_CAHNN_DB_MAX_LINK_NUM; i++) {
+			if (spp_chann_db[i].used == true && spp_chann_db[i].is_spp_sdp_ok == true && spp_chann_db[i].is_on_connection == false) {
 				p_chann = &spp_chann_db[i];
-				if (param->sdp_discov_cmpl.cause == 0x00) 
-				{
+				if (param->sdp_discov_cmpl.cause == 0x00) {
 					printf("bt_stack_spp_evt_ind_cback: BT_EVENT_SDP_DISCOV_CMPL SDP Discovery Completely\r\n");
-					if(bt_spp_connect_req(client_addr,p_chann->remote_server_chann,default_mtu_size, 
-									default_credits, p_chann->local_server_chann)) 
+					if (bt_spp_connect_req(client_addr,p_chann->remote_server_chann,default_mtu_size,
+									default_credits, p_chann->local_server_chann))
 					{
 						printf("bt_stack_spp_evt_ind_cback: BT_EVENT_SDP_DISCOV_CMPL send spp connection request success\r\n");
 						/* create event */
 						p_evt = rtk_bt_event_create(RTK_BT_BR_GP_SPP,RTK_BT_SPP_EVT_SDP_DISCOV_CMPL, sizeof(rtk_bt_spp_sdp_discov_cmpl_t));
-						if (!p_evt) 
-						{
+						if (!p_evt) {
 							printf("bt_stack_spp_evt_ind_cback: evt_t allocate failed \r\n");
 							break;
 						}
@@ -173,13 +162,12 @@ static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, u
 		}
 	}
 	break;
-	
-	case BT_EVENT_SPP_CONN_IND: 
+
+	case BT_EVENT_SPP_CONN_IND:
 	{
 		rtk_bt_spp_conn_ind_t *p_conn_ind = NULL;
 		p_chann = bt_stack_find_spp_chann(param->spp_conn_ind.local_server_chann);
-		if (p_chann == NULL)
-		{
+		if (p_chann == NULL) {
 			printf("bt_spp_stack_evt_ind_caback: BT_EVENT_SPP_CONN_IND wrong local server channel\r\n");
 			return ;
 		}
@@ -196,8 +184,7 @@ static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, u
 		uint8_t local_server_chann = param->spp_conn_ind.local_server_chann;
 		uint16_t frame_size = param->spp_conn_ind.frame_size;
 		/* Send spp connect confirmation */
-		if (false == bt_spp_connect_cfm(p_link->bd_addr, local_server_chann, true, frame_size, default_credits)) 
-		{
+		if (false == bt_spp_connect_cfm(p_link->bd_addr, local_server_chann, true, frame_size, default_credits)) {
 			printf("bt_stack_spp_evt_ind_cback: BT_EVENT_SPP_CONN_IND send spp connection confirm failed\r\n");
 			return ;
 		}
@@ -213,19 +200,18 @@ static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, u
 		memcpy((void *)p_conn_ind->bd_addr, (void *)param->spp_conn_ind.bd_addr, 6);
 		p_conn_ind->local_server_chann = param->spp_conn_ind.local_server_chann;
 		p_conn_ind->frame_size = param->spp_conn_ind.frame_size;
-		
+
 		/* Send event */
 		rtk_bt_evt_indicate(p_evt, NULL);
 	}
 	break;
 
-	case BT_EVENT_SPP_CONN_CMPL: 
+	case BT_EVENT_SPP_CONN_CMPL:
 	{
 		rtk_bt_spp_conn_cmpl_t *p_conn_cmpl = NULL;
 
 		p_chann = bt_stack_find_spp_chann(param->spp_conn_cmpl.local_server_chann);
-		if (p_chann == NULL)
-		{
+		if (p_chann == NULL) {
 			printf("bt_spp_stack_evt_ind_caback: BT_EVENT_SPP_CONN_CMPL wrong local server channel\r\n");
 			return ;
 		}
@@ -256,17 +242,16 @@ static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, u
 		p_conn_cmpl->frame_size = param->spp_conn_cmpl.frame_size;
 		/* Send event */
 		rtk_bt_evt_indicate(p_evt, NULL);
-		//printf("bt_spp_stack_evt_ind_caback: BT_EVENT_SPP_CONN_CMPL evt indicate success!!\r\n");   
+		//printf("bt_spp_stack_evt_ind_caback: BT_EVENT_SPP_CONN_CMPL evt indicate success!!\r\n");
 	}
 	break;
 
-	case BT_EVENT_SPP_CREDIT_RCVD: 
+	case BT_EVENT_SPP_CREDIT_RCVD:
 	{
 		rtk_bt_spp_credit_rcvd_t *p_credit_rcvd = NULL;
 
 		p_chann = bt_stack_find_spp_chann(param->spp_credit_rcvd.local_server_chann);
-		if (p_chann == NULL)
-		{
+		if (p_chann == NULL) {
 			printf("bt_spp_stack_evt_ind_caback: BT_EVENT_SPP_CREDIT_RCVD wrong local server channel\r\n");
 			return ;
 		}
@@ -297,13 +282,12 @@ static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, u
 	}
 	break;
 
-	case BT_EVENT_SPP_DATA_IND: 
+	case BT_EVENT_SPP_DATA_IND:
 	{
 		rtk_bt_spp_data_ind_t *p_data_ind = NULL;
 
 		p_chann = bt_stack_find_spp_chann(param->spp_data_ind.local_server_chann);
-		if (p_chann == NULL)
-		{
+		if (p_chann == NULL) {
 			printf("bt_spp_stack_evt_ind_caback: BT_EVENT_SPP_DATA_IND wrong local server channel\r\n");
 			return ;
 		}
@@ -343,7 +327,7 @@ static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, u
 	}
 	break;
 
-	// case BT_EVENT_SPP_DATA_RSP: 
+	// case BT_EVENT_SPP_DATA_RSP:
 	// {
 	//     (rtk_bt_spp_data_rsp_t *)p_data_rsp = NULL;
 	//     printf("bt_stack_spp_evt_ind_cback: SPP Data Response with ack flag set\r\n");
@@ -360,13 +344,12 @@ static void bt_stack_spp_evt_ind_cback(T_BT_EVENT event_type, void *event_buf, u
 	// }
 	// break;
 
-	case BT_EVENT_SPP_DISCONN_CMPL: 
+	case BT_EVENT_SPP_DISCONN_CMPL:
 	{
 		rtk_bt_spp_disconn_ind_t *p_disconn_ind = NULL;
 
 		p_chann = bt_stack_find_spp_chann(param->spp_disconn_cmpl.local_server_chann);
-		if (p_chann == NULL)
-		{
+		if (p_chann == NULL) {
 			printf("bt_spp_stack_evt_ind_caback: BT_EVENT_SPP_DISCONN_CMPL wrong local server channel\r\n");
 			return ;
 		}
@@ -415,8 +398,8 @@ static uint16_t bt_stack_spp_connect(void *param)
 	} else {
 		printf("[bt_stack_spp_connect] SPP server stop inquiry success! \r\n");
 	}
-	
-	if(gap_br_start_sdp_discov(bd_addr, uuid_type, uuid) == GAP_CAUSE_SUCCESS) {
+
+	if (gap_br_start_sdp_discov(bd_addr, uuid_type, uuid) == GAP_CAUSE_SUCCESS) {
 		printf("[bt_stack_spp_connect] SPP server start sdp discov success!\r\n");
 		return RTK_BT_OK;
 	}
@@ -463,13 +446,13 @@ static uint16_t bt_stack_spp_send_data(void *param)
 		printf("bt_stack_spp_send_data failed: no link found\r\n");
 		return RTK_BT_FAIL;
 	}
-	
+
 	if (p_link->rfc_spp_credit) {
 		if (bt_spp_data_send(p_send_data_t->bd_addr,
 								p_send_data_t->local_server_chann,
 								p_send_data_t->data,
 								p_send_data_t->len,
-								false)) 
+								false))
 			{
 				p_link->rfc_spp_credit--;
 				printf("bt_stack_spp_send_data: link credit is %d\r\n",p_link->rfc_spp_credit);
@@ -479,7 +462,7 @@ static uint16_t bt_stack_spp_send_data(void *param)
 	} else {
 		printf("bt_stack_spp_send_data failed: have no rfc_spp_credit\r\n");
 	}
-	
+
 	return RTK_BT_FAIL;
 }
 
@@ -490,8 +473,8 @@ static uint16_t bt_stack_spp_give_credits(void *param)
 
 	p_link = app_find_br_link(p_credits_give->bd_addr);
 	if (p_link != NULL) {
-		if (bt_spp_credits_give(p_credits_give->bd_addr, p_credits_give->local_server_chann, 
-								p_credits_give->credits)) 
+		if (bt_spp_credits_give(p_credits_give->bd_addr, p_credits_give->local_server_chann,
+								p_credits_give->credits))
 		{
 			//printf("bt_stack_spp_give_credits: bt_spp_credits_give() success\r\n");
 			return RTK_BT_OK;
@@ -550,16 +533,14 @@ uint16_t bt_stack_spp_init(uint8_t role)
 	printf("bt_stack_spp_init\r\n");
 	bt_spp_init(spp_max_link_num, spp_rfc_max_service_num);
 
-	/* Register spp service with uuid, and bond it with allocated spp server channel */ 
-	for (int i = 0; i < SPP_CAHNN_DB_MAX_LINK_NUM; i++)
-	{
-		if (spp_chann_db[i].used == true) 
-		{
+	/* Register spp service with uuid, and bond it with allocated spp server channel */
+	for (int i = 0; i < SPP_CAHNN_DB_MAX_LINK_NUM; i++) {
+		if (spp_chann_db[i].used == true) {
 			bt_spp_service_register(spp_chann_db[i].service_uuid.uuid_128, spp_chann_db[i].spp_chann_num);
 		}
 	}
 
-	/* Register event callback function*/ 
+	/* Register event callback function*/
 	bt_mgr_cback_register(bt_stack_spp_evt_ind_cback);
 
 	/* Disable spp L2CAP ERTM mode by default */
@@ -570,7 +551,7 @@ uint16_t bt_stack_spp_init(uint8_t role)
 
 extern void spp_deinit(void);
 
-void bt_stack_spp_deinit(void) 
+void bt_stack_spp_deinit(void)
 {
 	/* SPP deinit */
 	printf("spp_demo_deinit\r\n");

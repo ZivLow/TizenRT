@@ -1156,43 +1156,43 @@ static void rtk_bt_pre_excute_evt_hdl(uint8_t group, uint8_t act, void *ipc_msg)
 #if defined(BT_MESH_ENABLE_DATATRANS_MODEL) && BT_MESH_ENABLE_DATATRANS_MODEL
 	else if (RTK_BT_LE_GP_MESH_DATATRANS_MODEL == group) {
 		bt_mesh_datatrans_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif
 #if defined(BT_MESH_ENABLE_LIGHT_LIGHTNESS_SERVER_MODEL) && BT_MESH_ENABLE_LIGHT_LIGHTNESS_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_LIGHT_LIGHTNESS_SERVER_MODEL == group) {
 		bt_mesh_light_lightness_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_LIGHT_LIGHTNESS_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_LIGHT_CTL_SERVER_MODEL) && BT_MESH_ENABLE_LIGHT_CTL_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_LIGHT_CTL_SERVER_MODEL == group) {
 		bt_mesh_light_ctl_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
-	
+	}
+
 #endif // end of BT_MESH_ENABLE_LIGHT_CTL_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_LIGHT_CTL_TEMPERATURE_SERVER_MODEL) && BT_MESH_ENABLE_LIGHT_CTL_TEMPERATURE_SERVER_MODEL
 else if (RTK_BT_LE_GP_MESH_LIGHT_CTL_TEMPERATURE_SERVER_MODEL == group) {
 		bt_mesh_light_ctl_temperature_model_alloc_mem_for_event_param(act, ipc_msg);
-	}	
+	}
 #endif
 #if defined(BT_MESH_ENABLE_LIGHT_HSL_SERVER_MODEL) && BT_MESH_ENABLE_LIGHT_HSL_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_LIGHT_HSL_SERVER_MODEL == group) {
 		bt_mesh_light_hsl_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_LIGHT_HSL_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_LIGHT_HSL_HUE_SERVER_MODEL) && BT_MESH_ENABLE_LIGHT_HSL_HUE_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_LIGHT_HSL_HUE_SERVER_MODEL == group) {
 		bt_mesh_light_hsl_hue_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_LIGHT_HSL_HUE_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_LIGHT_HSL_SATURATION_SERVER_MODEL) && BT_MESH_ENABLE_LIGHT_HSL_SATURATION_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_LIGHT_HSL_SATURATION_SERVER_MODEL == group) {
 		bt_mesh_light_hsl_saturation_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_LIGHT_HSL_SATURATION_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_LIGHT_XYL_SERVER_MODEL) && BT_MESH_ENABLE_LIGHT_XYL_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_LIGHT_XYL_SERVER_MODEL == group) {
 		bt_mesh_light_xyl_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_LIGHT_XYL_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_LIGHT_LC_SERVER_MODEL) && BT_MESH_ENABLE_LIGHT_LC_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_LIGHT_LC_SERVER_MODEL == group) {
@@ -1202,27 +1202,27 @@ else if (RTK_BT_LE_GP_MESH_LIGHT_CTL_TEMPERATURE_SERVER_MODEL == group) {
 #if defined(BT_MESH_ENABLE_LIGHT_LC_SETUP_SERVER_MODEL) && BT_MESH_ENABLE_LIGHT_LC_SETUP_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_LIGHT_LC_SETUP_SERVER_MODEL == group) {
 		bt_mesh_light_lc_setup_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_LIGHT_LC_SETUP_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_TIME_SERVER_MODEL) && BT_MESH_ENABLE_TIME_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_TIME_SERVER_MODEL == group) {
 		bt_mesh_time_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_TIME_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_TIME_SETUP_SERVER_MODEL) && BT_MESH_ENABLE_TIME_SETUP_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_TIME_SETUP_SERVER_MODEL == group) {
 		bt_mesh_time_setup_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_TIME_SETUP_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_SCHEDULER_SERVER_MODEL) && BT_MESH_ENABLE_SCHEDULER_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_SCHEDULER_SERVER_MODEL == group) {
 		bt_mesh_scheduler_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_SCHEDULER_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_SCHEDULER_SETUP_SERVER_MODEL) && BT_MESH_ENABLE_SCHEDULER_SETUP_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_SCHEDULER_SETUP_SERVER_MODEL == group) {
 		bt_mesh_scheduler_setup_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_SCHEDULER_SETUP_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_SCENE_SERVER_MODEL) && BT_MESH_ENABLE_SCENE_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_SCENE_SERVER_MODEL == group) {
@@ -1232,72 +1232,72 @@ else if (RTK_BT_LE_GP_MESH_LIGHT_CTL_TEMPERATURE_SERVER_MODEL == group) {
 #if defined(BT_MESH_ENABLE_SCENE_SETUP_SERVER_MODEL) && BT_MESH_ENABLE_SCENE_SETUP_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_SCENE_SETUP_SERVER_MODEL == group) {
 		bt_mesh_scene_setup_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_SCENE_SETUP_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_DEFAULT_TRANSTION_TIME_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_DEFAULT_TRANSTION_TIME_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_DEFAULT_TRANSITION_TIME_SERVER_MODEL == group) {
 		bt_mesh_generic_default_transition_time_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_DEFAULT_TRANSTION_TIME_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_LEVEL_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_LEVEL_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_LEVEL_SERVER_MODEL == group) {
 		bt_mesh_generic_level_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_LEVEL_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_POWER_ON_OFF_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_POWER_ON_OFF_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_POWER_ON_OFF_SERVER_MODEL == group) {
 		bt_mesh_generic_power_on_off_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_POWER_ON_OFF_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_POWER_LEVEL_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_POWER_LEVEL_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL == group) {
 		bt_mesh_generic_power_level_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_POWER_LEVEL_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_BATTERY_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_BATTERY_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_BATTERY_SERVER_MODEL == group) {
 		bt_mesh_generic_battery_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 	
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_BATTERY_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_LOCATION_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_LOCATION_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_LOCATION_SERVER_MODEL == group) {
 		bt_mesh_generic_location_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_LOCATION_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_LOCATION_SETUP_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_LOCATION_SETUP_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_LOCATION_SETUP_SERVER_MODEL == group) {
 		bt_mesh_generic_location_setup_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_LOCATION_SETUP_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_USER_PROPERTY_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_USER_PROPERTY_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL == group) {
 		bt_mesh_generic_user_property_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_USER_PROPERTY_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_CLIENT_PROPERTY_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_CLIENT_PROPERTY_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_CLIENT_PROPERTY_SERVER_MODEL == group) {
 		bt_mesh_generic_client_property_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_CLIENT_PROPERTY_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_ADMIN_PROPERTY_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_ADMIN_PROPERTY_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL == group) {
 		bt_mesh_generic_admin_property_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_ADMIN_PROPERTY_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_GENERIC_MANUFACTURER_PROPERTY_SERVER_MODEL) && BT_MESH_ENABLE_GENERIC_MANUFACTURER_PROPERTY_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL == group) {
 		bt_mesh_generic_manu_property_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_GENERIC_MANUFACTURER_PROPERTY_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_SENSOR_SERVER_MODEL) && BT_MESH_ENABLE_SENSOR_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_SENSOR_SERVER_MODEL == group) {
 		bt_mesh_sensor_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif // end of BT_MESH_ENABLE_SENSOR_SERVER_MODEL
 #if defined(BT_MESH_ENABLE_SENSOR_SETUP_SERVER_MODEL) && BT_MESH_ENABLE_SENSOR_SETUP_SERVER_MODEL
 	else if (RTK_BT_LE_GP_MESH_SENSOR_SETUP_SERVER_MODEL == group) {
 		bt_mesh_sensor_setup_model_alloc_mem_for_event_param(act, ipc_msg);
-	} 
+	}
 #endif
 #if defined(RTK_BLE_MESH_DEVICE_SUPPORT) && RTK_BLE_MESH_DEVICE_SUPPORT
 	else if (RTK_BT_LE_GP_MESH_HEALTH_SERVER_MODEL == group) {

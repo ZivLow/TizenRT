@@ -1100,7 +1100,7 @@ static uint16_t send_cmd_to_stack(rtk_bt_gattc_req_t *req)
 	uint16_t credits = 0;
 
 	le_get_gap_param(GAP_PARAM_LE_REMAIN_CREDITS, &credits);
-	if (!credits) { 
+	if (!credits) {
 		ret = RTK_BT_ERR_NO_CREDITS;
 		goto fail;
 	}
@@ -1243,9 +1243,9 @@ static void internal_read_req_add(uint8_t conn_id, rtk_bt_gattc_req_t *read_req)
 	/* 	the internal used read_by_handle req shall be put before
 		1. all internal used disc_char_by_uuid req which haven't been sent
 		2. all other normal pending node */
-		if ((req->flag == REQ_FLAG_READ_BY_UUID && req->req_type == BT_STACK_GATTC_DISC_REQ && 
-			req->disc_param.type == RTK_BT_GATT_DISCOVER_CHARACTERISTIC_BY_UUID)  
-			|| !req->flag) 
+		if ((req->flag == REQ_FLAG_READ_BY_UUID && req->req_type == BT_STACK_GATTC_DISC_REQ &&
+			req->disc_param.type == RTK_BT_GATT_DISCOVER_CHARACTERISTIC_BY_UUID)
+			|| !req->flag)
 			break;
 	}
 
@@ -1742,7 +1742,7 @@ static uint16_t bt_stack_gattc_read(void *param)
 			return RTK_BT_ERR_NO_MEMORY;
 		}
 		req->flag = REQ_FLAG_READ_BY_UUID;
-		
+
 	} else {
 		req = bt_stack_gattc_create_req(BT_STACK_GATTC_READ_REQ, p_read_param);
 		if (!req) {
@@ -2005,7 +2005,7 @@ uint16_t bt_stack_gattc_init(rtk_bt_app_conf_t *app_conf)
 	for (i = 0; i < RTK_BLE_GAP_MAX_LINKS; i++) {
 		bt_stack_gattc_queue_init(&gattc_priv->request_queue[i]);
 		bt_stack_gattc_queue_init(&gattc_priv->cmd_queue[i]);
-		
+
 		INIT_LIST_HEAD(&gattc_priv->cccd_record_list[i]);
 	}
 

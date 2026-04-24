@@ -69,7 +69,7 @@ extern "C"
 #define RTK_BLE_AUDIO_UNICAST_SERVER_SUPPORT           0    //must set 1 when CAP Acceptor role, can set 0 as CAP other role
 #define RTK_BLE_AUDIO_UNICAST_CLIENT_SUPPORT           0    //must set 1 when CAP Initiator role, can set 0 as CAP other role
 #define RTK_BLE_AUDIO_BROADCAST_ASSISTANT_SUPPORT      0    //must set 1 when CAP Commander role, can set 0 as CAP other rol
-#define RTK_BLE_AUDIO_SCAN_DELEGATOR_SUPPORT           0    //must set 1 when CAP Acceptor or Commander role, can set 0 as CAP other role 
+#define RTK_BLE_AUDIO_SCAN_DELEGATOR_SUPPORT           0    //must set 1 when CAP Acceptor or Commander role, can set 0 as CAP other role
 #define RTK_BLE_AUDIO_VCP_VOLUME_CONTROLLER_SUPPORT    0    //can set 1 when CAP Commander role
 #define RTK_BLE_AUDIO_VCP_VOLUME_RENDERER_SUPPORT      0    //can set 1 when CAP Acceptor role
 #define RTK_BLE_AUDIO_MICP_MIC_CONTROLLER_SUPPORT      0    //can set 1 when CAP Commander role

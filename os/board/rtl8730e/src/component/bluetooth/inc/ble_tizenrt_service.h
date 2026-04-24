@@ -6,33 +6,33 @@
 
 typedef struct
 {
-    T_SERVICE_CALLBACK_TYPE msg_type;
-    uint8_t conn_id;
-    uint8_t srv_index;  /* srv index in tizenrt_ble_srv_database */
-    uint8_t att_index;  /* att index in chrc_info */
-    uint16_t val;
+	T_SERVICE_CALLBACK_TYPE msg_type;
+	uint8_t conn_id;
+	uint8_t srv_index;  /* srv index in tizenrt_ble_srv_database */
+	uint8_t att_index;  /* att index in chrc_info */
+	uint16_t val;
 } TIZENRT_CALLBACK_DATA;
 
 typedef struct
 {
-    uint8_t index;
-    uint16_t abs_handle;
-    T_APP_RESULT app_reject;
-    uint8_t *read_ptr;
-    uint16_t read_len;
-    uint8_t *data;      /* used for service callback */
-    uint16_t data_len;      /* used for service callback */
-    trble_server_cb_t cb;      /* used for user's callback */
-    void* arg;      /* used for user's callback */
+	uint8_t index;
+	uint16_t abs_handle;
+	T_APP_RESULT app_reject;
+	uint8_t *read_ptr;
+	uint16_t read_len;
+	uint8_t *data;      /* used for service callback */
+	uint16_t data_len;      /* used for service callback */
+	trble_server_cb_t cb;      /* used for user's callback */
+	void* arg;      /* used for user's callback */
 } TIZENERT_CHA_INFO;
 
-typedef struct 
+typedef struct
 {
-    uint16_t app_id;
-    uint16_t start_handle;  /* start handle of this service that specified by user */
-    uint16_t abs_handle;    /* absolute handle of the service decleration in the whole service table  */
-    uint8_t att_count;      /* number of attributes in this profile */
-    TIZENERT_CHA_INFO chrc_info[TIZENRT_MAX_ATTR_NUM];    /* characteristic info include callback, arg ,etc. */
+	uint16_t app_id;
+	uint16_t start_handle;  /* start handle of this service that specified by user */
+	uint16_t abs_handle;    /* absolute handle of the service decleration in the whole service table  */
+	uint8_t att_count;      /* number of attributes in this profile */
+	TIZENERT_CHA_INFO chrc_info[TIZENRT_MAX_ATTR_NUM];    /* characteristic info include callback, arg ,etc. */
 } TIZENERT_SRV_DATABASE;
 
 typedef uint8_t TIZENERT_SRV_CNT;

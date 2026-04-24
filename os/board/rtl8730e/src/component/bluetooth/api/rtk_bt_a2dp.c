@@ -98,7 +98,7 @@ uint16_t rtk_bt_a2dp_connect(uint8_t *bd_addr)
 	if (!bd_addr)
 		return RTK_BT_ERR_POINTER_INVALID;
 
-	ret = rtk_bt_send_cmd(RTK_BT_BR_GP_A2DP, RTK_BT_A2DP_ACT_CONNECT, 
+	ret = rtk_bt_send_cmd(RTK_BT_BR_GP_A2DP, RTK_BT_A2DP_ACT_CONNECT,
 							bd_addr, 6);
 
 	return ret;
@@ -114,7 +114,7 @@ uint16_t rtk_bt_a2dp_disconnect(uint8_t *bd_addr)
 	if (!bd_addr)
 		return RTK_BT_ERR_POINTER_INVALID;
 
-	ret = rtk_bt_send_cmd(RTK_BT_BR_GP_A2DP, RTK_BT_A2DP_ACT_DISCONNECT, 
+	ret = rtk_bt_send_cmd(RTK_BT_BR_GP_A2DP, RTK_BT_A2DP_ACT_DISCONNECT,
 							bd_addr, 6);
 
 	return ret;
@@ -130,7 +130,7 @@ uint16_t rtk_bt_a2dp_start(uint8_t *bd_addr)
 	if (!bd_addr)
 		return RTK_BT_ERR_POINTER_INVALID;
 
-	ret = rtk_bt_send_cmd(RTK_BT_BR_GP_A2DP, RTK_BT_A2DP_ACT_START, 
+	ret = rtk_bt_send_cmd(RTK_BT_BR_GP_A2DP, RTK_BT_A2DP_ACT_START,
 							bd_addr, 6);
 
 	return ret;
@@ -146,7 +146,7 @@ uint16_t rtk_bt_a2dp_suspend(uint8_t *bd_addr)
 	if (!bd_addr)
 		return RTK_BT_ERR_POINTER_INVALID;
 
-	ret = rtk_bt_send_cmd(RTK_BT_BR_GP_A2DP, RTK_BT_A2DP_ACT_SUSPEND, 
+	ret = rtk_bt_send_cmd(RTK_BT_BR_GP_A2DP, RTK_BT_A2DP_ACT_SUSPEND,
 							bd_addr, 6);
 
 	return ret;
@@ -162,7 +162,7 @@ uint16_t rtk_bt_a2dp_data_send(rtk_bt_a2dp_stream_data_send_t *p_data_send_t)
 	if (!p_data_send_t)
 		return RTK_BT_ERR_POINTER_INVALID;
 
-	ret = rtk_bt_send_cmd(RTK_BT_BR_GP_A2DP, RTK_BT_A2DP_ACT_SEND_DATA, 
+	ret = rtk_bt_send_cmd(RTK_BT_BR_GP_A2DP, RTK_BT_A2DP_ACT_SEND_DATA,
 							p_data_send_t, sizeof(rtk_bt_a2dp_stream_data_send_t));
 
 	return ret;

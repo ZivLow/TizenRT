@@ -13,36 +13,36 @@
 /****************common********************/
 typedef struct
 {
-    uint8_t tai_seconds[5]; /* little endian */
-    uint8_t subsecond;
-    uint8_t uncertainty;
-    uint16_t time_authority: 1;
-    uint16_t tai_utc_delta: 15;
-    uint8_t time_zone_offset;
+	uint8_t tai_seconds[5]; /* little endian */
+	uint8_t subsecond;
+	uint8_t uncertainty;
+	uint16_t time_authority: 1;
+	uint16_t tai_utc_delta: 15;
+	uint8_t time_zone_offset;
 } _PACKED4_ rtk_bt_mesh_tai_time_t;
 
 typedef struct
 {
-    uint8_t time_zone_offset_current;
-    uint8_t time_zone_offset_new;
-    uint8_t tai_of_zone_change[5]; /* little endian */
+	uint8_t time_zone_offset_current;
+	uint8_t time_zone_offset_new;
+	uint8_t tai_of_zone_change[5]; /* little endian */
 } _PACKED4_ rtk_bt_mesh_time_zone_t;
 
 typedef struct
 {
-    uint16_t tai_utc_delta_current: 15;
-    uint16_t padding1: 1; /* always 0*/
-    uint16_t tai_utc_delta_new: 15;
-    uint16_t padding2: 1; /* always 0*/
-    uint8_t tai_of_delta_change[5]; /* little endian */
+	uint16_t tai_utc_delta_current: 15;
+	uint16_t padding1: 1; /* always 0*/
+	uint16_t tai_utc_delta_new: 15;
+	uint16_t padding2: 1; /* always 0*/
+	uint8_t tai_of_delta_change[5]; /* little endian */
 } _PACKED4_ rtk_bt_mesh_tai_utc_delta_t;
 
 typedef enum
 {
-    RTK_BT_MESH_TIME_ROLE_NONE,
-    RTK_BT_MESH_TIME_ROLE_AUTHORITY,
-    RTK_BT_MESH_TIME_ROLE_RELAY,
-    RTK_BT_MESH_TIME_ROLE_CLIENT
+	RTK_BT_MESH_TIME_ROLE_NONE,
+	RTK_BT_MESH_TIME_ROLE_AUTHORITY,
+	RTK_BT_MESH_TIME_ROLE_RELAY,
+	RTK_BT_MESH_TIME_ROLE_CLIENT
 } rtk_bt_mesh_time_role_t;
 
 /************time client model*****************/
@@ -52,14 +52,14 @@ typedef enum
  */
 typedef enum {
 	RTK_BT_MESH_TIME_CLIENT_MODEL_GET = 1,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_ZONE_GET,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_TAI_UTC_DELTA_GET,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_ROLE_GET,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_SET,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_ZONE_SET,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_TAI_UTC_DELTA_SET,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_ROLE_SET,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_ACT_MAX,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_ZONE_GET,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_TAI_UTC_DELTA_GET,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_ROLE_GET,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_SET,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_ZONE_SET,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_TAI_UTC_DELTA_SET,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_ROLE_SET,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_ACT_MAX,
 } rtk_bt_mesh_time_client_model_act_t;
 
 /**
@@ -68,10 +68,10 @@ typedef enum {
  */
 typedef enum {
 	RTK_BT_MESH_TIME_CLIENT_MODEL_STATUS = 1,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_ROLE_STATUS,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_ZONE_STATUS,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_TAI_UTC_DELTA_STATUS,
-    RTK_BT_MESH_TIME_CLIENT_MODEL_EVT_MAX,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_ROLE_STATUS,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_ZONE_STATUS,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_TAI_UTC_DELTA_STATUS,
+	RTK_BT_MESH_TIME_CLIENT_MODEL_EVT_MAX,
 } rtk_bt_mesh_time_client_model_evt_t;
 
 /**
@@ -117,7 +117,7 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    rtk_bt_mesh_tai_time_t time;
+	rtk_bt_mesh_tai_time_t time;
 }_PACKED4_ rtk_bt_mesh_time_set_t;
 
 /**
@@ -127,8 +127,8 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint8_t time_zone_offset_new;
-    uint8_t tai_of_zone_change[5];
+	uint8_t time_zone_offset_new;
+	uint8_t tai_of_zone_change[5];
 } rtk_bt_mesh_time_zone_set_t;
 
 /**
@@ -138,8 +138,8 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t tai_utc_delta_new;
-    uint8_t tai_of_delta_change[5];
+	uint16_t tai_utc_delta_new;
+	uint8_t tai_of_delta_change[5];
 } rtk_bt_mesh_time_tai_utc_delta_set_t;
 
 /**
@@ -149,7 +149,7 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    rtk_bt_mesh_time_role_t role;
+	rtk_bt_mesh_time_role_t role;
 }_PACKED4_ rtk_bt_mesh_time_role_set_t;
 
 /**
@@ -158,8 +158,8 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t src;
-    rtk_bt_mesh_tai_time_t tai_time;
+	uint16_t src;
+	rtk_bt_mesh_tai_time_t tai_time;
 }_PACKED4_ rtk_bt_mesh_time_client_status_t;
 
 /**
@@ -168,10 +168,10 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint8_t time_zone_offset_current;
-    uint8_t time_zone_offset_new;
-    uint8_t tai_of_zone_change[5];
+	uint16_t src;
+	uint8_t time_zone_offset_current;
+	uint8_t time_zone_offset_new;
+	uint8_t tai_of_zone_change[5];
 } rtk_bt_mesh_time_client_status_zone_t;
 
 /**
@@ -180,12 +180,12 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t tai_utc_delta_current: 15;
-    uint16_t padding1: 1; /* always 0*/
-    uint16_t tai_utc_delta_new: 15;
-    uint16_t padding2: 1; /* always 0*/
-    uint8_t tai_of_delta_change[5]; /* little endian */
+	uint16_t src;
+	uint16_t tai_utc_delta_current: 15;
+	uint16_t padding1: 1; /* always 0*/
+	uint16_t tai_utc_delta_new: 15;
+	uint16_t padding2: 1; /* always 0*/
+	uint8_t tai_of_delta_change[5]; /* little endian */
 } rtk_bt_mesh_time_client_status_tai_utc_delta_t;
 
 /**
@@ -194,7 +194,7 @@ typedef struct
  */
 typedef struct
 {
-    rtk_bt_mesh_time_role_t role;
+	rtk_bt_mesh_time_role_t role;
 } rtk_bt_mesh_time_client_status_role_t;
 
 
@@ -206,10 +206,10 @@ typedef struct
  */
 typedef enum {
 	RTK_BT_MESH_TIME_SERVER_MODEL_GET = 1,
-    RTK_BT_MESH_TIME_SERVER_MODEL_ZONE_GET,
-    RTK_BT_MESH_TIME_SERVER_MODEL_TAI_UTC_DELTA_GET,
-    RTK_BT_MESH_TIME_SERVER_MODEL_STATUS_SET,
-    RTK_BT_MESH_TIME_SERVER_MODEL_EVT_MAX,
+	RTK_BT_MESH_TIME_SERVER_MODEL_ZONE_GET,
+	RTK_BT_MESH_TIME_SERVER_MODEL_TAI_UTC_DELTA_GET,
+	RTK_BT_MESH_TIME_SERVER_MODEL_STATUS_SET,
+	RTK_BT_MESH_TIME_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_time_server_model_evt_t;
 
 /**
@@ -224,7 +224,7 @@ typedef rtk_bt_mesh_tai_time_t               rtk_bt_mesh_time_server_get_t;
  */
 typedef struct
 {
-    rtk_bt_mesh_time_server_get_t *value;
+	rtk_bt_mesh_time_server_get_t *value;
 } rtk_bt_mesh_time_server_direct_get_t;
 
 /**
@@ -239,7 +239,7 @@ typedef rtk_bt_mesh_time_zone_t              rtk_bt_mesh_time_server_get_zone_t;
  */
 typedef struct
 {
-    rtk_bt_mesh_time_server_get_zone_t *value;
+	rtk_bt_mesh_time_server_get_zone_t *value;
 } rtk_bt_mesh_time_server_direct_get_zone_t;
 
 /**
@@ -254,10 +254,10 @@ typedef rtk_bt_mesh_tai_utc_delta_t          rtk_bt_mesh_time_server_get_tai_utc
  */
 typedef struct
 {
-    rtk_bt_mesh_time_server_get_tai_utc_delta_t *value;
+	rtk_bt_mesh_time_server_get_tai_utc_delta_t *value;
 } rtk_bt_mesh_time_server_direct_get_tai_utc_delta_t;
 
-/** 
+/**
  * @typedef   rtk_bt_mesh_time_server_status_set_t
  * @brief     BLE MESH time server status set evt message structure.
  */
@@ -275,22 +275,22 @@ typedef struct {
  */
 typedef enum {
 	RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_SET = 1,
-    RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_ZONE_SET,
-    RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_ROLE_GET,
-    RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_ROLE_SET,
-    RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_TAI_UTC_DELTA_SET,
-    RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_ZONE_GET,
-    RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_TAI_UTC_DELTA_GET,
-    RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_EVT_MAX,
+	RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_ZONE_SET,
+	RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_ROLE_GET,
+	RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_ROLE_SET,
+	RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_TAI_UTC_DELTA_SET,
+	RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_ZONE_GET,
+	RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_TAI_UTC_DELTA_GET,
+	RTK_BT_MESH_TIME_SETUP_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_time_setup_server_model_evt_t;
 
-/** 
+/**
  * @typedef   rtk_bt_mesh_time_server_set_t
  * @brief     BLE MESH time set evt message structure.
  */
 typedef rtk_bt_mesh_tai_time_t               rtk_bt_mesh_time_server_set_t;
 
-/** 
+/**
  * @typedef   rtk_bt_mesh_time_server_get_role_t
  * @brief     BLE MESH time get role evt message structure.
  */
@@ -298,7 +298,7 @@ typedef struct {
 	rtk_bt_mesh_time_role_t *role;
 } rtk_bt_mesh_time_server_get_role_t;
 
-/** 
+/**
  * @typedef   rtk_bt_mesh_time_server_set_role_t
  * @brief     BLE MESH time set role evt message structure.
  */
@@ -306,7 +306,7 @@ typedef struct {
 	rtk_bt_mesh_time_role_t role;
 } rtk_bt_mesh_time_server_set_role_t;
 
-/** 
+/**
  * @typedef   rtk_bt_mesh_time_server_set_zone_t
  * @brief     BLE MESH time set zone evt message structure.
  */
@@ -315,7 +315,7 @@ typedef struct {
 	uint8_t tai_of_zone_change[5]; /* little endian */
 } rtk_bt_mesh_time_server_set_zone_t;
 
-/** 
+/**
  * @typedef   rtk_bt_mesh_time_server_set_tai_utc_delta_t
  * @brief     BLE MESH time set tai utc delta evt message structure.
  */

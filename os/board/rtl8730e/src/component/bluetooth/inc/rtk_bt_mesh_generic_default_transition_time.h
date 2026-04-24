@@ -48,8 +48,8 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    rtk_bt_mesh_generic_transition_time_t trans_time;
-    bool ack;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
+	bool ack;
 } rtk_bt_mesh_generic_default_transition_time_set_t;
 
 /**
@@ -58,7 +58,7 @@ typedef struct {
  */
 typedef struct {
 	uint16_t src;
-    rtk_bt_mesh_generic_transition_time_t trans_time;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
 } rtk_bt_mesh_generic_transition_time_client_status_t;
 
 /**
@@ -77,7 +77,7 @@ typedef enum {
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_transition_time_t trans_time;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
 } rtk_bt_mesh_generic_default_transition_time_server_set_t;
 
 /**
@@ -86,7 +86,7 @@ typedef struct
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_transition_time_t *trans_time;
+	rtk_bt_mesh_generic_transition_time_t *trans_time;
 } rtk_bt_mesh_generic_default_transition_time_server_get_t;
 
 /********************************* Functions Declaration *******************************/

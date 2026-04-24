@@ -17,9 +17,9 @@
 
 typedef enum
 {
-    RTK_BT_MESH_SCENE_STATUS_SUCCESS,
-    RTK_BT_MESH_SCENE_STATUS_REGISTER_FULL,
-    RTK_BT_MESH_SCENE_STATUS_NOT_FOUND
+	RTK_BT_MESH_SCENE_STATUS_SUCCESS,
+	RTK_BT_MESH_SCENE_STATUS_REGISTER_FULL,
+	RTK_BT_MESH_SCENE_STATUS_NOT_FOUND
 // }uint8_t rtk_bt_mesh_scene_status_code_t;
 }rtk_bt_mesh_scene_status_code_t;
 
@@ -29,11 +29,11 @@ typedef enum
  */
 typedef enum {
 	RTK_BT_MESH_SCENE_CLIENT_MODEL_STORE = 1,
-    RTK_BT_MESH_SCENE_CLIENT_MODEL_RECALL,
-    RTK_BT_MESH_SCENE_CLIENT_MODEL_GET,
-    RTK_BT_MESH_SCENE_CLIENT_MODEL_REGISTER_GET,
-    RTK_BT_MESH_SCENE_CLIENT_MODEL_DELETE,
-    RTK_BT_MESH_SCENE_CLIENT_MODEL_ACT_MAX,
+	RTK_BT_MESH_SCENE_CLIENT_MODEL_RECALL,
+	RTK_BT_MESH_SCENE_CLIENT_MODEL_GET,
+	RTK_BT_MESH_SCENE_CLIENT_MODEL_REGISTER_GET,
+	RTK_BT_MESH_SCENE_CLIENT_MODEL_DELETE,
+	RTK_BT_MESH_SCENE_CLIENT_MODEL_ACT_MAX,
 } rtk_bt_mesh_scene_client_model_act_t;
 
 /**
@@ -42,8 +42,8 @@ typedef enum {
  */
 typedef enum {
 	RTK_BT_MESH_SCENE_CLIENT_MODEL_STATUS = 1,
-    RTK_BT_MESH_SCENE_CLIENT_MODEL_REGISTER_STATUS,
-    RTK_BT_MESH_SCENE_CLIENT_MODEL_EVT_MAX,
+	RTK_BT_MESH_SCENE_CLIENT_MODEL_REGISTER_STATUS,
+	RTK_BT_MESH_SCENE_CLIENT_MODEL_EVT_MAX,
 } rtk_bt_mesh_scene_client_model_evt_t;
 
 /**
@@ -53,8 +53,8 @@ typedef enum {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t scene_number;
-    bool ack;
+	uint16_t scene_number;
+	bool ack;
 } rtk_bt_mesh_scene_store_t;
 
 /**
@@ -64,12 +64,12 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t scene_number;
-    uint8_t tid;
-    bool optional;
-    rtk_bt_mesh_generic_transition_time_t trans_time;
-    uint8_t delay;
-    bool ack;
+	uint16_t scene_number;
+	uint8_t tid;
+	bool optional;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
+	uint8_t delay;
+	bool ack;
 } rtk_bt_mesh_scene_recall_t;
 
 /**
@@ -97,8 +97,8 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t scene_number;
-    bool ack;
+	uint16_t scene_number;
+	bool ack;
 } rtk_bt_mesh_scene_delete_t;
 
 /**
@@ -107,21 +107,21 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t src;
-    rtk_bt_mesh_scene_status_code_t status;
-    uint16_t current_scene;
-    bool optional;
-    uint16_t target_scene;
-    rtk_bt_mesh_generic_transition_time_t remaining_time;
+	uint16_t src;
+	rtk_bt_mesh_scene_status_code_t status;
+	uint16_t current_scene;
+	bool optional;
+	uint16_t target_scene;
+	rtk_bt_mesh_generic_transition_time_t remaining_time;
 } rtk_bt_mesh_scene_client_status_t;
 
 typedef struct
 {
-    uint16_t src;
-    rtk_bt_mesh_scene_status_code_t status;
-    uint16_t current_scene;
-    uint8_t scene_array_len;
-    uint16_t *scene_array;// Indication!!!
+	uint16_t src;
+	rtk_bt_mesh_scene_status_code_t status;
+	uint16_t current_scene;
+	uint8_t scene_array_len;
+	uint16_t *scene_array;// Indication!!!
 } rtk_bt_mesh_scene_client_register_status_t;
 
 
@@ -132,12 +132,12 @@ typedef struct
  */
 typedef enum {
 	RTK_BT_MESH_SCENE_SERVER_MODEL_GET = 1,
-    RTK_BT_MESH_SCENE_SERVER_MODEL_RECALL,
-    RTK_BT_MESH_SCENE_SERVER_MODEL_GET_REGISTER_STATUS,
-    RTK_BT_MESH_SCENE_SERVER_MODEL_GET_STATUS_RECALL,
-    RTK_BT_MESH_SCENE_SERVER_MODEL_GET_SCENES,
-    RTK_BT_MESH_SCENE_SERVER_MODEL_GET_SCENES_NUM,
-    RTK_BT_MESH_SCENE_SERVER_MODEL_EVT_MAX,
+	RTK_BT_MESH_SCENE_SERVER_MODEL_RECALL,
+	RTK_BT_MESH_SCENE_SERVER_MODEL_GET_REGISTER_STATUS,
+	RTK_BT_MESH_SCENE_SERVER_MODEL_GET_STATUS_RECALL,
+	RTK_BT_MESH_SCENE_SERVER_MODEL_GET_SCENES,
+	RTK_BT_MESH_SCENE_SERVER_MODEL_GET_SCENES_NUM,
+	RTK_BT_MESH_SCENE_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_scene_server_model_evt_t;
 
 /**
@@ -145,7 +145,7 @@ typedef enum {
  * @brief     BLE MESH scene server model act definition.
  */
 typedef enum {
-    RTK_BT_MESH_SCENE_SERVER_MODEL_ACT_DB_SET = 1,
+	RTK_BT_MESH_SCENE_SERVER_MODEL_ACT_DB_SET = 1,
 	RTK_BT_MESH_SCENE_SERVER_MODEL_ACT_MAX,
 } rtk_bt_mesh_scene_server_model_act_t;
 
@@ -155,8 +155,8 @@ typedef enum {
  */
 typedef struct
 {
-    uint16_t scene_number;
-    void *pmemory;
+	uint16_t scene_number;
+	void *pmemory;
 } rtk_bt_mesh_scene_storage_memory_t;
 
 /**
@@ -174,7 +174,7 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t *current_scene;
+	uint16_t *current_scene;
 } rtk_bt_mesh_scene_server_get_t;
 
 /**
@@ -183,7 +183,7 @@ typedef struct
  */
 typedef struct
 {
-    rtk_bt_mesh_scene_status_code_t *status;
+	rtk_bt_mesh_scene_status_code_t *status;
 } rtk_bt_mesh_scene_server_get_register_status_t;
 
 /**
@@ -192,7 +192,7 @@ typedef struct
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_transition_time_t trans_time;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
 } rtk_bt_mesh_scene_server_get_default_transition_time_t;
 
 /**
@@ -201,9 +201,9 @@ typedef struct
  */
 typedef struct
 {
-    rtk_bt_mesh_scene_status_code_t status;
-    uint16_t scene_number;
-    uint8_t *pmemory;
+	rtk_bt_mesh_scene_status_code_t status;
+	uint16_t scene_number;
+	uint8_t *pmemory;
 } rtk_bt_mesh_scene_server_store_t;
 
 /**
@@ -212,10 +212,10 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t scene_number;
-    rtk_bt_mesh_generic_transition_time_t total_time;
-    rtk_bt_mesh_generic_transition_time_t remaining_time;
-    uint8_t *pmemory;
+	uint16_t scene_number;
+	rtk_bt_mesh_generic_transition_time_t total_time;
+	rtk_bt_mesh_generic_transition_time_t remaining_time;
+	uint8_t *pmemory;
 } rtk_bt_mesh_scene_server_recall_t;
 
 /**
@@ -224,16 +224,16 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t scene_number;
+	uint16_t scene_number;
 } rtk_bt_mesh_scene_server_delete_t;
 
 typedef struct {
-    uint16_t scene_number;
+	uint16_t scene_number;
 	rtk_bt_mesh_scene_status_code_t *status_recall;
 } rtk_bt_mesh_scene_server_get_status_recall_t;
 
 typedef struct {
-    uint16_t num_scenes;
+	uint16_t num_scenes;
 	uint16_t *scenes; //variable length
 } rtk_bt_mesh_scene_server_get_scenes_t;
 
@@ -247,12 +247,12 @@ typedef struct {
  */
 typedef enum {
 	RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_STORE = 1,
-    RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_DELETE,
-    RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_GET,
-    RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_GET_STATUS_REGISTER,
-    RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_GET_SCENES,
-    RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_GET_SCENES_NUM,
-    RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_EVT_MAX,
+	RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_DELETE,
+	RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_GET,
+	RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_GET_STATUS_REGISTER,
+	RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_GET_SCENES,
+	RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_GET_SCENES_NUM,
+	RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_scene_setup_server_model_evt_t;
 
 /**
@@ -260,7 +260,7 @@ typedef enum {
  * @brief     BLE MESH scene setup server model act definition.
  */
 typedef enum {
-    RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_ACT_DB_SET = 1,
+	RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_ACT_DB_SET = 1,
 	RTK_BT_MESH_SCENE_SETUP_SERVER_MODEL_ACT_MAX,
 } rtk_bt_mesh_scene_setup_server_model_act_t;
 
@@ -270,8 +270,8 @@ typedef enum {
  */
 typedef struct
 {
-    uint16_t scene_number;
-    rtk_bt_mesh_scene_status_code_t *status;
+	uint16_t scene_number;
+	rtk_bt_mesh_scene_status_code_t *status;
 } rtk_bt_mesh_scene_setup_server_get_register_status_t;
 
 /********************************* Functions Declaration *******************************/

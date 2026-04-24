@@ -1170,15 +1170,15 @@ void rtk_bt_event_free(rtk_bt_evt_t *pevt);
 #ifndef HI_WORD
 #define HI_WORD(x)      ((uint8_t)((x & 0xFF00) >> 8))
 #endif
-	
+
 #ifndef LO_WORD
 #define LO_WORD(x)      ((uint8_t)(x))
 #endif
-	
+
 #ifndef UUID128_STR
 #define UUID128_STR "%08lx-%04x-%04x-%04x-%04x%08lx"
 #endif
-	
+
 	/* uuid128 shall be a pointer of (uint8_t *) */
 #ifndef UUID128_VAL
 #define UUID128_VAL(uuid128) \
@@ -1186,12 +1186,12 @@ void rtk_bt_event_free(rtk_bt_evt_t *pevt);
 		*(uint16_t*)(uuid128+8), *(uint16_t*)(uuid128+6), \
 		*(uint16_t*)(uuid128+4), *(uint32_t*)uuid128
 #endif
-	
+
 #define APP_PRINT_SEPARATOR()                                                               \
 		do {																					\
 			printf("############################################################\r\n \r\n");	\
 		} while (0)
-	
+
 #define APP_PROMOTE(...)                                                                \
 		do {																				\
 			printf("\r\n"); 																\

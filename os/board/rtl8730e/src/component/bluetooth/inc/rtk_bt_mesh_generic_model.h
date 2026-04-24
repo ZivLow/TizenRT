@@ -24,8 +24,8 @@
 typedef enum {
 	RTK_BT_MESH_GENERIC_LEVEL_CLIENT_MODEL_GET = 1,
 	RTK_BT_MESH_GENERIC_LEVEL_CLIENT_MODEL_SET,
-    RTK_BT_MESH_GENERIC_LEVEL_CLIENT_MODEL_DELTA_SET,
-    RTK_BT_MESH_GENERIC_LEVEL_CLIENT_MODEL_MOVE_SET,
+	RTK_BT_MESH_GENERIC_LEVEL_CLIENT_MODEL_DELTA_SET,
+	RTK_BT_MESH_GENERIC_LEVEL_CLIENT_MODEL_MOVE_SET,
 	RTK_BT_MESH_GENERIC_LEVEL_CLIENT_MODEL_ACT_MAX,
 } rtk_bt_mesh_generic_level_client_model_act_t;
 
@@ -54,12 +54,12 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    int16_t level;
-    uint8_t tid;
-    bool optional;
-    rtk_bt_mesh_generic_transition_time_t trans_time;
-    uint8_t delay;
-    bool ack;
+	int16_t level;
+	uint8_t tid;
+	bool optional;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
+	uint8_t delay;
+	bool ack;
 } rtk_bt_mesh_generic_level_set_t;
 
 /**
@@ -69,12 +69,12 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    int32_t delta_level;
-    uint8_t tid;
-    bool optional;
-    rtk_bt_mesh_generic_transition_time_t trans_time;
-    uint8_t delay;
-    bool ack;
+	int32_t delta_level;
+	uint8_t tid;
+	bool optional;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
+	uint8_t delay;
+	bool ack;
 } rtk_bt_mesh_generic_level_delta_set_t;
 
 /**
@@ -84,12 +84,12 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    int16_t delta_level;
-    uint8_t tid;
-    bool optional;
-    rtk_bt_mesh_generic_transition_time_t trans_time;
-    uint8_t delay;
-    bool ack;
+	int16_t delta_level;
+	uint8_t tid;
+	bool optional;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
+	uint8_t delay;
+	bool ack;
 } rtk_bt_mesh_generic_level_move_set_t;
 
 /**
@@ -98,11 +98,11 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t src;
-    int16_t present_level;
-    bool optional;
-    int16_t target_level;
-    rtk_bt_mesh_generic_transition_time_t remaining_time;
+	uint16_t src;
+	int16_t present_level;
+	bool optional;
+	int16_t target_level;
+	rtk_bt_mesh_generic_transition_time_t remaining_time;
 } rtk_bt_mesh_generic_level_client_status_t;
 
 
@@ -113,8 +113,8 @@ typedef struct
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_LEVEL_SERVER_MODEL_GET = 1,
-    RTK_BT_MESH_GENERIC_LEVEL_SERVER_MODEL_SET,
-    RTK_BT_MESH_GENERIC_LEVEL_SERVER_MODEL_SET_MOVE,
+	RTK_BT_MESH_GENERIC_LEVEL_SERVER_MODEL_SET,
+	RTK_BT_MESH_GENERIC_LEVEL_SERVER_MODEL_SET_MOVE,
 	RTK_BT_MESH_GENERIC_LEVEL_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_level_server_model_evt_t;
 
@@ -124,7 +124,7 @@ typedef enum {
  */
 typedef struct
 {
-    int16_t *level;
+	int16_t *level;
 } rtk_bt_mesh_generic_level_server_get_t;
 
 /**
@@ -133,7 +133,7 @@ typedef struct
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_transition_time_t trans_time;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
 } rtk_bt_mesh_generic_level_server_get_default_transition_time_t;
 
 /**
@@ -142,9 +142,9 @@ typedef struct
  */
 typedef struct
 {
-    int16_t level;
-    rtk_bt_mesh_generic_transition_time_t total_time;
-    rtk_bt_mesh_generic_transition_time_t remaining_time;
+	int16_t level;
+	rtk_bt_mesh_generic_transition_time_t total_time;
+	rtk_bt_mesh_generic_transition_time_t remaining_time;
 } rtk_bt_mesh_generic_level_server_set_t;
 
 /**
@@ -153,10 +153,10 @@ typedef struct
  */
 typedef struct
 {
-    int16_t move_delta;
-    int16_t target_level;
-    rtk_bt_mesh_generic_transition_time_t total_time;
-    rtk_bt_mesh_generic_transition_time_t remaining_time;
+	int16_t move_delta;
+	int16_t target_level;
+	rtk_bt_mesh_generic_transition_time_t total_time;
+	rtk_bt_mesh_generic_transition_time_t remaining_time;
 } rtk_bt_mesh_generic_level_server_set_move_t;
 
 /***********generic power on off*************/
@@ -195,13 +195,13 @@ typedef struct {
  */
 typedef enum
 {
-    /* After being powered up, the element is in an off state. */
-    RTK_BT_MESH_GENERIC_ON_POWER_UP_OFF,
-    /* After being powered up, the element is in an On state and uses default state values. */
-    RTK_BT_MESH_GENERIC_ON_POWER_UP_DEFAULT,
-    /* If a transition was in progress when powered down, the element restores the target state when powered up.
-       Otherwise the element restores the state it was in when powered down. */
-    RTK_BT_MESH_GENERIC_ON_POWER_UP_RESTORE
+	/* After being powered up, the element is in an off state. */
+	RTK_BT_MESH_GENERIC_ON_POWER_UP_OFF,
+	/* After being powered up, the element is in an On state and uses default state values. */
+	RTK_BT_MESH_GENERIC_ON_POWER_UP_DEFAULT,
+	/* If a transition was in progress when powered down, the element restores the target state when powered up.
+	   Otherwise the element restores the state it was in when powered down. */
+	RTK_BT_MESH_GENERIC_ON_POWER_UP_RESTORE
 } rtk_bt_mesh_generic_on_power_up_t;
 
 /**
@@ -211,8 +211,8 @@ typedef enum
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    rtk_bt_mesh_generic_on_power_up_t on_power_up;
-    bool ack;
+	rtk_bt_mesh_generic_on_power_up_t on_power_up;
+	bool ack;
 } rtk_bt_mesh_generic_on_power_up_set_t;
 
 /**
@@ -250,7 +250,7 @@ typedef enum {
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_on_power_up_t *on_power_up;
+	rtk_bt_mesh_generic_on_power_up_t *on_power_up;
 } rtk_bt_mesh_generic_power_on_off_server_get_t;
 
 /**
@@ -259,7 +259,7 @@ typedef struct
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_on_power_up_t on_power_up;
+	rtk_bt_mesh_generic_on_power_up_t on_power_up;
 } rtk_bt_mesh_generic_power_on_off_server_set_t;
 
 /******power level********/
@@ -272,11 +272,11 @@ typedef struct
 typedef enum {
 	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_GET = 1,
 	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_SET,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_LAST_GET,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_DEFAULT_GET,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_DEFAULT_SET,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_RANGE_GET,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_RANGE_SET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_LAST_GET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_DEFAULT_GET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_DEFAULT_SET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_RANGE_GET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_RANGE_SET,
 	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_ACT_MAX,
 } rtk_bt_mesh_generic_power_level_client_model_act_t;
 
@@ -286,9 +286,9 @@ typedef enum {
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_STATUS = 1,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_LAST_STATUS,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_DEFAULT_STATUS,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_RANGE_STATUS,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_LAST_STATUS,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_DEFAULT_STATUS,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_RANGE_STATUS,
 	RTK_BT_MESH_GENERIC_POWER_LEVEL_CLIENT_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_power_level_client_model_evt_t;
 
@@ -308,12 +308,12 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t power;
-    uint8_t tid;
-    bool optional;
-    rtk_bt_mesh_generic_transition_time_t trans_time;
-    uint8_t delay;
-    bool ack;
+	uint16_t power;
+	uint8_t tid;
+	bool optional;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
+	uint8_t delay;
+	bool ack;
 } rtk_bt_mesh_generic_power_level_set_t;
 
 /**
@@ -341,8 +341,8 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t power;
-    bool ack;
+	uint16_t power;
+	bool ack;
 } rtk_bt_mesh_generic_power_level_default_set_t;
 
 /**
@@ -361,9 +361,9 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t range_min;
-    uint16_t range_max;
-    bool ack;
+	uint16_t range_min;
+	uint16_t range_max;
+	bool ack;
 } rtk_bt_mesh_generic_power_level_range_set_t;
 
 /**
@@ -372,11 +372,11 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t present_power;
-    bool optional;
-    uint16_t target_power;
-    rtk_bt_mesh_generic_transition_time_t remaining_time;
+	uint16_t src;
+	uint16_t present_power;
+	bool optional;
+	uint16_t target_power;
+	rtk_bt_mesh_generic_transition_time_t remaining_time;
 } rtk_bt_mesh_generic_power_level_client_status_t;
 
 /**
@@ -385,8 +385,8 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t power;
+	uint16_t src;
+	uint16_t power;
 } rtk_bt_mesh_generic_power_level_client_status_simple_t;
 
 /**
@@ -395,10 +395,10 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    rtk_bt_mesh_generic_stat_t stat;
-    uint16_t range_min;
-    uint16_t range_max;
+	uint16_t src;
+	rtk_bt_mesh_generic_stat_t stat;
+	uint16_t range_min;
+	uint16_t range_max;
 } rtk_bt_mesh_generic_power_level_client_status_range_t;
 
 /****server****/
@@ -409,11 +409,11 @@ typedef struct
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_GET = 1,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_SET,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_LAST_GET,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_LAST_SET,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_DEFAULT_GET,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_RANGE_GET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_SET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_LAST_GET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_LAST_SET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_DEFAULT_GET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_RANGE_GET,
 	RTK_BT_MESH_GENERIC_POWER_LEVEL_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_power_level_server_model_evt_t;
 
@@ -422,8 +422,8 @@ typedef enum {
  * @brief     BLE MESH generic power level setup server model evt definition.
  */
 typedef enum {
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_SETUP_SERVER_MODEL_DEFAULT_SET = 1,
-    RTK_BT_MESH_GENERIC_POWER_LEVEL_SETUP_SERVER_MODEL_RANGE_SET,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_SETUP_SERVER_MODEL_DEFAULT_SET = 1,
+	RTK_BT_MESH_GENERIC_POWER_LEVEL_SETUP_SERVER_MODEL_RANGE_SET,
 	RTK_BT_MESH_GENERIC_POWER_LEVEL_SETUP_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_power_level_setup_server_model_evt_t;
 
@@ -433,7 +433,7 @@ typedef enum {
  */
 typedef struct
 {
-    uint16_t *power;
+	uint16_t *power;
 } rtk_bt_mesh_generic_power_level_server_get_t;
 
 /**
@@ -442,8 +442,8 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t range_min;
-    uint16_t range_max;
+	uint16_t range_min;
+	uint16_t range_max;
 } rtk_bt_mesh_generic_power_level_server_get_range_t;
 
 /**
@@ -452,7 +452,7 @@ typedef struct
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_power_level_server_get_range_t *value;
+	rtk_bt_mesh_generic_power_level_server_get_range_t *value;
 } rtk_bt_mesh_generic_power_level_server_direct_get_range_t;
 
 /**
@@ -461,7 +461,7 @@ typedef struct
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_transition_time_t trans_time;
+	rtk_bt_mesh_generic_transition_time_t trans_time;
 } rtk_bt_mesh_generic_power_level_server_get_default_transition_time_t;
 
 /**
@@ -470,9 +470,9 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t power;
-    rtk_bt_mesh_generic_transition_time_t total_time;
-    rtk_bt_mesh_generic_transition_time_t remaining_time;
+	uint16_t power;
+	rtk_bt_mesh_generic_transition_time_t total_time;
+	rtk_bt_mesh_generic_transition_time_t remaining_time;
 } rtk_bt_mesh_generic_power_level_server_set_t;
 
 /**
@@ -481,7 +481,7 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t power;
+	uint16_t power;
 } rtk_bt_mesh_generic_power_level_server_set_last_t;
 
 /**
@@ -490,7 +490,7 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t power;
+	uint16_t power;
 } rtk_bt_mesh_generic_power_level_server_set_default_t;
 
 /**
@@ -499,8 +499,8 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t range_min;
-    uint16_t range_max;
+	uint16_t range_min;
+	uint16_t range_max;
 } rtk_bt_mesh_generic_power_level_server_set_range_t;
 
 /********generic battery**********/
@@ -537,10 +537,10 @@ typedef struct {
  */
 typedef struct
 {
-    uint8_t presence: 2;
-    uint8_t indicator: 2;
-    uint8_t charging: 2;
-    uint8_t serviceability: 2;
+	uint8_t presence: 2;
+	uint8_t indicator: 2;
+	uint8_t charging: 2;
+	uint8_t serviceability: 2;
 } rtk_bt_mesh_generic_battery_flags_t;
 
 /**
@@ -549,11 +549,11 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint8_t battery_level;
-    uint32_t time_to_discharge;
-    uint32_t time_to_charge;
-    rtk_bt_mesh_generic_battery_flags_t flags;
+	uint16_t src;
+	uint8_t battery_level;
+	uint32_t time_to_discharge;
+	uint32_t time_to_charge;
+	rtk_bt_mesh_generic_battery_flags_t flags;
 } rtk_bt_mesh_generic_battery_client_status_t;
 
 /**
@@ -571,10 +571,10 @@ typedef enum {
  */
 typedef struct
 {
-    uint8_t battery_level;
-    uint32_t time_to_discharge;
-    uint32_t time_to_charge;
-    rtk_bt_mesh_generic_battery_flags_t flags;
+	uint8_t battery_level;
+	uint32_t time_to_discharge;
+	uint32_t time_to_charge;
+	rtk_bt_mesh_generic_battery_flags_t flags;
 } rtk_bt_mesh_generic_battery_server_get_t;
 
 /**
@@ -583,7 +583,7 @@ typedef struct
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_battery_server_get_t *value;
+	rtk_bt_mesh_generic_battery_server_get_t *value;
 } rtk_bt_mesh_generic_battery_server_direct_get_t;
 
 /******generic location*******/
@@ -593,9 +593,9 @@ typedef struct
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_GLOBAL_GET = 1,
-    RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_GLOBAL_SET,
-    RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_LOCAL_GET,
-    RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_LOCAL_SET,
+	RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_GLOBAL_SET,
+	RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_LOCAL_GET,
+	RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_LOCAL_SET,
 	RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_ACT_MAX,
 } rtk_bt_mesh_generic_location_client_model_act_t;
 
@@ -605,7 +605,7 @@ typedef enum {
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_GLOBAL_STATUS = 1,
-    RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_LOCAL_STATUS,
+	RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_LOCAL_STATUS,
 	RTK_BT_MESH_GENERIC_LOCATION_CLIENT_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_location_client_model_evt_t;
 
@@ -624,9 +624,9 @@ typedef struct {
  */
 typedef struct
 {
-    int32_t global_latitude;
-    int32_t global_longitude;
-    int16_t global_altitude;
+	int32_t global_latitude;
+	int32_t global_longitude;
+	int16_t global_altitude;
 } _PACKED4_ rtk_bt_mesh_generic_location_global_t;
 
 /**
@@ -636,8 +636,8 @@ typedef struct
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    rtk_bt_mesh_generic_location_global_t global;
-    bool ack;
+	rtk_bt_mesh_generic_location_global_t global;
+	bool ack;
 } rtk_bt_mesh_generic_location_global_set_t;
 
 /**
@@ -655,14 +655,14 @@ typedef struct {
  */
 typedef union
 {
-    struct
-    {
-        uint16_t stationary: 1;
-        uint16_t rfu: 7;
-        uint16_t update_time: 4;
-        uint16_t precision: 4;
-    };
-    uint16_t uncertainty;
+	struct
+	{
+		uint16_t stationary: 1;
+		uint16_t rfu: 7;
+		uint16_t update_time: 4;
+		uint16_t precision: 4;
+	};
+	uint16_t uncertainty;
 } _PACKED4_ rtk_bt_mesh_generic_location_uncertainty_t;
 
 /**
@@ -671,11 +671,11 @@ typedef union
  */
 typedef struct
 {
-    int16_t local_north;
-    int16_t local_east;
-    int16_t local_altitude;
-    uint8_t floor_num;
-    rtk_bt_mesh_generic_location_uncertainty_t uncertainty;
+	int16_t local_north;
+	int16_t local_east;
+	int16_t local_altitude;
+	uint8_t floor_num;
+	rtk_bt_mesh_generic_location_uncertainty_t uncertainty;
 } _PACKED4_ rtk_bt_mesh_generic_location_local_t;
 
 /**
@@ -685,8 +685,8 @@ typedef struct
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    rtk_bt_mesh_generic_location_local_t local;
-    bool ack;
+	rtk_bt_mesh_generic_location_local_t local;
+	bool ack;
 } rtk_bt_mesh_generic_location_local_set_t;
 
 /**
@@ -695,8 +695,8 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t src;
-    rtk_bt_mesh_generic_location_global_t global;
+	uint16_t src;
+	rtk_bt_mesh_generic_location_global_t global;
 } rtk_bt_mesh_generic_location_client_status_global_t;
 
 /**
@@ -705,8 +705,8 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    rtk_bt_mesh_generic_location_local_t local;
+	uint16_t src;
+	rtk_bt_mesh_generic_location_local_t local;
 } rtk_bt_mesh_generic_location_client_status_local_t;
 
 /**
@@ -715,7 +715,7 @@ typedef struct
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_LOCATION_SERVER_MODEL_GLOBAL_GET = 1,
-    RTK_BT_MESH_GENERIC_LOCATION_SERVER_MODEL_LOCAL_GET,
+	RTK_BT_MESH_GENERIC_LOCATION_SERVER_MODEL_LOCAL_GET,
 	RTK_BT_MESH_GENERIC_LOCATION_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_location_server_model_evt_t;
 
@@ -725,9 +725,9 @@ typedef enum {
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_LOCATION_SETUP_SERVER_MODEL_GLOBAL_SET = 1,
-    RTK_BT_MESH_GENERIC_LOCATION_SETUP_SERVER_MODEL_LOCAL_SET,
-    RTK_BT_MESH_GENERIC_LOCATION_SETUP_SERVER_MODEL_GLOBAL_GET,
-    RTK_BT_MESH_GENERIC_LOCATION_SETUP_SERVER_MODEL_LOCAL_GET,
+	RTK_BT_MESH_GENERIC_LOCATION_SETUP_SERVER_MODEL_LOCAL_SET,
+	RTK_BT_MESH_GENERIC_LOCATION_SETUP_SERVER_MODEL_GLOBAL_GET,
+	RTK_BT_MESH_GENERIC_LOCATION_SETUP_SERVER_MODEL_LOCAL_GET,
 	RTK_BT_MESH_GENERIC_LOCATION_SETUP_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_location_setup_server_model_evt_t;
 
@@ -743,7 +743,7 @@ typedef rtk_bt_mesh_generic_location_global_t rtk_bt_mesh_generic_location_serve
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_location_server_get_global_t *value;
+	rtk_bt_mesh_generic_location_server_get_global_t *value;
 } rtk_bt_mesh_generic_location_server_direct_get_global_t;
 
 /**
@@ -758,7 +758,7 @@ typedef rtk_bt_mesh_generic_location_local_t rtk_bt_mesh_generic_location_server
  */
 typedef struct
 {
-    rtk_bt_mesh_generic_location_server_get_local_t *value;
+	rtk_bt_mesh_generic_location_server_get_local_t *value;
 } rtk_bt_mesh_generic_location_server_direct_get_local_t;
 
 /**
@@ -780,15 +780,15 @@ typedef rtk_bt_mesh_generic_location_local_t rtk_bt_mesh_generic_location_server
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_USER_PROPERTIES_GET = 1,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_USER_PROPERTY_GET,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_USER_PROPERTY_SET,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ADMIN_PROPERTIES_GET,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ADMIN_PROPERTY_GET,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ADMIN_PROPERTY_SET,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_MANU_PROPERTIES_GET,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_MANU_PROPERTY_GET,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_MANU_PROPERTY_SET,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_CLIENT_PROPERTY_GET,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_USER_PROPERTY_GET,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_USER_PROPERTY_SET,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ADMIN_PROPERTIES_GET,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ADMIN_PROPERTY_GET,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ADMIN_PROPERTY_SET,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_MANU_PROPERTIES_GET,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_MANU_PROPERTY_GET,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_MANU_PROPERTY_SET,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_CLIENT_PROPERTY_GET,
 	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ACT_MAX,
 } rtk_bt_mesh_generic_property_client_model_act_t;
 
@@ -798,12 +798,12 @@ typedef enum {
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_USER_PROPERTIES_STATUS = 1,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_USER_PROPERTY_STATUS,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ADMIN_PROPERTIES_STATUS,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ADMIN_PROPERTY_STATUS,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_MANU_PROPERTIES_STATUS,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_MANU_PROPERTY_STATUS,
-    RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_CLIENT_PROPERTY_STATUS,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_USER_PROPERTY_STATUS,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ADMIN_PROPERTIES_STATUS,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_ADMIN_PROPERTY_STATUS,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_MANU_PROPERTIES_STATUS,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_MANU_PROPERTY_STATUS,
+	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_CLIENT_PROPERTY_STATUS,
 	RTK_BT_MESH_GENERIC_PROPERTY_CLIENT_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_property_client_model_evt_t;
 
@@ -823,7 +823,7 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
+	uint16_t property_id;
 } rtk_bt_mesh_generic_user_property_get_t;
 
 /**
@@ -833,10 +833,10 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
-    uint8_t pvalue[GENERIC_PROPERTY_DATA_MAX_LEN];
-    uint8_t value_len;
-    bool ack;
+	uint16_t property_id;
+	uint8_t pvalue[GENERIC_PROPERTY_DATA_MAX_LEN];
+	uint8_t value_len;
+	bool ack;
 } rtk_bt_mesh_generic_user_property_set_t;
 
 /**
@@ -855,7 +855,7 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
+	uint16_t property_id;
 } rtk_bt_mesh_generic_admin_property_get_t;
 
 /**
@@ -865,11 +865,11 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
-    uint8_t property_access;
-    uint8_t pvalue[GENERIC_PROPERTY_DATA_MAX_LEN];
-    uint8_t value_len;
-    bool ack;
+	uint16_t property_id;
+	uint8_t property_access;
+	uint8_t pvalue[GENERIC_PROPERTY_DATA_MAX_LEN];
+	uint8_t value_len;
+	bool ack;
 } rtk_bt_mesh_generic_admin_property_set_t;
 
 /**
@@ -888,7 +888,7 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
+	uint16_t property_id;
 } rtk_bt_mesh_generic_manu_property_get_t;
 
 /**
@@ -898,9 +898,9 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
-    uint8_t property_access;
-    bool ack;
+	uint16_t property_id;
+	uint8_t property_access;
+	bool ack;
 } rtk_bt_mesh_generic_manu_property_set_t;
 
 /**
@@ -910,7 +910,7 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
+	uint16_t property_id;
 } rtk_bt_mesh_generic_client_properties_get_t;
 
 /**
@@ -919,9 +919,9 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t src;
-    uint8_t num_ids;
-    uint16_t *pproperty_ids;
+	uint16_t src;
+	uint8_t num_ids;
+	uint16_t *pproperty_ids;
 } rtk_bt_mesh_generic_properties_client_status_t;
 
 /**
@@ -930,11 +930,11 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t property_id;
-    uint8_t property_access;
-    uint16_t value_len;
-    uint8_t *pproperty_value;
+	uint16_t src;
+	uint16_t property_id;
+	uint8_t property_access;
+	uint16_t value_len;
+	uint8_t *pproperty_value;
 } rtk_bt_mesh_generic_property_client_status_t;
 
 /**
@@ -943,11 +943,11 @@ typedef struct
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_PROPERTY_SET = 1,
-    RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_PARAMETER_GET,
-    RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_VALUE_GET,
-    RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_NUM_IDS_GET,
-    RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_IDS_VALUE_GET,
-    RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_EVT_MAX,
+	RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_PARAMETER_GET,
+	RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_VALUE_GET,
+	RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_NUM_IDS_GET,
+	RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_IDS_VALUE_GET,
+	RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_user_property_server_model_evt_t;
 
 /**
@@ -955,7 +955,7 @@ typedef enum {
  * @brief     BLE MESH generic user property server model act definition.
  */
 typedef enum {
-    RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_ACT_DB_SET = 1,
+	RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_ACT_DB_SET = 1,
 	RTK_BT_MESH_GENERIC_USER_PROPERTY_SERVER_MODEL_ACT_MAX,
 } rtk_bt_mesh_generic_user_property_server_model_act_t;
 
@@ -965,10 +965,10 @@ typedef enum {
  */
 typedef struct
 {
-    uint16_t property_id;
-    uint8_t property_access;
-    uint8_t *pproperty_value; //!< variable length
-    uint16_t value_len;
+	uint16_t property_id;
+	uint8_t property_access;
+	uint8_t *pproperty_value; //!< variable length
+	uint16_t value_len;
 } rtk_bt_mesh_generic_property_db_t;
 
 /**
@@ -977,13 +977,13 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t property_id;
-    /*
-     * just notify property value changed in database,
-     * do not need to modify it, just use it if needed
-     */
-    uint8_t *pproperty_value;
-    uint16_t value_len;
+	uint16_t property_id;
+	/*
+	 * just notify property value changed in database,
+	 * do not need to modify it, just use it if needed
+	 */
+	uint8_t *pproperty_value;
+	uint16_t value_len;
 } rtk_bt_mesh_generic_user_property_server_set_t;
 
 /**
@@ -1047,11 +1047,11 @@ typedef struct {
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_PROPERTY_SET = 1,
-    RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_PARAMETER_GET,
-    RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_VALUE_GET,
-    RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_NUM_IDS_GET,
-    RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_IDS_VALUE_GET,
-    RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_EVT_MAX,
+	RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_PARAMETER_GET,
+	RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_VALUE_GET,
+	RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_NUM_IDS_GET,
+	RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_IDS_VALUE_GET,
+	RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_admin_property_server_model_evt_t;
 
 /**
@@ -1059,7 +1059,7 @@ typedef enum {
  * @brief     BLE MESH generic admin property server model act definition.
  */
 typedef enum {
-    RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_ACT_DB_SET = 1,
+	RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_ACT_DB_SET = 1,
 	RTK_BT_MESH_GENERIC_ADMIN_PROPERTY_SERVER_MODEL_ACT_MAX,
 } rtk_bt_mesh_generic_admin_property_server_model_act_t;
 
@@ -1069,11 +1069,11 @@ typedef enum {
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_PROPERTY_SET = 1,
-    RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_PARAMETER_GET,
-    RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_VALUE_GET,
-    RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_NUM_IDS_GET,
-    RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_IDS_VALUE_GET,
-    RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_EVT_MAX,
+	RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_PARAMETER_GET,
+	RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_VALUE_GET,
+	RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_NUM_IDS_GET,
+	RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_IDS_VALUE_GET,
+	RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_manu_property_server_model_evt_t;
 
 /**
@@ -1081,7 +1081,7 @@ typedef enum {
  * @brief     BLE MESH generic manu property server model act definition.
  */
 typedef enum {
-    RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_ACT_DB_SET = 1,
+	RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_ACT_DB_SET = 1,
 	RTK_BT_MESH_GENERIC_MANU_PROPERTY_SERVER_MODEL_ACT_MAX,
 } rtk_bt_mesh_generic_manu_property_server_model_act_t;
 
@@ -1104,7 +1104,7 @@ typedef struct {
  */
 typedef enum {
 	RTK_BT_MESH_GENERIC_CLIENT_PROPERTY_SERVER_MODEL_PROPERTY_GET = 1,
-    RTK_BT_MESH_GENERIC_CLIENT_PROPERTY_SERVER_MODEL_EVT_MAX,
+	RTK_BT_MESH_GENERIC_CLIENT_PROPERTY_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_generic_client_property_server_model_evt_t;
 
 /**
@@ -1113,7 +1113,7 @@ typedef enum {
  */
 typedef struct {
 	uint16_t property_id_start;
-    uint8_t *value;
+	uint8_t *value;
 } rtk_bt_mesh_generic_client_property_server_direct_get_t;
 
 /**

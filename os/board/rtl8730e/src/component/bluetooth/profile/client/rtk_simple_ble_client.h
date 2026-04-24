@@ -40,7 +40,7 @@ uint16_t simple_ble_client_srv_discover(uint16_t conn_handle);
 
 uint16_t simple_ble_client_read_charac_v0(uint16_t conn_handle);
 
-uint16_t simple_ble_client_write_charac_v1(uint16_t conn_handle, 
+uint16_t simple_ble_client_write_charac_v1(uint16_t conn_handle,
 											uint8_t *data, uint16_t len);
 
 uint16_t simple_ble_client_set_notify_charac_v2(uint16_t conn_handle, bool enable);

@@ -98,7 +98,7 @@ uint16_t rtk_bt_enable(rtk_bt_app_conf_t *app_default_conf)
 		err = (uint16_t)ret[0];
 		osif_mem_free(ret);
 exit:
-		if(host_msg)
+		if (host_msg)
 			osif_mem_free(host_msg);
 	}
 #else

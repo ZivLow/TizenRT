@@ -37,7 +37,7 @@ void gattc_dump(uint16_t len, uint8_t* data, uint8_t* tag)
 				debug_print("[HEX]: \n\r");
 			else if (!i && 1 == j)
 				debug_print("[ASCII]: \n\r");
-			if (0 == i%16 && i && 0 == j) 
+			if (0 == i%16 && i && 0 == j)
 				debug_print("\n\r");
 			if (0 == j)
 				debug_print("%02x ", *(data + i));
@@ -60,12 +60,12 @@ void general_client_discover_res_hdl(void *data)
 		case RTK_BT_GATT_DISCOVER_PRIMARY_ALL:
 			if (BT_UUID_TYPE_16 == disc_res->disc_primary_all_per.uuid_type) {
 				debug_print("[APP] GATTC discover primary result: start_handle: 0x%04x, end_handle: 0x%04x, UUID: %04x\r\n",
-					disc_res->disc_primary_all_per.start_handle, disc_res->disc_primary_all_per.end_handle, 
+					disc_res->disc_primary_all_per.start_handle, disc_res->disc_primary_all_per.end_handle,
 					*(uint16_t*)disc_res->disc_primary_all_per.uuid);
 			}
 			else if (BT_UUID_TYPE_128 == disc_res->disc_primary_all_per.uuid_type) {
 				debug_print("[APP] GATTC discover primary result: start_handle: 0x%04x, end_handle: 0x%04x, UUID: "UUID128_STR,
-					disc_res->disc_primary_all_per.start_handle, disc_res->disc_primary_all_per.end_handle, 
+					disc_res->disc_primary_all_per.start_handle, disc_res->disc_primary_all_per.end_handle,
 					UUID128_VAL(disc_res->disc_primary_all_per.uuid));
 				debug_print("\r\n");
 			}
@@ -91,7 +91,7 @@ void general_client_discover_res_hdl(void *data)
 		case RTK_BT_GATT_DISCOVER_CHARACTERISTIC_ALL:
 		case RTK_BT_GATT_DISCOVER_CHARACTERISTIC_BY_UUID:
 			debug_print("[APP] GATTC discover characteritic of a service result: handle: 0x%04x, "
-					"properties: 0x%02x, value_handle: 0x%04x, UUID: ", disc_res->disc_char_all_per.handle, 
+					"properties: 0x%02x, value_handle: 0x%04x, UUID: ", disc_res->disc_char_all_per.handle,
 					disc_res->disc_char_all_per.properties, disc_res->disc_char_all_per.value_handle);
 			if (BT_UUID_TYPE_16 == disc_res->disc_char_all_per.uuid_type) {
 				debug_print("%04x\r\n", *(uint16_t*)disc_res->disc_char_all_per.uuid);
@@ -145,7 +145,7 @@ void general_client_read_res_hdl(void *data)
 				read_res->type, read_res->err_code);
 		APP_PRINT_SEPARATOR();
 		return;
-	} else if(RTK_BT_STATUS_CONTINUE == read_status) {
+	} else if (RTK_BT_STATUS_CONTINUE == read_status) {
 		switch(read_res->type) {
 		case RTK_BT_GATT_CHAR_READ_BY_HANDLE:
 			handle = read_res->by_handle.handle;
@@ -202,12 +202,12 @@ void general_client_write_res_hdl(void *data)
 				"profile_id: %d, conn_handle: %d, type: %d, status: %d\r\n",
 				write_res->profile_id, write_res->conn_handle,
 				write_res->type, write_res->err_code);
-		
-		if(RTK_BT_GATT_CHAR_WRITE_REQ == write_res->type){
+
+		if (RTK_BT_GATT_CHAR_WRITE_REQ == write_res->type){
 			g_scatternet_write_result.status = write_status;
 			g_scatternet_write_result.conn_handle = write_res->conn_handle;
 			g_scatternet_write_result.type = write_res->type;
-		} else if(RTK_BT_GATT_CHAR_WRITE_NO_RSP == write_res->type) {
+		} else if (RTK_BT_GATT_CHAR_WRITE_NO_RSP == write_res->type) {
 			g_scatternet_write_no_rsp_result.status = write_status;
 			g_scatternet_write_no_rsp_result.conn_handle = write_res->conn_handle;
 			g_scatternet_write_no_rsp_result.type = write_res->type;
@@ -222,13 +222,12 @@ void general_client_notify_hdl(void *data)
 	rtk_bt_gattc_cccd_value_ind_t *ntf_ind = (rtk_bt_gattc_cccd_value_ind_t *)data;
 	dbg("[APP] GATTC notify received, profile_id: %d, conn_handle: %d, handle: 0x%x\r\n",
 			ntf_ind->profile_id, ntf_ind->conn_handle, ntf_ind->value_handle);
-	
+
 	gattc_dump(ntf_ind->len, ntf_ind->value, (uint8_t *)"notify event");
 	trble_data read_result;
 	read_result.length = ntf_ind->len;
 	read_result.data = (uint8_t *)osif_mem_alloc(RAM_TYPE_DATA_ON, read_result.length);
-	if (!read_result.data)
-	{
+	if (!read_result.data) {
 		dbg("fail to malloc data %s\n", __FUNCTION__);
 		return;
 	}
@@ -249,16 +248,15 @@ void general_client_indicate_hdl(void *data)
 //	cfm_param.profile_id = indicate_ind->profile_id;
 //	cfm_param.conn_handle = indicate_ind->conn_handle;
 	trble_data read_result;
-	
+
 //	ret = rtk_bt_gattc_confirm(&cfm_param);
 //	if (RTK_BT_OK != ret) {
 //		debug_print("[APP] GATTC confirm for indication failed! err: 0x%x\r\n", ret);
 //	}
-	
+
 	read_result.length = indicate_ind->len;
 	read_result.data = (uint8_t *)osif_mem_alloc(RAM_TYPE_DATA_ON, read_result.length);
-	if (!read_result.data)
-	{
+	if (!read_result.data) {
 		dbg("fail to malloc data %s\n", __FUNCTION__);
 		return;
 	}
@@ -269,19 +267,19 @@ void general_client_indicate_hdl(void *data)
 
 void general_client_cccd_enable_hdl(void *data)
 {
-	rtk_bt_gattc_cccd_update_ind_t *cccd_update = 
+	rtk_bt_gattc_cccd_update_ind_t *cccd_update =
 									(rtk_bt_gattc_cccd_update_ind_t *)data;
 	rtk_bt_status_t status = cccd_update->status;
 	if (RTK_BT_STATUS_DONE == status) {
 		dbg("[APP] GATTC enable cccd succeed, "
 				"profile_id: %d, conn_handle: %d, handle: 0x%x\r\n",
-				cccd_update->profile_id, cccd_update->conn_handle, 
+				cccd_update->profile_id, cccd_update->conn_handle,
 											cccd_update->cccd_handle);
 	} else {
 		dbg("[APP] GATTC enable cccd failed, "
-			   "profile_id: %d, conn_handle: %d, handle: 0x%x, err: 0x%x\r\n",
-			   cccd_update->profile_id, cccd_update->conn_handle, 
-			   cccd_update->cccd_handle, cccd_update->err_code);
+					"profile_id: %d, conn_handle: %d, handle: 0x%x, err: 0x%x\r\n",
+					cccd_update->profile_id, cccd_update->conn_handle,
+					cccd_update->cccd_handle, cccd_update->err_code);
 	}
 }
 
@@ -292,13 +290,13 @@ void general_client_cccd_disable_hdl(void *data)
 	if (RTK_BT_STATUS_DONE == status) {
 		dbg("[APP] GATTC disable cccd succeed, "
 					"profile_id: %d, conn_handle: %d, handle: 0x%x\r\n",
-					cccd_update->profile_id, cccd_update->conn_handle, 
+					cccd_update->profile_id, cccd_update->conn_handle,
 												cccd_update->cccd_handle);
 	} else {
 		dbg("[APP] GATTC disable cccd failed, "
-			   "profile_id: %d, conn_handle: %d, handle: 0x%x, err: 0x%x\r\n",
-			   cccd_update->profile_id, cccd_update->conn_handle, 
-			   cccd_update->cccd_handle, cccd_update->err_code);
+				"profile_id: %d, conn_handle: %d, handle: 0x%x, err: 0x%x\r\n",
+				cccd_update->profile_id, cccd_update->conn_handle,
+				cccd_update->cccd_handle, cccd_update->err_code);
 	}
 }
 

@@ -385,16 +385,16 @@ uint16_t rtk_bt_le_gap_remove_ext_adv(uint8_t adv_handle)
 	return ret;
 }
 
-uint16_t rtk_bt_le_gap_get_ext_adv_handle_by_conn_handle(uint16_t conn_handle, uint8_t *adv_handle) 
-{ 
-	uint16_t ret = 0; 
-	rtk_bt_le_get_eadv_by_conn_handle_param_t get_adv_hdl = { 
-		.conn_handle = conn_handle, 
-		.adv_handle = adv_handle, 
-	}; 
+uint16_t rtk_bt_le_gap_get_ext_adv_handle_by_conn_handle(uint16_t conn_handle, uint8_t *adv_handle)
+{
+	uint16_t ret = 0;
+	rtk_bt_le_get_eadv_by_conn_handle_param_t get_adv_hdl = {
+		.conn_handle = conn_handle,
+		.adv_handle = adv_handle,
+	};
 
 	ret = rtk_bt_send_cmd(RTK_BT_LE_GP_GAP, RTK_BT_LE_GAP_ACT_GET_EXT_ADV_HANDLE_BY_CONN_HANDLE, &get_adv_hdl, sizeof(get_adv_hdl));
-	return ret; 
+	return ret;
 }
 #endif /* RTK_BLE_5_0_AE_ADV_SUPPORT */
 
@@ -627,7 +627,7 @@ uint16_t rtk_bt_le_gap_pa_sync_terminate(uint8_t sync_id)
 // 		.duplicate_filter_enable = duplicate_filter_enable,
 // 	};
 
-// 	if(!rtk_bt_is_enable())
+// 	if (!rtk_bt_is_enable())
 // 		return RTK_BT_ERR_NOT_READY;
 
 // 	ret = rtk_bt_send_cmd(RTK_BT_LE_GP_GAP, RTK_BT_LE_GAP_ACT_PA_SYNC_REPORT, &param, sizeof(rtk_bt_le_pa_sync_report_set_t));

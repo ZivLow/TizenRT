@@ -396,7 +396,7 @@ static void app_avrcp_bt_cback(T_BT_EVENT event_type, void *event_buf, uint16_t 
 	case BT_EVENT_AVRCP_REG_VOLUME_CHANGED: {
 		rtk_bt_avrcp_volume_change_req_t *p_volume_t = NULL;
 		uint8_t cb_ret = 0;
-	
+
 		APP_PRINT_INFO0("BT_EVENT_AVRCP_REG_VOLUME_CHANGED");
 		printf("app_avrcp_bt_cback: BT_EVENT_AVRCP_REG_VOLUME_CHANGED \r\n");
 		p_link = app_find_br_link(param->avrcp_reg_volume_changed.bd_addr);
@@ -425,7 +425,7 @@ static void app_avrcp_bt_cback(T_BT_EVENT event_type, void *event_buf, uint16_t 
 	}
 	break;
 
-	}	
+	}
 	if (handle == true) {
 		APP_PRINT_INFO1("app_avrcp_bt_cback: event_type 0x%04x", event_type);
 		printf("app_avrcp_bt_cback: event_type 0x%04x \r\n", event_type);

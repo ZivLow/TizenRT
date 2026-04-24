@@ -152,14 +152,14 @@ uint16_t rtk_bt_set_tx_power(rtk_bt_vendor_tx_power_param_t *tx_power)
 	rtk_bt_gap_vendor_cmd_param_t param;
 	uint8_t data[5] = {0};
 
-	if(0 == tx_power->tx_power_type){
+	if (0 == tx_power->tx_power_type){
 		data[0] = SUB_CMD_SET_ADV_TX_POWER;
 		data[1] = tx_power->adv_tx_power.type;
 		data[2] = tx_power->tx_gain;
 		param.len = 3;
-	} else if(1 == tx_power->tx_power_type) {
+	} else if (1 == tx_power->tx_power_type) {
 		uint8_t conn_id = 0;
-		if(RTK_BT_OK != rtk_bt_le_gap_get_conn_id(tx_power->conn_tx_power.conn_handle, &conn_id)) {
+		if (RTK_BT_OK != rtk_bt_le_gap_get_conn_id(tx_power->conn_tx_power.conn_handle, &conn_id)) {
 			dbg("%s: conn_handle %d is not connect!\r\n", __func__, tx_power->conn_tx_power.conn_handle);
 			return RTK_BT_FAIL;
 		}
@@ -220,14 +220,14 @@ void rtk_bt_scoreboard_isr_handler(void)
 		//SCOREBOARD: bit 17: 0:SOF, 1:EOF; bit 17 is valid when bit 18 is 1
 		//			  bit 18: 0:disable, 1:enable
 		//dbg("[KM4] BT2WL dedicated SCB int data is: 0x%x\r\n", value);
-		if(value & BIT18) {
-			if(value & BIT17) {
+		if (value & BIT18) {
+			if (value & BIT17) {
 				ind = RTK_BT_LE_TX_EOF;
 			}
 			else {
 				ind = RTK_BT_LE_TX_SOF;
 			}
-			if(g_rtk_bt_scoreboard_isr_cb)
+			if (g_rtk_bt_scoreboard_isr_cb)
 				g_rtk_bt_scoreboard_isr_cb((uint8_t)ind);
 			else
 				dbg("g_rtk_bt_scoreboard_isr_cb is not defined\r\n");
@@ -242,7 +242,7 @@ static bool rtk_bt_scoreboard_isr_enable(void)
 	uint32_t value = 0;
 
 	/****BT_SCB_IRQ (67# NP/AP INT VECTOR)*****/
-	if(false == InterruptRegister((IRQ_FUN)rtk_bt_scoreboard_isr_handler, BT_SCB_IRQ, (uint32_t)NULL, BT_SCB_IRQ_PRIO)) {
+	if (false == InterruptRegister((IRQ_FUN)rtk_bt_scoreboard_isr_handler, BT_SCB_IRQ, (uint32_t)NULL, BT_SCB_IRQ_PRIO)) {
 		dbg("InterruptRegister for BT_SCB_IRQ fail\r\n");
 		return false;
 	}
@@ -253,7 +253,7 @@ static bool rtk_bt_scoreboard_isr_enable(void)
 #if 1 //FIXME: use leave ips instead now
 	//set 0x42008218[5] = 1, APBPeriph_WMAC_CLOCK
 	value = HAL_READ32(SYSTEM_CTRL_BASE_LP, REG_LSYS_CKE_GRP1);
-	if((value & BIT5) == 0) {
+	if ((value & BIT5) == 0) {
 		HAL_WRITE32(SYSTEM_CTRL_BASE_LP, REG_LSYS_CKE_GRP1, value | APBPeriph_WMAC_CLOCK);
 		value = HAL_READ32(SYSTEM_CTRL_BASE_LP, REG_LSYS_CKE_GRP1);
 		dbg("%s set APBPeriph_WMAC_CLOCK, 0x%x = 0x%x\r\n",__func__,(unsigned int)(SYSTEM_CTRL_BASE_LP + REG_LSYS_CKE_GRP1), (unsigned int)value);
@@ -262,7 +262,7 @@ static bool rtk_bt_scoreboard_isr_enable(void)
 
 	//set 0x42008208[7] = 1, APBPeriph_WLON,enable WLON function for write REG_FSIMR_V1
 	value = HAL_READ32(SYSTEM_CTRL_BASE_LP, REG_LSYS_FEN_GRP0);
-	if((value & BIT7) == 0) {
+	if ((value & BIT7) == 0) {
 		HAL_WRITE32(SYSTEM_CTRL_BASE_LP, REG_LSYS_FEN_GRP0, value | APBPeriph_WLON);
 		value = HAL_READ32(SYSTEM_CTRL_BASE_LP, REG_LSYS_FEN_GRP0);
 		dbg("%s set APBPeriph_WLON , 0x%x = 0x%x\r\n",__func__,(unsigned int)(SYSTEM_CTRL_BASE_LP + REG_LSYS_FEN_GRP0), (unsigned int)value);
@@ -305,14 +305,14 @@ static bool rtk_bt_scoreboard_isr_disable(void)
 	dbg("%s Disable BT dedicated SCB int IMR , 0x%x = 0x%x\r\n",__func__,(unsigned int)(WIFI_REG_BASE+REG_FSIMR_V1), (unsigned int)value);
 
 #if 1 //FIXME: use leave ips instead now
-	if(need_reset_wlon) {
+	if (need_reset_wlon) {
 		value = HAL_READ32(SYSTEM_CTRL_BASE_LP, REG_LSYS_FEN_GRP0);
 		HAL_WRITE32(SYSTEM_CTRL_BASE_LP, REG_LSYS_FEN_GRP0, value & (~BIT7));
 		value = HAL_READ32(SYSTEM_CTRL_BASE_LP, REG_LSYS_FEN_GRP0);
 		dbg("%s reset APBPeriph_WLON, 0x%x = 0x%x\r\n",__func__,(unsigned int)(SYSTEM_CTRL_BASE_LP + REG_LSYS_FEN_GRP0), (unsigned int)value);
 	}
 
-	if(need_reset_wmac_clk) {
+	if (need_reset_wmac_clk) {
 		value = HAL_READ32(SYSTEM_CTRL_BASE_LP, REG_LSYS_CKE_GRP1);
 		HAL_WRITE32(SYSTEM_CTRL_BASE_LP, REG_LSYS_CKE_GRP1, value & (~BIT5));
 		value = HAL_READ32(SYSTEM_CTRL_BASE_LP, REG_LSYS_CKE_GRP1);
@@ -329,25 +329,25 @@ uint16_t rtk_bt_le_sof_eof_ind(uint16_t conn_handle, uint8_t enable, void *cb)
 	uint16_t ret = RTK_BT_OK;
 	uint8_t conn_id = 0;
 
-	if(0 != rtk_bt_le_gap_get_conn_id(conn_handle,&conn_id)) {
+	if (0 != rtk_bt_le_gap_get_conn_id(conn_handle,&conn_id)) {
 		dbg("%s: conn_handle %d is not connect!\r\n", __func__, conn_handle);
 		return RTK_BT_FAIL;
 	}
 
-	if(enable == 1) {
-		if(g_rtk_bt_scoreboard_isr_cb) {
+	if (enable == 1) {
+		if (g_rtk_bt_scoreboard_isr_cb) {
 			dbg("bt_scoreboard_isr is enabled!\r\n");
 			return RTK_BT_OK;
 		}
 		//enable bt scoreboard isr
-		if(false == rtk_bt_scoreboard_isr_enable())
+		if (false == rtk_bt_scoreboard_isr_enable())
 			return RTK_BT_FAIL;
 
 		//save the callback function
 		g_rtk_bt_scoreboard_isr_cb = (p_func_cb)cb;
 
-	} else if(enable == 0) {
-		if(g_rtk_bt_scoreboard_isr_cb == NULL) {
+	} else if (enable == 0) {
+		if (g_rtk_bt_scoreboard_isr_cb == NULL) {
 			dbg("bt_scoreboard_isr not enable!\r\n");
 			return RTK_BT_OK;
 		}
@@ -356,7 +356,7 @@ uint16_t rtk_bt_le_sof_eof_ind(uint16_t conn_handle, uint8_t enable, void *cb)
 		g_rtk_bt_scoreboard_isr_cb = NULL;
 
 		//disable bt scoreboard isr
-		if(false == rtk_bt_scoreboard_isr_disable())
+		if (false == rtk_bt_scoreboard_isr_disable())
 			return RTK_BT_FAIL;
 	} else {
 		dbg("%s unsupport value %d!\r\n",__func__,enable);
@@ -365,7 +365,7 @@ uint16_t rtk_bt_le_sof_eof_ind(uint16_t conn_handle, uint8_t enable, void *cb)
 
 	//set the vendor cmd to inform fw start indicate sof and eof
 	ret = rtk_bt_le_sof_eof_ctrl(conn_handle, enable);
-	if(ret != RTK_BT_OK) {
+	if (ret != RTK_BT_OK) {
 		dbg("%s rtk_bt_le_sof_eof_ctrl fail, ret = 0x%x\r\n", __func__, ret);
 		return ret;
 	}

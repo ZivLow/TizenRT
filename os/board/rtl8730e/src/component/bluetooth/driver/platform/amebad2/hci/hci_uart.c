@@ -348,8 +348,7 @@ static uint8_t amebad2_uart_open(void)
 
 static uint8_t amebad2_uart_close(void)
 {
-	if (!amebad2_uart)
-	{
+	if (!amebad2_uart) {
 		DBG_8195A("amebad2_uart is NULL!");
 		return HCI_FAIL;
 	}
@@ -364,8 +363,7 @@ static uint8_t amebad2_uart_close(void)
 
 static uint8_t amebad2_uart_free(void)
 {
-	if (!amebad2_uart)
-	{
+	if (!amebad2_uart) {
 		DBG_8195A("amebad2_uart is NULL!");
 		return HCI_FAIL;
 	}

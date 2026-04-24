@@ -129,7 +129,7 @@ typedef struct {
  * @brief     set profile record.
  * @param[in] record: record data pointer
  * @param[in] length: data length
- * @return    
+ * @return
  *            - 0  : Succeed
  *            - Others: Error code
  */

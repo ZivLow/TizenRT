@@ -49,7 +49,7 @@ typedef enum {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t company_id;
+	uint16_t company_id;
 } rtk_bt_mesh_health_fault_get_t;
 
 /**
@@ -59,8 +59,8 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t company_id;
-    bool ack;
+	uint16_t company_id;
+	bool ack;
 } rtk_bt_mesh_health_fault_clear_t;
 
 /**
@@ -70,9 +70,9 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint8_t test_id;
-    uint16_t company_id;
-    bool ack;
+	uint8_t test_id;
+	uint16_t company_id;
+	bool ack;
 } rtk_bt_mesh_health_fault_test_t;
 
 /**
@@ -91,8 +91,8 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint8_t fast_period_divisor;
-    bool ack;
+	uint8_t fast_period_divisor;
+	bool ack;
 } rtk_bt_mesh_health_period_set_t;
 
 /**
@@ -111,8 +111,8 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint8_t attn;
-    bool ack;
+	uint8_t attn;
+	bool ack;
 } rtk_bt_mesh_health_attn_set_t;
 
 /**
@@ -121,11 +121,11 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t src;
-    uint8_t test_id;
-    uint16_t company_id;
-    uint8_t fault_array_len;
-    uint8_t *fault_array;
+	uint16_t src;
+	uint8_t test_id;
+	uint16_t company_id;
+	uint8_t fault_array_len;
+	uint8_t *fault_array;
 } rtk_bt_mesh_health_client_status_t;
 
 /**
@@ -134,7 +134,7 @@ typedef struct
  */
 typedef struct
 {
-    uint8_t fast_period_divisor;
+	uint8_t fast_period_divisor;
 } rtk_bt_mesh_health_client_status_period_t;
 
 /**
@@ -143,7 +143,7 @@ typedef struct
  */
 typedef struct
 {
-    uint8_t attention;
+	uint8_t attention;
 } rtk_bt_mesh_health_client_status_attention_t;
 
 /**
@@ -179,7 +179,7 @@ typedef enum {
  * @brief     BLE MESH health server fault register act message structure.
  */
 typedef struct {
-    uint8_t fault;
+	uint8_t fault;
 } rtk_bt_mesh_health_server_fault_register_act_t;
 
 /**
@@ -187,7 +187,7 @@ typedef struct {
  * @brief     BLE MESH health server fault clear act message structure.
  */
 typedef struct {
-    uint8_t fault;
+	uint8_t fault;
 } rtk_bt_mesh_health_server_fault_clear_act_t;
 
 /**
@@ -195,7 +195,7 @@ typedef struct {
  * @brief     BLE MESH health server fault check act message structure.
  */
 typedef struct {
-    uint8_t fault;
+	uint8_t fault;
 	bool set;
 } rtk_bt_mesh_health_server_check_fault_act_t;
 
@@ -204,7 +204,7 @@ typedef struct {
  * @brief     BLE MESH health server fault count act message structure.
  */
 typedef struct {
-    uint8_t fault_count;
+	uint8_t fault_count;
 } rtk_bt_mesh_health_server_count_fault_act_t;
 
 /**
@@ -212,8 +212,8 @@ typedef struct {
  * @brief     BLE MESH health get fault evt message structure.
  */
 typedef struct {
-    uint16_t company_id;
-    uint8_t *fault_array;
+	uint16_t company_id;
+	uint8_t *fault_array;
 } rtk_bt_mesh_health_server_fault_get_t;
 
 /**
@@ -221,8 +221,8 @@ typedef struct {
  * @brief     BLE MESH health clear fault evt message structure.
  */
 typedef struct {
-    uint16_t company_id;
-    uint8_t *fault_array;
+	uint16_t company_id;
+	uint8_t *fault_array;
 } rtk_bt_mesh_health_server_fault_clear_t;
 
 /**
@@ -230,9 +230,9 @@ typedef struct {
  * @brief     BLE MESH health test fault evt message structure.
  */
 typedef struct {
-    uint8_t test_id;
-    uint16_t company_id;
-    uint8_t *fault_array;
+	uint8_t test_id;
+	uint16_t company_id;
+	uint8_t *fault_array;
 } rtk_bt_mesh_health_server_fault_test_t;
 
 /**

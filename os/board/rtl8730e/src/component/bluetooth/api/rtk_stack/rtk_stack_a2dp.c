@@ -31,8 +31,7 @@ extern T_APP_BR_LINK *app_find_br_link(uint8_t *bd_addr);
 
 static void app_a2dp_src_set_stream_status(T_APP_BR_LINK *p_link, bool streaming)
 {
-	if (p_link->is_streaming == true && streaming == false)
-	{
+	if (p_link->is_streaming == true && streaming == false) {
 		bt_avrcp_play_status_change_req(p_link->bd_addr, BT_AVRCP_PLAY_STATUS_PAUSED);
 	}
 	else if (p_link->is_streaming == false && streaming == true)
@@ -84,7 +83,7 @@ static void app_a2dp_bt_cback(T_BT_EVENT event_type, void *event_buf, uint16_t b
 		}
 	}
 	break;
-	
+
 	case BT_EVENT_A2DP_CONN_IND: {
 		rtk_bt_a2dp_conn_ind_t *p_a2dp_conn_ind = NULL;
 
@@ -268,14 +267,14 @@ static void app_a2dp_bt_cback(T_BT_EVENT event_type, void *event_buf, uint16_t b
 		// APP_PRINT_INFO1("stream data len %d", param->a2dp_stream_data_ind.len);
 		// printf("app_a2dp_bt_cback: stream data len %d \r\n", param->a2dp_stream_data_ind.len);
 		// {
-		// 	int i = 0;                             
-		// 	printf(" Dump KM4 \n\r ");  
-		// 	while(i < a2dp_data_stream.length) {                  
-		// 		printf("%02x ", a2dp_data_stream.data[i++]);        
-		// 		if (i%16 == 0)                     
-		// 			printf("\n\r");                
-		// 	}                                      
-		// 	printf("\n\r");                        
+		// 	int i = 0;
+		// 	printf(" Dump KM4 \n\r ");
+		// 	while (i < a2dp_data_stream.length) {
+		// 		printf("%02x ", a2dp_data_stream.data[i++]);
+		// 		if (i%16 == 0)
+		// 			printf("\n\r");
+		// 	}
+		// 	printf("\n\r");
 		// }
 		{
 			uint8_t cb_ret = 0;
@@ -539,14 +538,14 @@ static uint16_t bt_stack_a2dp_stream_data_send(void *param)
 		return RTK_BT_FAIL;
 	}
 	do {
-		if (bt_a2dp_stream_data_send(p_data_send_t->bd_addr, 
+		if (bt_a2dp_stream_data_send(p_data_send_t->bd_addr,
 								p_data_send_t->frame_num,
 								p_data_send_t->frame_buf,
 								p_data_send_t->len)) {
 			return RTK_BT_OK;
 		}
 		osif_delay(1);
-	} while(a2dp_send_retry_count --); //increase retry count bt framework buffer is not enough
+	} while (a2dp_send_retry_count --); //increase retry count bt framework buffer is not enough
 	APP_PRINT_INFO0("bt_stack_a2dp_stream_data_send fail");
 	printf("bt_stack_a2dp_stream_data_send fail %d %d\r\n", (int)p_data_send_t->frame_num, (int)p_data_send_t->len);
 

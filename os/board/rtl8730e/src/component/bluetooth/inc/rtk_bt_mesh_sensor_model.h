@@ -23,50 +23,50 @@
 
 typedef enum
 {
-    RTK_BT_MESH_SENSOR_SETTING_ACCESS_READ_ONLY = 0x01,
-    RTK_BT_MESH_SENSOR_SETTING_ACCESS_READ_WRITE = 0x03,
+	RTK_BT_MESH_SENSOR_SETTING_ACCESS_READ_ONLY = 0x01,
+	RTK_BT_MESH_SENSOR_SETTING_ACCESS_READ_WRITE = 0x03,
 } rtk_bt_mesh_sensor_setting_access_t;
 
 typedef struct
 {
-    uint8_t raw_value_len;
-    uint8_t fast_cadence_period_divisor: 7;
-    uint8_t status_trigger_type: 1; /**< @ref sensor_trigger_type_t */
-    void *status_trigger_delta_down;
-    void *status_trigger_delta_up;
-    uint8_t status_min_interval;
-    void *fast_cadence_low;
-    void *fast_cadence_high;
+	uint8_t raw_value_len;
+	uint8_t fast_cadence_period_divisor: 7;
+	uint8_t status_trigger_type: 1; /**< @ref sensor_trigger_type_t */
+	void *status_trigger_delta_down;
+	void *status_trigger_delta_up;
+	uint8_t status_min_interval;
+	void *fast_cadence_low;
+	void *fast_cadence_high;
 } _PACKED4_ rtk_bt_mesh_sensor_cadence_t;
 
 typedef struct
 {
-    uint16_t setting_property_id;
-    rtk_bt_mesh_sensor_setting_access_t setting_access;
-    uint8_t setting_raw_len;
-    void *setting_raw;
+	uint16_t setting_property_id;
+	rtk_bt_mesh_sensor_setting_access_t setting_access;
+	uint8_t setting_raw_len;
+	void *setting_raw;
 } _PACKED4_ rtk_bt_mesh_sensor_setting_t;
 
 typedef enum
 {
-    RTK_BT_MESH_SENSOR_SAMPLING_UNSPECIFIED,
-    RTK_BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS,
-    RTK_BT_MESH_SENSOR_SAMPLING_ARITHMETIC_MEAN,
-    RTK_BT_MESH_SENSOR_SAMPLING_RMS,
-    RTK_BT_MESH_SENSOR_SAMPLING_MAXIMUM,
-    RTK_BT_MESH_SENSOR_SAMPLING_MINIMUM,
-    RTK_BT_MESH_SENSOR_SAMPLING_ACCUMULATED,
-    RTK_BT_MESH_SENSOR_SAMPLING_COUNT,
+	RTK_BT_MESH_SENSOR_SAMPLING_UNSPECIFIED,
+	RTK_BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS,
+	RTK_BT_MESH_SENSOR_SAMPLING_ARITHMETIC_MEAN,
+	RTK_BT_MESH_SENSOR_SAMPLING_RMS,
+	RTK_BT_MESH_SENSOR_SAMPLING_MAXIMUM,
+	RTK_BT_MESH_SENSOR_SAMPLING_MINIMUM,
+	RTK_BT_MESH_SENSOR_SAMPLING_ACCUMULATED,
+	RTK_BT_MESH_SENSOR_SAMPLING_COUNT,
 } rtk_bt_mesh_sensor_sampling_function_t;
 
 typedef struct
 {
-    uint16_t property_id;
-    uint32_t positive_tolerance: 12;
-    uint32_t negative_tolerance: 12;
-    uint32_t sampling_function: 8; /**< @ref sensor_sampling_function_t */
-    uint8_t measurement_period;
-    uint8_t update_interval;
+	uint16_t property_id;
+	uint32_t positive_tolerance: 12;
+	uint32_t negative_tolerance: 12;
+	uint32_t sampling_function: 8; /**< @ref sensor_sampling_function_t */
+	uint8_t measurement_period;
+	uint8_t update_interval;
 } _PACKED4_ rtk_bt_mesh_sensor_descriptor_t;
 
 /**
@@ -75,15 +75,15 @@ typedef struct
  */
 typedef enum {
 	RTK_BT_MESH_SENSOR_DESCRIPTOR_CLIENT_MODEL_GET = 1,
-    RTK_BT_MESH_SENSOR_CADENCE_CLIENT_MODEL_GET,
-    RTK_BT_MESH_SENSOR_CADENCE_CLIENT_MODEL_SET,
-    RTK_BT_MESH_SENSOR_SETTINGS_CLIENT_MODEL_GET,
-    RTK_BT_MESH_SENSOR_SETTING_CLIENT_MODEL_GET,
-    RTK_BT_MESH_SENSOR_SETTING_CLIENT_MODEL_SET,
-    RTK_BT_MESH_SENSOR_CLIENT_MODEL_GET,
-    RTK_BT_MESH_SENSOR_COLUMN_CLIENT_MODEL_GET,
-    RTK_BT_MESH_SENSOR_SERIES_CLIENT_MODEL_GET,
-    RTK_BT_MESH_SENSOR_CLIENT_MODEL_ACT_MAX,
+	RTK_BT_MESH_SENSOR_CADENCE_CLIENT_MODEL_GET,
+	RTK_BT_MESH_SENSOR_CADENCE_CLIENT_MODEL_SET,
+	RTK_BT_MESH_SENSOR_SETTINGS_CLIENT_MODEL_GET,
+	RTK_BT_MESH_SENSOR_SETTING_CLIENT_MODEL_GET,
+	RTK_BT_MESH_SENSOR_SETTING_CLIENT_MODEL_SET,
+	RTK_BT_MESH_SENSOR_CLIENT_MODEL_GET,
+	RTK_BT_MESH_SENSOR_COLUMN_CLIENT_MODEL_GET,
+	RTK_BT_MESH_SENSOR_SERIES_CLIENT_MODEL_GET,
+	RTK_BT_MESH_SENSOR_CLIENT_MODEL_ACT_MAX,
 } rtk_bt_mesh_sensor_client_model_act_t;
 
 /**
@@ -92,13 +92,13 @@ typedef enum {
  */
 typedef enum {
 	RTK_BT_MESH_SENSOR_DESCRIPTOR_CLIENT_MODEL_STATUS = 1,
-    RTK_BT_MESH_SENSOR_CADENCE_CLIENT_MODEL_STATUS,
-    RTK_BT_MESH_SENSOR_SETTINGS_CLIENT_MODEL_STATUS,
-    RTK_BT_MESH_SENSOR_SETTING_CLIENT_MODEL_STATUS,
-    RTK_BT_MESH_SENSOR_CLIENT_MODEL_STATUS,
-    RTK_BT_MESH_SENSOR_COLUMN_CLIENT_MODEL_STATUS,
-    RTK_BT_MESH_SENSOR_SERIES_CLIENT_MODEL_STATUS,
-    RTK_BT_MESH_SENSOR_CLIENT_MODEL_EVT_MAX,
+	RTK_BT_MESH_SENSOR_CADENCE_CLIENT_MODEL_STATUS,
+	RTK_BT_MESH_SENSOR_SETTINGS_CLIENT_MODEL_STATUS,
+	RTK_BT_MESH_SENSOR_SETTING_CLIENT_MODEL_STATUS,
+	RTK_BT_MESH_SENSOR_CLIENT_MODEL_STATUS,
+	RTK_BT_MESH_SENSOR_COLUMN_CLIENT_MODEL_STATUS,
+	RTK_BT_MESH_SENSOR_SERIES_CLIENT_MODEL_STATUS,
+	RTK_BT_MESH_SENSOR_CLIENT_MODEL_EVT_MAX,
 } rtk_bt_mesh_sensor_client_model_evt_t;
 
 /**
@@ -108,7 +108,7 @@ typedef enum {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
+	uint16_t property_id;
 } rtk_bt_mesh_sensor_descriptor_get_t;
 
 /**
@@ -118,7 +118,7 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
+	uint16_t property_id;
 } rtk_bt_mesh_sensor_cadence_get_t;
 
 /**
@@ -128,16 +128,16 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
-    bool ack;
-    uint8_t fast_cadence_period_divisor: 7;
-    uint8_t status_trigger_type: 1;
-    uint8_t raw_value_len;
-    uint8_t trigger_down[SENSOR_TRIGGER_DATA_MAX_LEN];
-    uint8_t trigger_up[SENSOR_TRIGGER_DATA_MAX_LEN];
-    uint8_t status_min_interval;
-    uint8_t cadence_low[SENSOR_CADENCE_DATA_MAX_LEN];
-    uint8_t cadence_high[SENSOR_CADENCE_DATA_MAX_LEN];
+	uint16_t property_id;
+	bool ack;
+	uint8_t fast_cadence_period_divisor: 7;
+	uint8_t status_trigger_type: 1;
+	uint8_t raw_value_len;
+	uint8_t trigger_down[SENSOR_TRIGGER_DATA_MAX_LEN];
+	uint8_t trigger_up[SENSOR_TRIGGER_DATA_MAX_LEN];
+	uint8_t status_min_interval;
+	uint8_t cadence_low[SENSOR_CADENCE_DATA_MAX_LEN];
+	uint8_t cadence_high[SENSOR_CADENCE_DATA_MAX_LEN];
 } rtk_bt_mesh_sensor_cadence_set_t;
 
 /**
@@ -147,7 +147,7 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
+	uint16_t property_id;
 } rtk_bt_mesh_sensor_settings_get_t;
 
 /**
@@ -157,8 +157,8 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
-    uint16_t setting_property_id;
+	uint16_t property_id;
+	uint16_t setting_property_id;
 } rtk_bt_mesh_sensor_setting_get_t;
 
 /**
@@ -168,11 +168,11 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
-    uint16_t setting_property_id;
-    bool ack;
-    uint8_t setting_raw_len;
-    uint8_t setting_raw[SENSOR_SETTING_DATA_MAX_LEN];
+	uint16_t property_id;
+	uint16_t setting_property_id;
+	bool ack;
+	uint8_t setting_raw_len;
+	uint8_t setting_raw[SENSOR_SETTING_DATA_MAX_LEN];
 } rtk_bt_mesh_sensor_setting_set_t;
 
 /**
@@ -182,7 +182,7 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
+	uint16_t property_id;
 } rtk_bt_mesh_sensor_get_t;
 
 /**
@@ -192,9 +192,9 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
-    uint8_t raw_value_x_len;
-    uint8_t raw_value_x[SENSOR_COLUMN_DATA_MAX_LEN];
+	uint16_t property_id;
+	uint8_t raw_value_x_len;
+	uint8_t raw_value_x[SENSOR_COLUMN_DATA_MAX_LEN];
 } rtk_bt_mesh_sensor_column_get_t;
 
 /**
@@ -204,10 +204,10 @@ typedef struct {
 typedef struct {
 	uint16_t dst;
 	uint16_t app_key_index;
-    uint16_t property_id;
-    uint8_t raw_value_x_len;
-    uint8_t raw_value_x1[SENSOR_COLUMN_DATA_MAX_LEN];
-    uint8_t raw_value_x2[SENSOR_COLUMN_DATA_MAX_LEN];
+	uint16_t property_id;
+	uint8_t raw_value_x_len;
+	uint8_t raw_value_x1[SENSOR_COLUMN_DATA_MAX_LEN];
+	uint8_t raw_value_x2[SENSOR_COLUMN_DATA_MAX_LEN];
 } rtk_bt_mesh_sensor_series_get_t;
 
 /**
@@ -216,10 +216,10 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t property_id;
-    uint16_t num_descriptors;
-    rtk_bt_mesh_sensor_descriptor_t *descriptors;
+	uint16_t src;
+	uint16_t property_id;
+	uint16_t num_descriptors;
+	rtk_bt_mesh_sensor_descriptor_t *descriptors;
 } rtk_bt_mesh_sensor_client_status_descriptor_t;
 
 /**
@@ -228,10 +228,10 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t property_id;
-    bool flag;
-    rtk_bt_mesh_sensor_cadence_t *cadence;
+	uint16_t src;
+	uint16_t property_id;
+	bool flag;
+	rtk_bt_mesh_sensor_cadence_t *cadence;
 } rtk_bt_mesh_sensor_client_status_cadence_t;
 
 /**
@@ -240,10 +240,10 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t property_id;
-    uint16_t num_ids;
-    uint16_t *setting_ids;
+	uint16_t src;
+	uint16_t property_id;
+	uint16_t num_ids;
+	uint16_t *setting_ids;
 } rtk_bt_mesh_sensor_client_status_settings_t;
 
 /**
@@ -252,11 +252,11 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t property_id;
-    uint16_t setting_property_id;
-    bool flag;
-    rtk_bt_mesh_sensor_setting_t *setting;
+	uint16_t src;
+	uint16_t property_id;
+	uint16_t setting_property_id;
+	bool flag;
+	rtk_bt_mesh_sensor_setting_t *setting;
 } rtk_bt_mesh_sensor_client_status_setting_t;
 
 /**
@@ -265,9 +265,9 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t marshalled_sensor_data_len;
-    void *marshalled_sensor_data;
+	uint16_t src;
+	uint16_t marshalled_sensor_data_len;
+	void *marshalled_sensor_data;
 } rtk_bt_mesh_sensor_client_status_t;
 
 /**
@@ -276,10 +276,10 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t property_id;
-    uint16_t column_raw_value_len;
-    void *column_raw_value;
+	uint16_t src;
+	uint16_t property_id;
+	uint16_t column_raw_value_len;
+	void *column_raw_value;
 } rtk_bt_mesh_sensor_client_status_column_t;
 
 /**
@@ -288,10 +288,10 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t src;
-    uint16_t property_id;
-    uint16_t series_raw_value_len;
-    void *series_raw_value;
+	uint16_t src;
+	uint16_t property_id;
+	uint16_t series_raw_value_len;
+	void *series_raw_value;
 } rtk_bt_mesh_sensor_client_status_series_t;
 
 /*****************server*********************/
@@ -301,12 +301,12 @@ typedef struct
  */
 typedef enum {
 	RTK_BT_MESH_SENSOR_SERVER_MODEL_GET = 1,
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_COLUMN_GET,
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_SERIES_GET,
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_COMPARE_CADENCE,
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_DESCRIPTOR_NUM_GET,
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_DESCRIPTOR_GET,
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_EVT_MAX,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_COLUMN_GET,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_SERIES_GET,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_COMPARE_CADENCE,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_DESCRIPTOR_NUM_GET,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_DESCRIPTOR_GET,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_sensor_server_model_evt_t;
 
 /**
@@ -314,7 +314,7 @@ typedef enum {
  * @brief     BLE MESH sensor server model act definition.
  */
 typedef enum {
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_ACT_DB_SET = 1,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_ACT_DB_SET = 1,
 	RTK_BT_MESH_SENSOR_SERVER_MODEL_ACT_MAX,
 } rtk_bt_mesh_sensor_server_model_act_t;
 
@@ -324,12 +324,12 @@ typedef enum {
  */
 typedef struct
 {
-    rtk_bt_mesh_sensor_descriptor_t descriptor;
-    uint8_t sensor_raw_data_len;
-    uint16_t num_settings;
-    rtk_bt_mesh_sensor_setting_t *settings;
-    rtk_bt_mesh_sensor_cadence_t *cadence;
-    int32_t pub_count;
+	rtk_bt_mesh_sensor_descriptor_t descriptor;
+	uint8_t sensor_raw_data_len;
+	uint16_t num_settings;
+	rtk_bt_mesh_sensor_setting_t *settings;
+	rtk_bt_mesh_sensor_cadence_t *cadence;
+	int32_t pub_count;
 } rtk_bt_mesh_sensor_db_t;
 
 /**
@@ -347,9 +347,9 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t property_id;
-    /* app need to modify pointer blew, default is NULL */
-    void *raw_data;
+	uint16_t property_id;
+	/* app need to modify pointer blew, default is NULL */
+	void *raw_data;
 } rtk_bt_mesh_sensor_server_get_t;
 
 /**
@@ -358,13 +358,13 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t property_id;
-    uint8_t raw_value_x_len;
-    const void *raw_value_x;
-    /* app need to modify pointer blew, default is NULL */
-    uint16_t column_len;
-    /* contains raw value x, column width and raw value y */
-    void *column;
+	uint16_t property_id;
+	uint8_t raw_value_x_len;
+	const void *raw_value_x;
+	/* app need to modify pointer blew, default is NULL */
+	uint16_t column_len;
+	/* contains raw value x, column width and raw value y */
+	void *column;
 } rtk_bt_mesh_sensor_server_get_column_t;
 
 /**
@@ -373,10 +373,10 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t property_id;
-    uint8_t raw_value_x_len;
-    uint8_t raw_value_x[SENSOR_COLUMN_DATA_MAX_LEN];
-    void *value;
+	uint16_t property_id;
+	uint8_t raw_value_x_len;
+	uint8_t raw_value_x[SENSOR_COLUMN_DATA_MAX_LEN];
+	void *value;
 } rtk_bt_mesh_sensor_server_direct_get_column_t;
 
 /**
@@ -385,14 +385,14 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t property_id;
-    uint8_t raw_value_x_len;
-    const void *raw_value_x1;
-    const void *raw_value_x2;
-    /* app need to modify pointer blew, default is NULL */
-    uint16_t series_len;
-    /* contains n raw value x, column width and raw value y */
-    void *series;
+	uint16_t property_id;
+	uint8_t raw_value_x_len;
+	const void *raw_value_x1;
+	const void *raw_value_x2;
+	/* app need to modify pointer blew, default is NULL */
+	uint16_t series_len;
+	/* contains n raw value x, column width and raw value y */
+	void *series;
 } rtk_bt_mesh_sensor_server_get_series_t;
 
 /**
@@ -401,11 +401,11 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t property_id;
-    uint8_t raw_value_x_len;
-    uint8_t raw_value_x1[SENSOR_GET_SERIES_MAX_LEN];
-    uint8_t raw_value_x2[SENSOR_GET_SERIES_MAX_LEN];
-    void *value;
+	uint16_t property_id;
+	uint8_t raw_value_x_len;
+	uint8_t raw_value_x1[SENSOR_GET_SERIES_MAX_LEN];
+	uint8_t raw_value_x2[SENSOR_GET_SERIES_MAX_LEN];
+	void *value;
 } rtk_bt_mesh_sensor_server_direct_get_series_t;
 
 /**
@@ -414,12 +414,12 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t property_id;
-    /*
-     * just notify new cadence value in database,
-     * do not need to modify it, just use it if needed
-     */
-    uint8_t *cadence;
+	uint16_t property_id;
+	/*
+	 * just notify new cadence value in database,
+	 * do not need to modify it, just use it if needed
+	 */
+	uint8_t *cadence;
 } rtk_bt_mesh_sensor_server_get_cadence_t;
 
 /**
@@ -428,12 +428,12 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t property_id;
-    /*
-     * just notify new cadence value in database,
-     * do not need to modify it, just use it if needed
-     */
-    rtk_bt_mesh_sensor_cadence_t *cadence;
+	uint16_t property_id;
+	/*
+	 * just notify new cadence value in database,
+	 * do not need to modify it, just use it if needed
+	 */
+	rtk_bt_mesh_sensor_cadence_t *cadence;
 } rtk_bt_mesh_sensor_server_set_cadence_t;
 
 /**
@@ -442,12 +442,12 @@ typedef struct
  */
 typedef struct
 {
-    uint16_t property_id;
-    /*
-     * just notify new setting value in database,
-     * do not need to modify it, just use it if needed
-     */
-    rtk_bt_mesh_sensor_setting_t *setting;
+	uint16_t property_id;
+	/*
+	 * just notify new setting value in database,
+	 * do not need to modify it, just use it if needed
+	 */
+	rtk_bt_mesh_sensor_setting_t *setting;
 } rtk_bt_mesh_sensor_server_set_setting_t;
 
 /**
@@ -475,8 +475,8 @@ typedef struct {
  */
 typedef struct
 {
-    uint16_t property_id;
-    bool *need_fast_divisor;
+	uint16_t property_id;
+	bool *need_fast_divisor;
 } rtk_bt_mesh_sensor_server_compare_cadence_t;
 
 /**
@@ -495,7 +495,7 @@ typedef struct {
 typedef struct {
 	uint16_t property_id; //0 means get all
 	uint16_t descriptor_num; //0 means NULL
-    rtk_bt_mesh_sensor_descriptor_t *descriptor;
+	rtk_bt_mesh_sensor_descriptor_t *descriptor;
 } rtk_bt_mesh_sensor_server_get_descriptor_t;
 
 /**
@@ -503,12 +503,12 @@ typedef struct {
  * @brief     BLE MESH sensor setup server model event definition.
  */
 typedef enum {
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_CADENCE_SET = 1,
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_SETTING_SET,
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_CADENCE_GET,
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_SETTINGS_GET,
-    RTK_BT_MESH_SENSOR_SERVER_MODEL_SETTING_GET,
-    RTK_BT_MESH_SENSOR_SETUP_SERVER_MODEL_EVT_MAX,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_CADENCE_SET = 1,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_SETTING_SET,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_CADENCE_GET,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_SETTINGS_GET,
+	RTK_BT_MESH_SENSOR_SERVER_MODEL_SETTING_GET,
+	RTK_BT_MESH_SENSOR_SETUP_SERVER_MODEL_EVT_MAX,
 } rtk_bt_mesh_sensor_setup_server_model_evt_t;
 
 /**
@@ -516,7 +516,7 @@ typedef enum {
  * @brief     BLE MESH sensor setup server model act definition.
  */
 typedef enum {
-    RTK_BT_MESH_SENSOR_SETUP_SERVER_MODEL_ACT_DB_SET = 1,
+	RTK_BT_MESH_SENSOR_SETUP_SERVER_MODEL_ACT_DB_SET = 1,
 	RTK_BT_MESH_SENSOR_SETUP_SERVER_MODEL_ACT_MAX,
 } rtk_bt_mesh_sensor_setup_server_model_act_t;
 

@@ -791,7 +791,7 @@ static int32_t light_lightness_server_data(const mesh_model_info_p pmodel_info,
 		uint8_t cb_ret = 0;
 		if (p_set_data) {
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_LIGHTNESS_SERVER_MODEL, RTK_BT_MESH_LIGHT_LIGHTNESS_SERVER_MODEL_SET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_LIGHTNESS_SERVER_MODEL, RTK_BT_MESH_LIGHT_LIGHTNESS_SERVER_MODEL_SET,
 										sizeof(light_lightness_server_set_t));
 			memcpy(p_evt->data, p_set_data, sizeof(light_lightness_server_set_t));
 			rtk_bt_evt_indicate(p_evt, &cb_ret);
@@ -902,7 +902,7 @@ static int32_t light_ctl_server_data(const mesh_model_info_p pmodel_info,
 		if (p_get_data) {
 			rtk_bt_mesh_light_ctl_server_direct_get_t *lightness_ctl_get;
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_CTL_SERVER_MODEL, RTK_BT_MESH_LIGHT_CTL_SERVER_MODEL_GET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_CTL_SERVER_MODEL, RTK_BT_MESH_LIGHT_CTL_SERVER_MODEL_GET,
 										sizeof(rtk_bt_mesh_light_ctl_server_direct_get_t));
 			lightness_ctl_get = (rtk_bt_mesh_light_ctl_server_direct_get_t *)p_evt->data;
 			lightness_ctl_get->value = &ctl_store_get;
@@ -952,7 +952,7 @@ static int32_t light_ctl_server_data(const mesh_model_info_p pmodel_info,
 		light_ctl_server_set_t *p_get_data = pargs;
 		if (p_get_data) {
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_CTL_SERVER_MODEL, RTK_BT_MESH_LIGHT_CTL_SERVER_MODEL_SET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_CTL_SERVER_MODEL, RTK_BT_MESH_LIGHT_CTL_SERVER_MODEL_SET,
 										sizeof(light_ctl_server_set_t));
 			memcpy(p_evt->data, p_get_data, sizeof(light_ctl_server_set_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
@@ -1112,7 +1112,7 @@ static int32_t light_hsl_server_data(const mesh_model_info_p pmodel_info,
 		if (p_get_data) {
 			rtk_bt_mesh_light_hsl_server_direct_get_t *hsl_get;
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_SERVER_MODEL_GET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_SERVER_MODEL_GET,
 										sizeof(rtk_bt_mesh_light_hsl_server_direct_get_t));
 			hsl_get = (rtk_bt_mesh_light_hsl_server_direct_get_t *)p_evt->data;
 			hsl_get->value = &hsl_store;
@@ -1129,7 +1129,7 @@ static int32_t light_hsl_server_data(const mesh_model_info_p pmodel_info,
 		if (p_get_data) {
 			rtk_bt_evt_t *p_evt = NULL;
 			rtk_bt_mesh_light_hsl_server_direct_get_default_t *hsl_default;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_DEFAULT_SERVER_MODEL_GET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_DEFAULT_SERVER_MODEL_GET,
 										sizeof(rtk_bt_mesh_light_hsl_server_direct_get_default_t));
 			hsl_default = (rtk_bt_mesh_light_hsl_server_direct_get_default_t *)p_evt->data;
 			hsl_default->value = &hsl_default_store;
@@ -1146,7 +1146,7 @@ static int32_t light_hsl_server_data(const mesh_model_info_p pmodel_info,
 		if (p_get_data) {
 			rtk_bt_mesh_light_hsl_server_direct_get_range_t *hsl_range;
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_RANGE_SERVER_MODEL_GET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_RANGE_SERVER_MODEL_GET,
 										sizeof(rtk_bt_mesh_light_hsl_server_direct_get_range_t));
 			hsl_range = (rtk_bt_mesh_light_hsl_server_direct_get_range_t *)p_evt->data;
 			hsl_range->value = &hsl_range_store;
@@ -1165,7 +1165,7 @@ static int32_t light_hsl_server_data(const mesh_model_info_p pmodel_info,
 		light_hsl_server_set_t *p_set_data = pargs;
 		if (p_set_data) {
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_SERVER_MODEL_SET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_SERVER_MODEL_SET,
 										sizeof(light_hsl_server_set_t));
 			memcpy(p_evt->data, p_set_data, sizeof(light_hsl_server_set_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
@@ -1205,7 +1205,7 @@ static int32_t light_hsl_hue_server_data(const mesh_model_info_p pmodel_info,
 		if (p_get_data) {
 			rtk_bt_mesh_light_hsl_server_direct_get_hue_t *hue_get;
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_HUE_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_HUE_SERVER_MODEL_GET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_HUE_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_HUE_SERVER_MODEL_GET,
 										sizeof(rtk_bt_mesh_light_hsl_server_direct_get_hue_t));
 			hue_get = (rtk_bt_mesh_light_hsl_server_direct_get_hue_t *)p_evt->data;
 			hue_get->value = &hue_store;
@@ -1218,7 +1218,7 @@ static int32_t light_hsl_hue_server_data(const mesh_model_info_p pmodel_info,
 		light_hsl_server_set_hue_t *p_set_data = pargs;
 		if (p_set_data) {
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_HUE_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_HUE_SERVER_MODEL_SET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_HUE_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_HUE_SERVER_MODEL_SET,
 			sizeof(light_hsl_server_set_hue_t));
 			memcpy(p_evt->data, p_set_data, sizeof(light_hsl_server_set_hue_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
@@ -1231,7 +1231,7 @@ static int32_t light_hsl_hue_server_data(const mesh_model_info_p pmodel_info,
 		if (p_get_data) {
 			rtk_bt_mesh_light_hsl_server_direct_get_range_t *hue_range;
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_HUE_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_RANGE_SERVER_MODEL_GET_H, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_HUE_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_RANGE_SERVER_MODEL_GET_H,
 										sizeof(rtk_bt_mesh_light_hsl_server_direct_get_range_t));
 			hue_range = (rtk_bt_mesh_light_hsl_server_direct_get_range_t *)p_evt->data;
 			hue_range->value = &hue_range_store;
@@ -1360,7 +1360,7 @@ static int32_t light_hsl_setup_server_data(const mesh_model_info_p pmodel_info,
 		light_hsl_server_set_range_t *p_set_data = pargs;
 		if (p_set_data) {
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_SETUP_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_RANGE_SERVER_MODEL_SET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_HSL_SETUP_SERVER_MODEL, RTK_BT_MESH_LIGHT_HSL_RANGE_SERVER_MODEL_SET,
 										sizeof(light_hsl_server_set_range_t));
 			memcpy(p_evt->data, p_set_data, sizeof(light_hsl_server_set_range_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
@@ -1402,7 +1402,7 @@ static int32_t light_xyl_server_data(const mesh_model_info_p pmodel_info,
 		if (p_get_data) {
 			rtk_bt_mesh_light_xyl_server_direct_get_t *xyl_get;
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_XYL_SERVER_MODEL, RTK_BT_MESH_LIGHT_XYL_SERVER_MODEL_GET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_XYL_SERVER_MODEL, RTK_BT_MESH_LIGHT_XYL_SERVER_MODEL_GET,
 										sizeof(rtk_bt_mesh_light_xyl_server_direct_get_t));
 			xyl_get = (rtk_bt_mesh_light_xyl_server_direct_get_t *)p_evt->data;
 			xyl_get->value = &xyl_store;
@@ -1419,7 +1419,7 @@ static int32_t light_xyl_server_data(const mesh_model_info_p pmodel_info,
 		if (p_get_data) {
 			rtk_bt_mesh_light_xyl_server_direct_get_default_t *xyl_default;
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_XYL_SERVER_MODEL, RTK_BT_MESH_LIGHT_XYL_DEFAULT_SERVER_MODEL_GET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_XYL_SERVER_MODEL, RTK_BT_MESH_LIGHT_XYL_DEFAULT_SERVER_MODEL_GET,
 										sizeof(rtk_bt_mesh_light_xyl_server_direct_get_default_t));
 			xyl_default = (rtk_bt_mesh_light_xyl_server_direct_get_default_t *)p_evt->data;
 			xyl_default->value = &xyl_default_store;
@@ -1436,7 +1436,7 @@ static int32_t light_xyl_server_data(const mesh_model_info_p pmodel_info,
 		if (p_get_data) {
 			rtk_bt_mesh_light_xyl_server_direct_get_range_t *xyl_range;
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_XYL_SERVER_MODEL, RTK_BT_MESH_LIGHT_XYL_RANGE_SERVER_MODEL_GET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_XYL_SERVER_MODEL, RTK_BT_MESH_LIGHT_XYL_RANGE_SERVER_MODEL_GET,
 										sizeof(rtk_bt_mesh_light_xyl_server_direct_get_range_t));
 			xyl_range = (rtk_bt_mesh_light_xyl_server_direct_get_range_t *)p_evt->data;
 			xyl_range->value = &xyl_range_store;
@@ -1455,7 +1455,7 @@ static int32_t light_xyl_server_data(const mesh_model_info_p pmodel_info,
 		light_xyl_server_set_t *p_get_data = pargs;
 		if (p_get_data) {
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_XYL_SERVER_MODEL, RTK_BT_MESH_LIGHT_XYL_SERVER_MODEL_SET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_XYL_SERVER_MODEL, RTK_BT_MESH_LIGHT_XYL_SERVER_MODEL_SET,
 										sizeof(light_xyl_server_set_t));
 			memcpy(p_evt->data, p_get_data, sizeof(light_xyl_server_set_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
@@ -1502,7 +1502,7 @@ static int32_t light_xyl_setup_server_data(const mesh_model_info_p pmodel_info, 
 		p_set_data = (light_xyl_server_set_range_t *)pargs;
 		if (p_set_data) {
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_XYL_SETUP_SERVER_MODEL, RTK_BT_MESH_LIGHT_XYL_RANGE_SERVER_MODEL_SET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_XYL_SETUP_SERVER_MODEL, RTK_BT_MESH_LIGHT_XYL_RANGE_SERVER_MODEL_SET,
 										sizeof(light_xyl_server_set_range_t));
 			memcpy(p_evt->data, p_set_data, sizeof(light_xyl_server_set_range_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
@@ -1544,7 +1544,7 @@ static int32_t light_lc_server_data(const mesh_model_info_p pmodel_info, uint32_
 		if (p_get_data) {
 			rtk_bt_mesh_light_lc_server_direct_get_mode_t *mode_get;
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_LC_SERVER_MODEL, RTK_BT_MESH_LIGHT_LC_SERVER_MODEL_MODE_GET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_LC_SERVER_MODEL, RTK_BT_MESH_LIGHT_LC_SERVER_MODEL_MODE_GET,
 										sizeof(rtk_bt_mesh_light_lc_server_direct_get_mode_t));
 			mode_get = (rtk_bt_mesh_light_lc_server_direct_get_mode_t *)p_evt->data;
 			mode_get->value = &mode_store;
@@ -1557,7 +1557,7 @@ static int32_t light_lc_server_data(const mesh_model_info_p pmodel_info, uint32_
 		light_lc_server_set_mode_t *p_set_data = pargs;
 		if (p_set_data) {
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_LC_SERVER_MODEL, RTK_BT_MESH_LIGHT_LC_SERVER_MODEL_MODE_SET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_LC_SERVER_MODEL, RTK_BT_MESH_LIGHT_LC_SERVER_MODEL_MODE_SET,
 										sizeof(light_lc_server_set_mode_t));
 			memcpy(p_evt->data, p_set_data, sizeof(light_lc_server_set_mode_t));
 			rtk_bt_evt_indicate(p_evt, NULL);
@@ -1570,7 +1570,7 @@ static int32_t light_lc_server_data(const mesh_model_info_p pmodel_info, uint32_
 		if (p_get_data) {
 			rtk_bt_mesh_light_lc_server_direct_get_om_t *om_get;
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_LC_SERVER_MODEL, RTK_BT_MESH_LIGHT_LC_SERVER_MODEL_OM_GET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_LC_SERVER_MODEL, RTK_BT_MESH_LIGHT_LC_SERVER_MODEL_OM_GET,
 										sizeof(rtk_bt_mesh_light_lc_server_direct_get_om_t));
 			om_get = (rtk_bt_mesh_light_lc_server_direct_get_om_t *)p_evt->data;
 			om_get->value = &om_store;
@@ -1583,7 +1583,7 @@ static int32_t light_lc_server_data(const mesh_model_info_p pmodel_info, uint32_
 		light_lc_server_set_om_t *p_set_data = pargs;
 		if (p_set_data) {
 			rtk_bt_evt_t *p_evt = NULL;
-			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_LC_SERVER_MODEL, RTK_BT_MESH_LIGHT_LC_SERVER_MODEL_OM_SET, 
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_MESH_LIGHT_LC_SERVER_MODEL, RTK_BT_MESH_LIGHT_LC_SERVER_MODEL_OM_SET,
 										sizeof(light_lc_server_set_om_t));
 			memcpy(p_evt->data, p_set_data, sizeof(light_lc_server_set_om_t));
 			rtk_bt_evt_indicate(p_evt, NULL);

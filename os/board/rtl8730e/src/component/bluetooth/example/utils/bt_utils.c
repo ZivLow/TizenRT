@@ -28,7 +28,7 @@ static uint8_t ctoi(char c)
 	return 0xFF;
 }
 
-/* parse string to integer, if string begin with 0x or 0X, treat as hex, 
+/* parse string to integer, if string begin with 0x or 0X, treat as hex,
    else treat as decimal */
 int str_to_int(char *str)
 {
@@ -116,7 +116,7 @@ bool hexnum_str_to_array(char *str, uint8_t *byte_arr, uint8_t arr_len)
 	while (n <= (hex_str_len + 1)/2 - 1) {
 		byte_low = ctoi(*(str_low--));
 
-		/* deal with the highest byte, it may be 1_hex_str(e.g. 0xF), or 2_hex_str(e.g. 0xFF) */ 
+		/* deal with the highest byte, it may be 1_hex_str(e.g. 0xF), or 2_hex_str(e.g. 0xFF) */
 		if ((n == ((hex_str_len + 1)/2 - 1)) && (hex_str_len % 2)) {
 			byte_high = 0;
 		} else {

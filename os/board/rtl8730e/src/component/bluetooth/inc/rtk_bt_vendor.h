@@ -1,6 +1,6 @@
 /**
  * @file      rtk_bt_vendor.h
- * @author    
+ * @author
  * @brief     Bluetooth Common function definition
  * @copyright Copyright (c) 2022. Realtek Semiconductor Corporation. All rights reserved.
  */
