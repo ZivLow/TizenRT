@@ -20,10 +20,7 @@ extern "C" {
 #ifndef UNUSED
 #define UNUSED(x) ((void)(x))
 #endif
-#if defined(CONFIG_BT_AP) && CONFIG_BT_AP                                          
-#define RTK_BT_LE_ISO_DATA_SEND_ASYNC    0              //data ptr is changed when run is different core, send iso data sync when AP + NP 
-#endif 
-                                 
+
 #define RTK_BLE_ISO_DATA_SEND_TIMER_IN_API   1
 
 #define RTK_BLE_ISO_DEFAULT_PHY_1M                  (1) /**< bit 0:LE PHY 1M used. */

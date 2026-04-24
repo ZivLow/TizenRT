@@ -17,10 +17,6 @@
 #ifndef GAP_AOX_CONN_H
 #define GAP_AOX_CONN_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -370,8 +366,6 @@ T_GAP_CAUSE le_aox_conn_cte_response_enable(uint8_t conn_id,
 #endif
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_AOX_CONN_H */

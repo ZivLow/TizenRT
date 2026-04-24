@@ -17,7 +17,7 @@ extern "C"
 #include <dlist.h>
 #include <rtk_bt_def.h>
 
-#if RTK_BLE_MGR_LIB
+#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
 
 /**
  * @struct    rtk_bt_gattc_uuid_t
@@ -364,7 +364,7 @@ uint16_t rtk_bt_gattc_register_profile(uint16_t profile_id, rtk_bt_gattc_uuid_t 
 uint16_t rtk_bt_gattc_discover_all(uint16_t conn_handle);
 
 /**
- * @fn         uint16_t rtk_bt_gattc_find(rtk_bt_gattc_find_param_t *p_find_param) 
+ * @fn         uint16_t rtk_bt_gattc_find(rtk_bt_gattc_find_param_t *p_find_param)
  * @brief      GATT client Discovery operations, will cause event @ref RTK_BT_GATTC_EVT_DISCOVER_RESULT_IND
  * @param p_find_param: Pointer to GATT client find parameters.
  * @return
@@ -485,7 +485,6 @@ typedef struct {
 			uint16_t end_handle;			/*!< Included service end handle */
 		} disc_descriptor;					/*!< Discover all characteristic descriptors */
 	};										/*!< Anonymous union member in rtk_bt_gattc_discover_param_t */
-	
 } rtk_bt_gattc_discover_param_t;
 
 /**
@@ -497,15 +496,14 @@ typedef struct {
 	uint16_t conn_handle;					/*!< Connection handle */
 	uint16_t seq;							/*!< Sequence number, for convinience, not mandatory */
 	rtk_bt_gattc_discover_type_t type;		/*!< Discover type */
-	rtk_bt_status_t status;					/*!< GATTC discover status, 
+	rtk_bt_status_t status;					/*!< GATTC discover status,
 												@note: One discover request may raise multiple discover events because many attribute entries may be
 												reported as results when discover complete. Each event reports one attribute entry.
-												if status is @ref RTK_BT_STATUS_CONTINUE, means one discover attribute entry is reported with this msg, 
+												if status is @ref RTK_BT_STATUS_CONTINUE, means one discover attribute entry is reported with this msg,
 													discover data of union below is not empty, and still have another msg follow this.
 												if status is @ref RTK_BT_STATUS_DONE, means discover is finished, and discover data of union below is empty.
 												if status is @ref RTK_BT_STATUS_FAIL, means discover is failed, inquire err_code for the cause of failure */
 	uint16_t err_code;						/*!< GATTC discover err_code, 0: success, others: failure cause */
-	// uint8_t has_data;
 	union {
 		struct disc_primary_all_per_param {
 			uint16_t start_handle;			/*!< Primary service start handle */
@@ -609,12 +607,11 @@ typedef struct {
 	rtk_bt_status_t status;					/*!< GATTC read status,
 												@note: One read request may raise multiple read events because many attribute entries may be
 												reported as results when read complete. Each event reports one attribute entry.
-												if status is @ref RTK_BT_STATUS_CONTINUE, means one read attribute entry is reported with this msg, 
+												if status is @ref RTK_BT_STATUS_CONTINUE, means one read attribute entry is reported with this msg,
 													read data of union below is not empty, and still have another msg follow this.
 												if status is @ref RTK_BT_STATUS_DONE, means read is finished, and read data of union below is empty.
 												if status is @ref RTK_BT_STATUS_FAIL, means read is failed, inquire err_code for the cause of failure */
-	uint16_t err_code;						/*!< GATTC read err_code, 0: success, others: failure cause */					
-	// uint8_t has_data;
+	uint16_t err_code;						/*!< GATTC read err_code, 0: success, others: failure cause */
 	union {
 		struct by_handle_res_param {
 			uint16_t handle;				/*!< Characteristic value handle */
@@ -676,7 +673,7 @@ typedef struct {
 	uint16_t seq;							/*!< Sequence number, for convinience, not mandatory */
 	rtk_bt_gattc_write_type_t type;			/*!< Characteristic value write type */
 	rtk_bt_status_t status;					/*!< GATTC write status,
-												if status is @ref RTK_BT_STATUS_DONE, means write is success, 
+												if status is @ref RTK_BT_STATUS_DONE, means write is success,
 												if status is @ref RTK_BT_STATUS_FAIL, means write is failed, inquire err_code for the cause of failure */
 	uint16_t err_code;						/*!< GATTC write err_code, 0: success, others: failure cause */
 	uint16_t handle;						/*!< Characteristic value handle */
@@ -705,7 +702,7 @@ typedef struct {
 	uint16_t conn_handle;					/*!< Connection handle */
 	uint16_t seq;							/*!< Sequence number, for convinience, not mandatory */
 	rtk_bt_status_t status;					/*!< GATTC cccd update status,
-												if status is @ref RTK_BT_STATUS_DONE, means write is success, 
+												if status is @ref RTK_BT_STATUS_DONE, means write is success,
 												if status is @ref RTK_BT_STATUS_FAIL, means write is failed, inquire err_code for the cause of failure */
 	uint16_t err_code;						/*!< GATTC write err_code, 0: success, others: failure cause */
 	uint16_t cccd_handle;  					/*!< Client characteristic configuration descriptor(CCCD) handle */
@@ -757,7 +754,7 @@ uint16_t rtk_bt_gattc_register_profile(uint16_t profile_id);
 uint16_t rtk_bt_gattc_exchange_mtu(uint16_t conn_handle);
 
 /**
- * @fn         uint16_t rtk_bt_gattc_discover(rtk_bt_gattc_discover_param_t *p_dis_param) 
+ * @fn         uint16_t rtk_bt_gattc_discover(rtk_bt_gattc_discover_param_t *p_dis_param)
  * @brief      GATT client Discovery operations, will cause event @ref RTK_BT_GATTC_EVT_DISCOVER_RESULT_IND
  * @param p_dis_param: Pointer to GATT client Discovery parameters.
  * @return

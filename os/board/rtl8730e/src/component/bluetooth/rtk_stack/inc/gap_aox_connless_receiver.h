@@ -17,10 +17,6 @@
 #ifndef GAP_AOX_CONNLESS_RECEIVER_H
 #define GAP_AOX_CONNLESS_RECEIVER_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -189,8 +185,6 @@ T_GAP_CAUSE le_aox_connless_receiver_set_iq_sampling_enable(uint8_t sync_id,
 #endif
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_AOX_CONNLESS_RECEIVER_H */

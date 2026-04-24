@@ -17,10 +17,6 @@
 #ifndef GAP_BIG_MGR_H
 #define GAP_BIG_MGR_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -1662,8 +1658,6 @@ T_GAP_CAUSE gap_big_mgr_read_test_counters(uint16_t bis_conn_handle);
   */
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_BIG_MGR_H */

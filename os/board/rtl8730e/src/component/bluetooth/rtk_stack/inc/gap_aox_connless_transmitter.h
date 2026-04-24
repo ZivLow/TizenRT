@@ -17,10 +17,6 @@
 #ifndef GAP_AOX_CONNLESS_TRANSMITTER_H
 #define GAP_AOX_CONNLESS_TRANSMITTER_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -77,8 +73,8 @@ extern "C"
 typedef enum
 {
     GAP_AOX_CONNLESS_TRANSMITTER_CTE_TYPES_AOA = 0x00,      /**< AoA Constant Tone Extension. */
-    GAP_AOX_CONNLESS_TRANSMITTER_CTE_TYPES_AOD_1US = 0x01,  /**< AoD Constant Tone Extension with 1 ��s slots. */
-    GAP_AOX_CONNLESS_TRANSMITTER_CTE_TYPES_AOD_2US = 0x02,  /**< AoD Constant Tone Extension with 2 ��s slots. */
+    GAP_AOX_CONNLESS_TRANSMITTER_CTE_TYPES_AOD_1US = 0x01,  /**< AoD Constant Tone Extension with 1 μs slots. */
+    GAP_AOX_CONNLESS_TRANSMITTER_CTE_TYPES_AOD_2US = 0x02,  /**< AoD Constant Tone Extension with 2 μs slots. */
 } T_GAP_AOX_CONNLESS_TRANSMITTER_CTE_TYPES;
 
 typedef enum
@@ -155,7 +151,7 @@ T_GAP_CAUSE le_aox_connless_transmitter_init(uint8_t adv_set_num);
  *              @ref app_gap_aox_callback with cb_type @ref GAP_MSG_LE_AOX_CONNLESS_TRANSMITTER_SET_CTE_TRANSMIT_PARAMS.
  *
  * @param[in]   adv_handle                 Used to identify an advertising set.
- * @param[in]   cte_length                 Constant Tone Extension length in 8 ��s units.
+ * @param[in]   cte_length                 Constant Tone Extension length in 8 μs units.
  *                                         Range: 0x02 to max_cte_length supported by controller returned by
  *                                                @ref le_aox_read_antenna_information.
  * @param[in]   cte_type                   @ref T_GAP_AOX_CONNLESS_TRANSMITTER_CTE_TYPES.
@@ -326,8 +322,6 @@ T_GAP_CAUSE le_aox_connless_transmitter_set_cte_transmit_enable(uint8_t adv_hand
 #endif
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_AOX_CONNLESS_TRANSMITTER_H */

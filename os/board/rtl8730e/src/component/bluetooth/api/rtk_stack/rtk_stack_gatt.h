@@ -28,9 +28,7 @@ typedef struct{
 /***************************** GATT Server related ***************************/
 typedef struct {
 	struct list_head service_list;
-#if !RTK_BLE_MGR_LIB
 	uint8_t srv_registering;
-#endif
 	rtk_bt_gatt_queue_t notify_queue[RTK_BLE_GAP_MAX_LINKS];
 	rtk_bt_gatt_queue_t indicate_queue[RTK_BLE_GAP_MAX_LINKS];
 	uint32_t last_seq;
@@ -47,7 +45,7 @@ typedef enum {
 typedef struct{
 	struct list_head list;
 	uint16_t conn_handle;
-	uint8_t app_id;
+	uint16_t app_id;
 	uint32_t seq;
 	uint16_t index;
 	uint16_t len;
@@ -57,7 +55,7 @@ typedef struct{
 } rtk_bt_gatts_req_t;
 
 /***************************** GATT Client related ***************************/
-#if !RTK_BLE_MGR_LIB
+#if !defined(RTK_BLE_MGR_LIB) || !RTK_BLE_MGR_LIB
 typedef enum {
 	BT_STACK_GATTC_DISC_REQ  = 1,
 	BT_STACK_GATTC_READ_REQ,

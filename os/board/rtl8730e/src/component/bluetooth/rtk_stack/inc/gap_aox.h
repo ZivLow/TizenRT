@@ -17,10 +17,6 @@
 #ifndef GAP_AOX_H
 #define GAP_AOX_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -116,7 +112,7 @@ typedef struct
                                                       supported by the Controller. @ref GAP_AOX_SUPPORTED_SWITCH_SAMPLE_BITS.*/
     uint8_t num_antennae;                        /**< The number of antennae supported by the Controller. */
     uint8_t max_switching_pattern_length;        /**< Maximum length of antenna switching pattern supported by the Controller. */
-    uint8_t max_cte_length;                      /**< Maximum length of a transmitted Constant Tone Extension supported in 8 ��s units. */
+    uint8_t max_cte_length;                      /**< Maximum length of a transmitted Constant Tone Extension supported in 8 μs units. */
 } T_LE_AOX_READ_ANTENNA_INFORMATION_RSP;
 
 #if F_BT_LE_5_1_AOX_CONN_SUPPORT
@@ -386,8 +382,6 @@ T_GAP_CAUSE le_aox_read_antenna_information(void);
 #endif
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_AOX_H */

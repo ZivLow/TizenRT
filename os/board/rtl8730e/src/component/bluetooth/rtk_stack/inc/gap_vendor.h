@@ -17,10 +17,6 @@
 #ifndef GAP_VENDOR_H
 #define GAP_VENDOR_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -213,8 +209,6 @@ T_GAP_CAUSE gap_vendor_cmd_req(uint16_t op, uint8_t len, uint8_t *p_param);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_VENDOR_H */

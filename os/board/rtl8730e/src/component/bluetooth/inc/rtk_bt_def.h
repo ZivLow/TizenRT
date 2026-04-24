@@ -198,15 +198,21 @@ enum rtk_bt_err_att {
 	RTK_BT_ATT_ERR_INSUFFICIENT_ENCRYPT         =   0x0F,
 	RTK_BT_ATT_ERR_UNSUPPORTED_GROUP_TYPE       =   0x10,
 	RTK_BT_ATT_ERR_INSUFFICIENT_RESOURCES       =   0x11,
-	RTK_BT_ATT_ERR_MIN_APPLIC_CODE              =   0x80,
+	RTK_BT_ATT_ERR_DATABASE_OUT_OF_SYNC         =   0x12,
+	RTK_BT_ATT_ERR_VALUE_NOT_ALLOWED            =   0x13,
+	/* Application Error 0x80 - 0x9F */
 	RTK_BT_ATT_ERR_INVALID_VALUE                =   0x80,
+	/* Manufacturer specific error */
 	RTK_BT_ATT_ERR_INVALID_CCC_BITS             =   0xC0,
 	RTK_BT_ATT_ERR_INVALID_SIGNED_COUNT         =   0xC1,
 	RTK_BT_ATT_ERR_INVALID_SIGNED_MAC_FAILED    =   0xC2,
+	RTK_BT_ATT_ERR_MIN_APPLIC_CODE              =   0xC3,
+	/* Common Profiles and Service Error 0xE0 - 0xFF */
 	RTK_BT_ATT_ERR_CCCD_IMPROPERLY_CONFIGURED   =   0xFD,
 	RTK_BT_ATT_ERR_PROC_ALREADY_IN_PROGRESS     =   0xFE,
 	RTK_BT_ATT_ERR_OUT_OF_RANGE                 =   0xFF,
 };
+
 
 /**
  * @enum      rtk_bt_err_smp

@@ -15,10 +15,6 @@
 #ifndef PROFILE_CLIENT_EXT_H
 #define PROFILE_CLIENT_EXT_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef  __cplusplus
 extern "C" {
 #endif      /* __cplusplus */
@@ -473,8 +469,6 @@ T_GAP_CAUSE client_ext_attr_read_multi_variable(uint16_t conn_handle, uint16_t c
 #ifdef  __cplusplus
 }
 #endif      /*  __cplusplus */
-
-#endif
 
 #endif /* PROFILE_CLIENT_EXT_H */
 

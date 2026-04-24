@@ -15,10 +15,6 @@
 #ifndef PROFILE_SERVER_EXT_H
 #define PROFILE_SERVER_EXT_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef  __cplusplus
 extern "C" {
 #endif      /* __cplusplus */
@@ -62,6 +58,7 @@ typedef struct
     T_SERVER_ID     service_id;
     uint16_t        attrib_idx;
     uint16_t        cause;
+    T_GATT_PDU_TYPE data_type;
 } T_EXT_SEND_DATA_RESULT;
 
 /** @brief Service callback data */
@@ -392,7 +389,5 @@ bool server_ext_get_cccd_info(uint16_t conn_handle, T_SERVER_ID service_id, uint
 #ifdef  __cplusplus
 }
 #endif      /*  __cplusplus */
-
-#endif
 
 #endif /* PROFILE_SERVER_EXT_H */

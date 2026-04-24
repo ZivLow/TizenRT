@@ -18,10 +18,6 @@
 #ifndef GAP_BOND_MANAGER_H
 #define GAP_BOND_MANAGER_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -258,8 +254,6 @@ bool gap_update_cccd_info(uint16_t conn_handle, uint8_t data_len, uint8_t *data)
 #endif
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_BOND_MANAGER_H */

@@ -15,10 +15,6 @@
 #ifndef GAP_PAST_RECIPIENT_H
 #define GAP_PAST_RECIPIENT_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -58,8 +54,8 @@ extern "C"
 #define PAST_RECIPIENT_PERIODIC_ADV_SYNC_TRANSFER_CTE_TYPE_CTE_IRRELEVANT             0x00   /**< A value of 0 (i.e. all bits clear) indicates that the presence or absence of
                                                                                                   a Constant Tone Extension is irrelevant. */
 #define PAST_RECIPIENT_PERIODIC_ADV_SYNC_TRANSFER_CTE_TYPE_NOT_SYNC_WITH_AOA_CTE      0x01   /**< Do not sync to packets with an AoA Constant Tone Extension. */
-#define PAST_RECIPIENT_PERIODIC_ADV_SYNC_TRANSFER_CTE_TYPE_NOT_SYNC_WITH_AOD_CTE_1US  0x02   /**< Do not sync to packets with an AoD Constant Tone Extension with 1 ��s slots. */
-#define PAST_RECIPIENT_PERIODIC_ADV_SYNC_TRANSFER_CTE_TYPE_NOT_SYNC_WITH_AOD_CTE_2US  0x04   /**< Do not sync to packets with an AoD Constant Tone Extension with 2 ��s slots. */
+#define PAST_RECIPIENT_PERIODIC_ADV_SYNC_TRANSFER_CTE_TYPE_NOT_SYNC_WITH_AOD_CTE_1US  0x02   /**< Do not sync to packets with an AoD Constant Tone Extension with 1 μs slots. */
+#define PAST_RECIPIENT_PERIODIC_ADV_SYNC_TRANSFER_CTE_TYPE_NOT_SYNC_WITH_AOD_CTE_2US  0x04   /**< Do not sync to packets with an AoD Constant Tone Extension with 2 μs slots. */
 #define PAST_RECIPIENT_PERIODIC_ADV_SYNC_TRANSFER_CTE_TYPE_NOT_SYNC_WITHOUT_CTE       0x10   /**< Do not sync to packets without a Constant Tone Extension. */
 /** End of PAST_RECIPIENT_PERIODIC_ADV_SYNC_TRANSFER_CTE_TYPE
   * @}
@@ -373,8 +369,6 @@ T_GAP_CAUSE le_past_recipient_set_periodic_adv_sync_transfer_params(uint8_t conn
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_PAST_RECIPIENT_H */

@@ -18,8 +18,8 @@ enum {
 uint8_t  hci_process         (void);
 
 /* HCI StandAlone */
-uint8_t* hci_sa_recv_get_buf (uint8_t type, uint16_t len, uint32_t timeout);
-uint8_t  hci_sa_recv         (uint8_t type, uint8_t* buf, uint16_t len);
-uint8_t  hci_sa_send         (uint8_t type, uint8_t* buf, uint16_t len, uint8_t is_sync);
+bool hci_sa_recv_get_buf(hci_rx_t *info, uint32_t timeout);
+uint8_t hci_sa_recv(hci_rx_t *info);
+uint8_t hci_sa_send(uint8_t type, uint8_t *buf, uint16_t len, uint8_t is_sync);
 
 #endif

@@ -5,10 +5,6 @@
 #ifndef _GAP_BR_H_
 #define _GAP_BR_H_
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #include <gap.h>
 
 #ifdef __cplusplus
@@ -5514,7 +5510,5 @@ T_GAP_CAUSE gap_br_vendor_remote_tpoll_ignore(uint16_t handle,
 #ifdef __cplusplus
 }
 #endif    /*  __cplusplus */
-
-#endif
 
 #endif    /*  _GAP_BR_H_*/

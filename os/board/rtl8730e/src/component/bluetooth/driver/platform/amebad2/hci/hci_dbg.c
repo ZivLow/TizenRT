@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <platform_stdlib.h>
+#include "basic_types.h"
 #include <stdbool.h>
 #include "ameba_soc.h"
 #include "hci_dbg.h"

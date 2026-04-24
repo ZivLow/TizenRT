@@ -17,10 +17,6 @@
 #ifndef _BLE_ISOCH_DEF_H_
 #define _BLE_ISOCH_DEF_H_
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef  __cplusplus
 extern "C"
 {
@@ -191,8 +187,6 @@ typedef struct
 
 #ifdef  __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* _BLE_ISOCH_DEF_H_ */

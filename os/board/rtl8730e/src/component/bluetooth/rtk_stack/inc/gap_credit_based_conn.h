@@ -14,10 +14,6 @@
 #ifndef _LE_CREDIT_BASED_CONN_H_
 #define _LE_CREDIT_BASED_CONN_H_
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #include "upperstack_config.h"
 #include "gap_le.h"
 #include "gap.h"
@@ -155,6 +151,5 @@ T_GAP_CAUSE le_coc_set_psm_security(uint16_t le_psm, bool active, T_LE_COC_SECUR
 #endif
 
 
-#endif
 
 #endif /* _LE_CREDIT_BASED_CONN_H_ */

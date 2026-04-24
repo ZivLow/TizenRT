@@ -17,10 +17,6 @@
 #ifndef GAP_LE_RF_H
 #define GAP_LE_RF_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -655,8 +651,6 @@ T_GAP_CAUSE le_rf_set_path_loss_reporting_enable(uint8_t conn_id, uint8_t enable
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* GAP_LE_RF_H */

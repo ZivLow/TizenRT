@@ -19,6 +19,7 @@
 #include <gap_le.h>
 #include <app_msg.h>
 #include <gap_config.h>
+#include <gap_vendor.h>
 #include <trace_app.h>
 #include <bt_api_config.h>
 
@@ -47,8 +48,15 @@ extern struct amebad2_uart_t *amebad2_uart;
 #include <rtk_bt_mesh_generic_model.h>
 #include <rtk_bt_mesh_health_model.h>
 #endif
-#if RTK_BLE_MGR_LIB
+#if (defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB) || (defined(RTK_BREDR_SUPPORT) && RTK_BREDR_SUPPORT)
+//#include <sysm.h>
+#endif
+#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
 #include <ble_mgr.h>
+#endif
+#if defined(RTK_BREDR_SUPPORT) && RTK_BREDR_SUPPORT
+#include <remote.h>
+#include <btm.h>
 #endif
 static void *api_task_sem = NULL;
 static void *api_task_hdl = NULL;
@@ -65,11 +73,10 @@ static void bt_stack_api_taskentry(void *ctx)
 	(void)ctx;
 	uint8_t event;
 	T_IO_MSG io_msg;
-	rtk_bt_cmd_t *api_cmd;
 
 	osif_sem_give(api_task_sem);
 
-#if defined(configENABLE_TRUSTZONE) && (configENABLE_TRUSTZONE == 1)
+#if defined(configENABLE_TRUSTZONE) && configENABLE_TRUSTZONE
 	osif_create_secure_context(configMINIMAL_SECURE_STACK_SIZE + 256);
 #endif
 
@@ -80,12 +87,9 @@ static void bt_stack_api_taskentry(void *ctx)
 					if (true == osif_msg_recv(api_task_io_msg_q, &io_msg, 0)) {
 						switch (io_msg.type) {
 						case IO_MSG_TYPE_API_SYS_CALL:
-							api_cmd = (rtk_bt_cmd_t *)io_msg.u.buf;
 
 							/* Check if need to exit task*/
-							if (RTK_BT_API_TASK_EXIT == api_cmd->group) {
-								api_cmd->ret = 0;
-								osif_sem_give(api_cmd->psem);
+							if (io_msg.subtype == RTK_BT_API_TASK_EXIT) {
 								goto out;
 							}
 							bt_stack_act_handler((rtk_bt_cmd_t *)io_msg.u.buf);
@@ -135,11 +139,85 @@ out:
 	osif_task_delete(NULL);
 }
 
+static bool bt_stack_framework_init(void)
+{
+#if (defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB) || (defined(RTK_BREDR_SUPPORT) && RTK_BREDR_SUPPORT)
+	bool b_sys;
+#if defined(RTK_BREDR_SUPPORT) && RTK_BREDR_SUPPORT
+	bool b_remote = false;
+	bool b_bt;
+#endif
+#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
+	BLE_MGR_PARAMS param = {0};
+#endif
+
+	/* System Manager */
+	b_sys = sys_mgr_init(api_task_evt_msg_q);
+	if (!b_sys)
+		goto fail;
+
+#if defined(RTK_BREDR_SUPPORT) && RTK_BREDR_SUPPORT
+	/* Initialize remote control manager*/
+	b_remote = remote_mgr_init(REMOTE_SESSION_ROLE_SINGLE);
+	if (!b_remote)
+		goto fail;
+
+	/* Bluetooth Manager */
+	b_bt = bt_mgr_init();
+	if (!b_bt)
+		goto fail;
+#endif
+
+#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
+#if (defined(RTK_BLE_5_0_AE_ADV_SUPPORT) && RTK_BLE_5_0_AE_ADV_SUPPORT) && F_BT_LE_5_0_AE_ADV_SUPPORT && RTK_BLE_MGR_LIB_EADV
+	param.ble_ext_adv.enable = true;
+	param.ble_ext_adv.adv_num = GAP_MAX_EXT_ADV_SETS;
+#endif
+	ble_mgr_init(&param);
+#endif
+
+	return true;
+
+fail:
+#if defined(RTK_BREDR_SUPPORT) && RTK_BREDR_SUPPORT
+	if (b_bt)
+		bt_mgr_deinit();
+	if (b_remote)
+		remote_mgr_deinit();
+#endif
+	if (b_sys)
+		sys_mgr_deinit();
+
+	return false;
+#else
+	return true;
+#endif
+}
+
+static void bt_stack_framework_deinit(void)
+{
+#if (defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB) || (defined(RTK_BREDR_SUPPORT) && RTK_BREDR_SUPPORT)
+#if defined(RTK_BREDR_SUPPORT) && RTK_BREDR_SUPPORT
+	/* bt mgr deinit */
+	bt_mgr_deinit();
+	/* remote mgr deinit */
+	remote_mgr_deinit();
+#endif
+
+#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
+	// ble_mgr_deinit();
+#endif
+
+	sys_mgr_deinit();
+#endif
+}
+
 static uint16_t bt_stack_init(void *app_config)
 {
 	bool b_trace_init_ret = false;
 	bool b_bte_init_ret = false;
 	uint16_t b_bt_ble_gap_init_ret = 0;
+	bool b_framework_init = false;
 	rtk_bt_app_conf_t *papp_conf = (rtk_bt_app_conf_t *)app_config;
 	rtk_bt_app_conf_t default_conf = {0};
 
@@ -147,6 +225,7 @@ static uint16_t bt_stack_init(void *app_config)
 	if (papp_conf != NULL) {
 		default_conf.mtu_size = papp_conf->mtu_size;
 		default_conf.master_init_mtu_req = papp_conf->master_init_mtu_req;
+		default_conf.slave_init_mtu_req = papp_conf->slave_init_mtu_req;
 		default_conf.prefer_all_phy = papp_conf->prefer_all_phy;
 		default_conf.prefer_tx_phy = papp_conf->prefer_tx_phy;
 		default_conf.prefer_rx_phy = papp_conf->prefer_rx_phy;
@@ -165,6 +244,7 @@ static uint16_t bt_stack_init(void *app_config)
 	} else {
 		default_conf.mtu_size = 180;
 		default_conf.master_init_mtu_req = true;
+		default_conf.slave_init_mtu_req = false;
 		default_conf.prefer_all_phy = 0;
 		default_conf.prefer_tx_phy = 1 | 1 << 1 | 1 << 2;
 		default_conf.prefer_rx_phy = 1 | 1 << 1 | 1 << 2;
@@ -190,8 +270,12 @@ static uint16_t bt_stack_init(void *app_config)
 	gap_config_max_mtu_size(default_conf.mtu_size);
 	gap_config_deinit_flow(2);
 
-#if (defined(RTK_BLE_AUDIO_SUPPORT) && RTK_BLE_AUDIO_SUPPORT) && (defined(F_BT_LE_GATT_SERVER_SUPPORT) && F_BT_LE_GATT_SERVER_SUPPORT)
+#if (defined(RTK_BLE_AUDIO_SUPPORT) && RTK_BLE_AUDIO_SUPPORT)
 	gap_config_ccc_bits_count(GAP_MAX_CCC_BITS_CNT, GAP_MAX_CCC_BITS_CNT);
+#else
+	if (papp_conf && true == papp_conf->cccd_not_check) {
+		gap_config_ccc_bits_count(16, 0);
+	}
 #endif
 #if defined(RTK_BLE_SET_TX_QUEUE_NUM) && RTK_BLE_SET_TX_QUEUE_NUM
 	if (false == gap_config_credits_num(default_conf.max_stack_tx_pending_num)) {
@@ -209,15 +293,20 @@ static uint16_t bt_stack_init(void *app_config)
 #endif
 #endif
 
-#if ((defined(RTK_BT_5_2_L2C_ECFC_SUPPORT) && RTK_BT_5_2_L2C_ECFC_SUPPORT) && (defined(F_BT_5_2_L2C_ECFC_SUPPORT) && F_BT_5_2_L2C_ECFC_SUPPORT)) || \
-    (defined(RTK_BLE_COC_SUPPORT) && RTK_BLE_COC_SUPPORT)
-	gap_config_le_l2c_chann_num(GAP_MAX_LE_L2CAP_CHANN_NUM);
-	gap_config_le_sec_entry_num(GAP_MAX_LE_SEC_ENTRY_NUM);
+#if (defined(RTK_BT_5_2_L2C_ECFC_SUPPORT) && RTK_BT_5_2_L2C_ECFC_SUPPORT) && (defined(F_BT_5_2_L2C_ECFC_SUPPORT) && F_BT_5_2_L2C_ECFC_SUPPORT) || \
+	(defined(RTK_BLE_COC_SUPPORT) && RTK_BLE_COC_SUPPORT)
+	gap_config_le_l2c_chann_num(GAP_LE_MAX_ECFC_CHANN_NUM);
+	gap_config_le_sec_entry_num(GAP_MAX_ECFC_PROTOCAL_NUM);
 #endif
 
 	//BT Stack init
 	b_bte_init_ret = bte_init();
 	if (false == b_bte_init_ret) {
+		goto failed;
+	}
+
+	b_framework_init = bt_stack_framework_init();
+	if (false == b_framework_init) {
 		goto failed;
 	}
 
@@ -237,17 +326,6 @@ static uint16_t bt_stack_init(void *app_config)
 //		goto failed;
 //	}
 
-#if RTK_BLE_MGR_LIB
-	{
-		BLE_MGR_PARAMS param = {0};
-#if (defined(RTK_BLE_5_0_AE_ADV_SUPPORT) && RTK_BLE_5_0_AE_ADV_SUPPORT) && F_BT_LE_5_0_AE_ADV_SUPPORT && RTK_BLE_MGR_LIB_EADV
-		param.ble_ext_adv.enable = true;
-		param.ble_ext_adv.adv_num = GAP_MAX_EXT_ADV_SETS;
-#endif
-		ble_mgr_init(&param);
-	}
-#endif
-
 	return 0;
 
 failed:
@@ -255,12 +333,16 @@ failed:
 		bt_stack_le_gap_deinit();
 	}
 
-	if (true == b_bte_init_ret) {
+	if (b_framework_init) {
+		bt_stack_framework_deinit();
+	}
+
+	if (b_bte_init_ret) {
 		bte_deinit();
 		bte_deinit_free();
 	}
 
-	if (true == b_trace_init_ret) {
+	if (b_trace_init_ret) {
 		bt_trace_deinit();
 	}
 
@@ -462,9 +544,8 @@ failed:
 	return RTK_BT_FAIL;
 }
 
-static uint16_t bt_stack_api_deinit(void)
+static uint16_t bt_stack_api_stop(void)
 {
-	uint16_t ret = 0;
 
 	api_task_running = false;
 
@@ -472,11 +553,19 @@ static uint16_t bt_stack_api_deinit(void)
 	while (api_task_msg_num) {
 		osif_delay(5);
 	}
+}
+
+static uint16_t bt_stack_api_deinit(void)
+	{
+	uint8_t event = EVENT_IO_TO_APP;
+	T_IO_MSG io_msg = {
+		.type = IO_MSG_TYPE_API_SYS_CALL,
+		.subtype = RTK_BT_API_TASK_EXIT,
+	};
 
 	/* indicate bt api task to kill itself */
-	ret = rtk_bt_send_cmd(RTK_BT_API_TASK_EXIT, 0, NULL, 0);
-	if (ret) {
-		return ret;
+	if (!osif_msg_send(api_task_io_msg_q, &io_msg, 0) || !osif_msg_send(api_task_evt_msg_q, &event, 0)) {
+		return RTK_BT_ERR_OS_OPERATION;
 	}
 
 	if (false == osif_sem_take(api_task_sem, 0xffffffff)) {
@@ -762,6 +851,14 @@ static void bt_stack_log_config(void)
 }
 #endif
 
+static void bt_stack_post_config(void)
+{
+	gap_vendor_le_set_host_feature(16, 1);
+#if defined(RTK_BT_STACK_LOG_CONFIG) && RTK_BT_STACK_LOG_CONFIG
+	bt_stack_log_config();
+#endif
+}
+
 uint16_t bt_stack_enable(void *app_conf)
 {
 	uint16_t ret = 0;
@@ -789,9 +886,7 @@ uint16_t bt_stack_enable(void *app_conf)
 	bt_stack_le_gap_wait_ready();
 //	bt_stack_br_gap_wait_ready();
 
-#if defined(RTK_BT_STACK_LOG_CONFIG) && RTK_BT_STACK_LOG_CONFIG
-	bt_stack_log_config();
-#endif
+	bt_stack_post_config();
 	return 0;
 }
 
@@ -814,10 +909,9 @@ uint16_t bt_stack_disable(void)
 		return ret;
 	}
 
-#if RTK_BLE_MGR_LIB
-	/* deinit flow: bte_deinit --> ble_audio_deinit -->ble_mgr_deinit */
-	// ble_mgr_deinit();
-#endif
+	/* leaudio deinit flow: bte_deinit --> ble_audio_deinit --> ble_mgr_deinit -->sys_mgr_deinit */
+	/* classic deinit flow: bte_deinit --> a2ap_deinit --> bt_mgr_deinit --> remote_mgr_deinit -->sys_mgr_deinit */
+	bt_stack_framework_deinit();
 
 	/* free stack resource after api task terminated */
 	bte_deinit_free();
@@ -838,11 +932,8 @@ uint16_t bt_stack_msg_send(uint16_t type, uint16_t subtype, void *msg)
 	osif_unlock(flags);
 
 	if (!api_task_running) {
-		/* send EXIT as last msg to kill task */
-		if (type != IO_MSG_TYPE_API_SYS_CALL || ((rtk_bt_cmd_t *)msg)->group != RTK_BT_API_TASK_EXIT) {
-			ret = RTK_BT_ERR_NOT_READY;
-			goto end;
-		}
+		ret = RTK_BT_ERR_NOT_READY;
+		goto end;
 	}
 
 	io_msg.type = type;
@@ -914,7 +1005,7 @@ void bt_stack_pending_cmd_init(void)
     INIT_LIST_HEAD(&g_cmd_pending_list);
 }
 
-#ifdef CONFIG_BT_API_DEBUG
+#if defined(CONFIG_BT_API_DEBUG) && CONFIG_BT_API_DEBUG
 void BT_API_DUMPBUF(uint8_t level, const char *func, uint8_t *buf, uint16_t len)
 {
 	int i = 0;

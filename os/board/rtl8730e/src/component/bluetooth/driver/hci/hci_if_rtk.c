@@ -11,17 +11,13 @@
 #include "hci_uart.h"
 #include "hci_platform.h"
 #include "hci_dbg.h"
-
-/* Zi Yik DLIST */
-/////////////////////////////////////////////////////////////TizenRT service header start
 #include "dlist.h"
 
 #define H4_HDR_LEN          (1)
-#define RESERVED_LEN        (H4_HDR_LEN + 0)
 
 #define SECURE_CONTEXT_SIZE (128)
 
-#ifdef CONFIG_AYNSC_HCI_INTF
+#if defined(CONFIG_AYNSC_HCI_INTF) && CONFIG_AYNSC_HCI_INTF
 #define HCI_IF_TASK_SIZE    (2*1024)
 #define HCI_IF_TASK_PRIO    (5)
 
@@ -39,7 +35,7 @@ struct tx_packet_t {
 static struct {
 	uint8_t status;
 	HCI_IF_CALLBACK cb;
-#ifdef CONFIG_AYNSC_HCI_INTF
+#if defined(CONFIG_AYNSC_HCI_INTF) && CONFIG_AYNSC_HCI_INTF
 	bool task_running;
 	uint32_t task_msg_num;
 	struct list_head tx_list;
@@ -50,7 +46,7 @@ static struct {
 } hci_if_rtk = {
 	.status = 0,
 	.cb = 0,
-#ifdef CONFIG_AYNSC_HCI_INTF
+#if defined(CONFIG_AYNSC_HCI_INTF) && CONFIG_AYNSC_HCI_INTF
 	.task_running = false,
 	.task_msg_num = 0,
 	.tx_list = {NULL, NULL},
@@ -60,65 +56,60 @@ static struct {
 #endif
 };
 
-static uint8_t *rtk_stack_get_buf(uint8_t type, uint16_t len, uint32_t timeout)
+static uint8_t _rx_offset(uint8_t type)
+{
+	uint8_t offset = H4_HDR_LEN;
+
+	if (type == H4_ACL || type == H4_ISO)
+		offset += HCI_H4_RX_ACL_PKT_BUF_OFFSET;
+	else if (type == H4_SCO)
+		offset += HCI_H4_RX_SCO_PKT_BUF_OFFSET;
+
+	return offset;
+}
+
+static bool rtk_stack_get_buf(hci_rx_t *info, uint32_t timeout)
 {
 	(void)timeout;
 	uint8_t *buf = NULL;
-	uint16_t actual_len = RESERVED_LEN + len;
+	uint8_t offset = _rx_offset(info->type);
 
-	switch (type) {
-	case H4_ACL:
-	case H4_ISO:
-		actual_len += HCI_H4_RX_ACL_PKT_BUF_OFFSET;
-		buf = (uint8_t *)osif_mem_aligned_alloc(RAM_TYPE_DATA_ON, actual_len, 4);
-		memset(buf, 0, actual_len);
-		return (buf + RESERVED_LEN + HCI_H4_RX_ACL_PKT_BUF_OFFSET);
-		break;
-	case H4_EVT:
-		buf = (uint8_t *)osif_mem_aligned_alloc(RAM_TYPE_DATA_ON, actual_len, 4);
-		memset(buf, 0, actual_len);
-		return (buf + RESERVED_LEN);
-		break;
-	case H4_SCO:
-		actual_len += HCI_H4_RX_SCO_PKT_BUF_OFFSET;
-		buf = (uint8_t *)osif_mem_aligned_alloc(RAM_TYPE_DATA_ON, actual_len, 4);
-		memset(buf, 0, actual_len);
-		return (buf + RESERVED_LEN + HCI_H4_RX_SCO_PKT_BUF_OFFSET);
-		break;
-	default:
-		break;
-	}
+	buf = (uint8_t *)osif_mem_aligned_alloc(RAM_TYPE_DATA_ON, info->len + offset, 4);
+	memset(buf, 0, info->len + offset);
 
-	return NULL;
+	info->data = buf + offset;
+	info->arg = buf;
+	return true;
 }
 
-static uint8_t rtk_stack_recv(uint8_t type, uint8_t *buf, uint16_t len)
+static void rtk_stack_free_buf(hci_rx_t *info)
 {
-	uint8_t *hci_buf = buf - RESERVED_LEN;
-	uint32_t actual_len = len + H4_HDR_LEN;
+	hci_if_confirm((uint8_t *)info->arg);
+}
 
-	if (H4_ACL == type || H4_ISO == type) {
-		hci_buf -= HCI_H4_RX_ACL_PKT_BUF_OFFSET;
-		actual_len += HCI_H4_RX_ACL_PKT_BUF_OFFSET;
-	} else if (H4_SCO == type) {
-		hci_buf -= HCI_H4_RX_SCO_PKT_BUF_OFFSET;
-		actual_len += HCI_H4_RX_SCO_PKT_BUF_OFFSET;
+static uint8_t rtk_stack_recv(hci_rx_t *info)
+{
+	uint8_t offset = _rx_offset(info->type);
+	uint8_t *buf = (uint8_t *)info->arg;
+
+	buf[0] = info->type;
+
+	if (hci_if_rtk.cb) {
+		if (!hci_if_rtk.cb(HCI_IF_EVT_DATA_IND, true, buf, info->len + offset)) {
+			hci_if_confirm(buf);    /* when indicate fail, free memory here. */
+		}
 	}
-
-	hci_buf[RESERVED_LEN - H4_HDR_LEN] = type;
-
-	hci_if_rtk.cb(HCI_IF_EVT_DATA_IND, true, &hci_buf[RESERVED_LEN - H4_HDR_LEN], actual_len);
-
 	return HCI_SUCCESS;
 }
 
 static void _hci_if_open_indicate(void)
 {
-	if (hci_platform_check_mp() == HCI_SUCCESS) {
-		hci_if_rtk.cb(HCI_IF_EVT_OPENED, false, NULL, 0);	//If in MP mode, do not start upper stack
+	if (hci_platform_check_mp() == HCI_SUCCESS) {    //If in MP mode, do not start upper stack
 		HCI_PRINT("Not start upper stack for MP test\r\n");
-	} else {
-		hci_if_rtk.cb(HCI_IF_EVT_OPENED, true, NULL, 0);	//If in normal mode, start upper stack
+	} else {                                         //If in normal mode, start upper stack
+		if (hci_if_rtk.cb) {
+			hci_if_rtk.cb(HCI_IF_EVT_OPENED, true, NULL, 0);
+		}
 		HCI_PRINT("Start upper stack\r\n");
 	}
 }
@@ -138,7 +129,7 @@ static bool _hci_if_open(void)
 	}
 
 	/* HCI Transport Bridge to StandAlone */
-	hci_transport_set_get_buf(hci_sa_recv_get_buf);
+	hci_transport_set_buf_ops(hci_sa_recv_get_buf, NULL);
 	hci_transport_set_recv(hci_sa_recv);
 
 	/* HCI UART Bridge to Transport */
@@ -153,7 +144,7 @@ static bool _hci_if_open(void)
 	 * (Stop and Start rx_ind for this Moment)
 	 */
 	hci_uart_set_rx_ind(NULL);
-	hci_transport_set_get_buf(rtk_stack_get_buf);
+	hci_transport_set_buf_ops(rtk_stack_get_buf, rtk_stack_free_buf);
 	hci_transport_set_recv(rtk_stack_recv);
 	hci_uart_set_rx_ind(hci_transport_recv_ind);
 
@@ -173,11 +164,13 @@ static void _hci_if_send(uint8_t *buf, uint32_t len, bool from_stack)
 
 	hci_transport_send(buf[0], buf + offset, len - offset, 1);
 	if (from_stack) {
-		hci_if_rtk.cb(HCI_IF_EVT_DATA_XMIT, true, buf, len);
+		if (hci_if_rtk.cb) {
+			hci_if_rtk.cb(HCI_IF_EVT_DATA_XMIT, true, buf, len);
+		}
 	}
 }
 
-#ifdef CONFIG_AYNSC_HCI_INTF
+#if defined(CONFIG_AYNSC_HCI_INTF) && CONFIG_AYNSC_HCI_INTF
 static bool _tx_list_add(uint8_t *buf, uint32_t len, uint8_t flag)
 {
 	bool ret = false;
@@ -198,7 +191,9 @@ static bool _tx_list_add(uint8_t *buf, uint32_t len, uint8_t flag)
 
 	if (!pkt) {
 		if (flag & FLAG_BUF_FROM_STACK) {
-			hci_if_rtk.cb(HCI_IF_EVT_DATA_XMIT, false, buf, len);
+			if (hci_if_rtk.cb) {
+				hci_if_rtk.cb(HCI_IF_EVT_DATA_XMIT, false, buf, len);
+			}
 		}
 		HCI_ERR("pkt alloc fail!");
 		goto end;
@@ -231,7 +226,7 @@ static void hci_if_task(void *context)
 {
 	(void)context;
 
-#if defined(CONFIG_BUILD_NONSECURE)
+#if defined(CONFIG_BUILD_NONSECURE) && CONFIG_BUILD_NONSECURE
 	osif_create_secure_context(SECURE_CONTEXT_SIZE);
 #endif
 
@@ -270,7 +265,9 @@ out:
 	/* HCI Transport Close */
 	hci_transport_close();
 
-	hci_if_rtk.cb(HCI_IF_EVT_CLOSED, true, NULL, 0);
+	if (hci_if_rtk.cb) {
+		hci_if_rtk.cb(HCI_IF_EVT_CLOSED, true, NULL, 0);
+	}
 	hci_if_rtk.status = 0;
 	osif_task_delete(NULL);
 }
@@ -286,7 +283,7 @@ bool hci_if_open(HCI_IF_CALLBACK callback)
 		return true;
 	}
 
-#ifdef CONFIG_AYNSC_HCI_INTF
+#if defined(CONFIG_AYNSC_HCI_INTF) && CONFIG_AYNSC_HCI_INTF
 	INIT_LIST_HEAD(&hci_if_rtk.tx_list);
 	osif_sem_create(&hci_if_rtk.tx_ind_sem, 0, 1);
 	osif_mutex_create(&hci_if_rtk.tx_list_mtx);
@@ -305,7 +302,7 @@ bool hci_if_close(void)
 		return true;
 	}
 
-#ifdef CONFIG_AYNSC_HCI_INTF
+#if defined(CONFIG_AYNSC_HCI_INTF) && CONFIG_AYNSC_HCI_INTF
 	hci_if_rtk.task_running = false;
 
 	/* Waiting hci_if_write_raw() on other tasks interrupted by deinit task to complete */
@@ -328,7 +325,9 @@ bool hci_if_close(void)
 		return false;
 	}
 
-	hci_if_rtk.cb(HCI_IF_EVT_CLOSED, true, NULL, 0);
+	if (hci_if_rtk.cb) {
+		hci_if_rtk.cb(HCI_IF_EVT_CLOSED, true, NULL, 0);
+	}
 	hci_if_rtk.status = 0;
 #endif
 	return true;
@@ -351,7 +350,7 @@ void hci_if_deinit(void)
 
 bool hci_if_write_raw(uint8_t *buf, uint32_t len, bool from_stack)
 {
-#ifdef CONFIG_AYNSC_HCI_INTF
+#if defined(CONFIG_AYNSC_HCI_INTF) && CONFIG_AYNSC_HCI_INTF
 	return _tx_list_add(buf, len, from_stack ? FLAG_BUF_FROM_STACK : 0);
 #else
 	_hci_if_send(buf, len, from_stack);
@@ -373,11 +372,7 @@ bool hci_if_write(uint8_t *buf, uint32_t len)
 
 bool hci_if_confirm(uint8_t *buf)
 {
-#if 0//def CONFIG_AYNSC_HCI_INTF
-	/* TODO */
-#else
-	osif_mem_aligned_free(buf - (RESERVED_LEN - H4_HDR_LEN));
-#endif
+	osif_mem_aligned_free(buf);
 	return true;
 }
 
@@ -387,4 +382,3 @@ void hci_if_wait_patch_download(void)
 		osif_delay(1);
 	HCI_INFO("Patch download End!");
 }
-

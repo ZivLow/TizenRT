@@ -17,10 +17,6 @@
 #ifndef BT_DIRECT_MSG_H
 #define BT_DIRECT_MSG_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -177,8 +173,6 @@ void gap_register_direct_cb(P_FUN_BT_DIRECT_CB app_callback);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif /* BT_DIRECT_MSG_H */

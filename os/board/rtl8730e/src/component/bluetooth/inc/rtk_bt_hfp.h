@@ -98,6 +98,54 @@ typedef enum
 } rtk_bt_cvsd_frame_duration;
 
 /**
+ * @typedef   rtk_bt_hfp_ag_service_indicator
+ * @brief     Define BT HFP AG service indicator
+ */
+typedef enum rtk_bt_hfp_ag_service_indicator {
+	RTK_BT_HFP_AG_SERVICE_STATUS_AVAILABLE     = 0x00,
+	RTK_BT_HFP_AG_SERVICE_STATUS_UNAVAILABLE   = 0x01,
+} rtk_bt_hfp_ag_service_indicator;
+
+/**
+ * @typedef   rtk_bt_hfp_ag_call_indicator
+ * @brief     Define BT HFP AG call indicator
+ */
+typedef enum rtk_bt_hfp_ag_call_indicator {
+	RTK_BT_HFP_AG_NO_CALL_IN_PROGRESS  = 0x00,
+	RTK_BT_HFP_AG_CALL_IN_PROGRESS     = 0x01,
+} rtk_bt_hfp_ag_call_indicator;
+
+/**
+ * @typedef   rtk_bt_hfp_ag_call_setup_indicator
+ * @brief     Define BT HFP AG call setup indicator
+ */
+typedef enum rtk_bt_hfp_ag_call_setup_indicator {
+	RTK_BT_HFP_AG_CALL_SETUP_STATUS_IDLE              = 0x00,
+	RTK_BT_HFP_AG_CALL_SETUP_STATUS_INCOMING_CALL     = 0x01,
+	RTK_BT_HFP_AG_CALL_SETUP_STATUS_OUTGOING_CALL     = 0x02,
+	RTK_BT_HFP_AG_CALL_SETUP_STATUS_ALERTING          = 0x03,
+} rtk_bt_hfp_ag_call_setup_indicator;
+
+/**
+ * @typedef   rtk_bt_hfp_ag_call_held_indicator
+ * @brief     Define BT HFP AG call held indicator
+ */
+typedef enum rtk_bt_hfp_ag_call_held_indicator {
+	RTK_BT_HFP_AG_CALL_HELD_STATUS_IDLE                  = 0x00,
+	RTK_BT_HFP_AG_CALL_HELD_STATUS_HOLD_AND_ACTIVE_CALL  = 0x01,
+	RTK_BT_HFP_AG_CALL_HELD_STATUS_HOLD_NO_ACTIVE_CALL   = 0x02,
+} rtk_bt_hfp_ag_call_held_indicator;
+
+/**
+ * @typedef   rtk_bt_hfp_ag_roaming_indicator
+ * @brief     Define BT HFP AG roaming indicator
+ */
+typedef enum rtk_bt_hfp_ag_roaming_indicator {
+	RTK_BT_HFP_AG_ROAMING_STATUS_INACTIVE = 0x00,
+	RTK_BT_HFP_AG_ROAMING_STATUS_ACTIVE   = 0x01,
+} rtk_bt_hfp_ag_roaming_indicator;
+
+/**
  * @struct    rtk_bt_hfp_ag_conf_t
  * @brief     hfp ag configuration data structure.
  */
@@ -303,7 +351,22 @@ typedef struct {
  */
 typedef struct {
 	uint8_t bd_addr[6];									/*!< address */
+	uint8_t *ret_info;                                  /*!< pointer of directly calling return info */
 } rtk_bt_hfp_ag_indicators_status_req_t;
+
+/**
+ * @struct    rtk_bt_hfp_ag_indicators_status_t
+ * @brief     Bluetooth hfp ag indicators status struct.
+ */
+typedef struct {
+	rtk_bt_hfp_ag_service_indicator service_indicator;         /*!< HFP AG service availability indicator.*/
+	rtk_bt_hfp_ag_call_indicator call_indicator;               /*!< HFP AG standard call status indicator.*/
+	rtk_bt_hfp_ag_call_setup_indicator call_setup_indicator;   /*!< HFP AG call set up status indicator.*/
+	rtk_bt_hfp_ag_call_held_indicator call_held_indicator;     /*!< HFP AG call hold status indicator.*/
+	uint8_t signal_indicator;                                  /*!< HFP AG signal strength indicator.*/
+	rtk_bt_hfp_ag_roaming_indicator roaming_indicator;         /*!< HFP AG roaming status indicator.*/
+	uint8_t batt_chg_indicator;                                /*!< HFP AG battery charge indicator.*/
+} rtk_bt_hfp_ag_indicators_status_t;
 
 /**
  * @struct    rtk_bt_hfp_ag_curr_calls_list_query_t

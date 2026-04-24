@@ -15,10 +15,6 @@
 #ifndef PROFILE_SERVER_DEF_H
 #define PROFILE_SERVER_DEF_H
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef  __cplusplus
 extern "C" {
 #endif      /* __cplusplus */
@@ -70,26 +66,26 @@ typedef uint8_t T_SERVER_ID;    //!< Service ID
 /** @brief  GATT write data type*/
 typedef enum
 {
-	WRITE_REQUEST,                      /**< Write request. */
-	WRITE_WITHOUT_RESPONSE,             /**< Write without response. */
-	WRITE_SIGNED_WITHOUT_RESPONSE,      /**< Signed write without response. */
-	WRITE_LONG,                         /**< Write long request. */
+    WRITE_REQUEST,                      /**< Write request. */
+    WRITE_WITHOUT_RESPONSE,             /**< Write without response. */
+    WRITE_SIGNED_WITHOUT_RESPONSE,      /**< Signed write without response. */
+    WRITE_LONG,                         /**< Write long request. */
 } T_WRITE_TYPE;
 
 /** @brief  GATT PDU type*/
 typedef enum
 {
-	GATT_PDU_TYPE_ANY           = 0x00, /**<  Any PDU type. */
-	GATT_PDU_TYPE_NOTIFICATION  = 0x01, /**<  Notification PDU type. */
-	GATT_PDU_TYPE_INDICATION    = 0x02  /**<  Indication PDU type. */
+    GATT_PDU_TYPE_ANY           = 0x00, /**<  Any PDU type. */
+    GATT_PDU_TYPE_NOTIFICATION  = 0x01, /**<  Notification PDU type. */
+    GATT_PDU_TYPE_INDICATION    = 0x02  /**<  Indication PDU type. */
 } T_GATT_PDU_TYPE;
 
 /** @brief Event type to inform app*/
 typedef enum
 {
-	SERVICE_CALLBACK_TYPE_INDIFICATION_NOTIFICATION = 1,    /**< CCCD update event */
-	SERVICE_CALLBACK_TYPE_READ_CHAR_VALUE = 2,              /**< client read event */
-	SERVICE_CALLBACK_TYPE_WRITE_CHAR_VALUE = 3,             /**< client write event */
+    SERVICE_CALLBACK_TYPE_INDIFICATION_NOTIFICATION = 1,    /**< CCCD update event */
+    SERVICE_CALLBACK_TYPE_READ_CHAR_VALUE = 2,              /**< client read event */
+    SERVICE_CALLBACK_TYPE_WRITE_CHAR_VALUE = 3,             /**< client write event */
 } T_SERVICE_CALLBACK_TYPE;
 
 /** @defgroup GATT_SERVER_COMMON_CB_DATA Server Common Callback data
@@ -99,35 +95,35 @@ typedef enum
 /** @brief Event ID */
 typedef enum
 {
-	PROFILE_EVT_SRV_REG_COMPLETE,              /**< Services register complete event
+    PROFILE_EVT_SRV_REG_COMPLETE,              /**< Services register complete event
     when application calls server_add_service before calling gap_start_bt_stack. */
-	PROFILE_EVT_SEND_DATA_COMPLETE,            /**< Notification or indication data send complete event. */
-	PROFILE_EVT_SRV_REG_AFTER_INIT_COMPLETE,   /**< Services register complete event
+    PROFILE_EVT_SEND_DATA_COMPLETE,            /**< Notification or indication data send complete event. */
+    PROFILE_EVT_SRV_REG_AFTER_INIT_COMPLETE,   /**< Services register complete event
     when application calls server_add_service after receiving @ref GAP_INIT_STATE_STACK_READY. */
-	PROFILE_EVT_SRV_CLEAR_AFTER_INIT_COMPLETE, /**< Services clear complete event
+    PROFILE_EVT_SRV_CLEAR_AFTER_INIT_COMPLETE, /**< Services clear complete event
     when application calls server_clear_service after receiving @ref GAP_INIT_STATE_STACK_READY. */
 } T_SERVER_CB_TYPE;
 
 /** @brief  The callback data of PROFILE_EVT_SRV_REG_COMPLETE */
 typedef enum
 {
-	GATT_SERVER_SUCCESS,
-	GATT_SERVER_FAIL
+    GATT_SERVER_SUCCESS,
+    GATT_SERVER_FAIL
 } T_SERVER_RESULT;
 
 /** @brief  The callback data of PROFILE_EVT_SRV_REG_AFTER_INIT_COMPLETE */
 typedef struct
 {
-	T_SERVER_RESULT result;
-	T_SERVER_ID     service_id;
-	uint16_t        cause;
+    T_SERVER_RESULT result;
+    T_SERVER_ID     service_id;
+    uint16_t        cause;
 } T_SERVER_REG_AFTER_INIT_RESULT;
 
 /** @brief  The callback data of PROFILE_EVT_SRV_CLEAR_AFTER_INIT_COMPLETE */
 typedef struct
 {
-	uint16_t        cause;
-	uint16_t        svc_changed_char_cccd_handle; /**< 0x0000: Invalid handle. */
+    uint16_t        cause;
+    uint16_t        svc_changed_char_cccd_handle; /**< 0x0000: Invalid handle. */
 } T_SERVER_CLEAR_SERVICE_AFTER_INIT_RESULT;
 
 /** @} End of GATT_SERVER_COMMON_CB_DATA */
@@ -297,7 +293,5 @@ bool server_clear_service(void);
 #ifdef  __cplusplus
 }
 #endif      /*  __cplusplus */
-
-#endif
 
 #endif /* PROFILE_SERVER_DEF_H */

@@ -337,14 +337,14 @@ typedef struct
 uint16_t rtk_bt_br_gap_set_default_param(rtk_bt_br_gap_default_param_t *param);
 
 /**
- * @fn        uint16_t rtk_bt_br_gap_get_address(rtk_bt_br_bd_addr_t *paddr)
+ * @fn        uint16_t rtk_bt_br_gap_get_bd_addr(rtk_bt_br_bd_addr_t *paddr)
  * @brief     Get local device's address.
  * @param[out] paddr: Device address under use
  * @return    
  *            - 0  : Succeed
  *            - Others: Error code
  */
-uint16_t rtk_bt_br_gap_get_address(rtk_bt_br_bd_addr_t *paddr);
+uint16_t rtk_bt_br_gap_get_bd_addr(rtk_bt_br_bd_addr_t *paddr);
 
 /**
  * @fn        uint16_t rtk_bt_br_gap_set_device_name(const uint8_t *name)

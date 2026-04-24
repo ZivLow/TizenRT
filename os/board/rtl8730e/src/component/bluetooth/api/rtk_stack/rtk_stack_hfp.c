@@ -306,8 +306,9 @@ static void app_hfp_bt_cback(T_BT_EVENT event_type, void *event_buf, uint16_t bu
 				p_hfp_batt_ind = (rtk_bt_hfp_hf_battery_ind_t *)p_evt->data;
 				memcpy((void *)p_hfp_batt_ind->bd_addr, (void *)p_link->bd_addr, 6);
 				p_hfp_batt_ind->state = param->hfp_battery_ind.state;
+				p_hfp_batt_ind->ret_info = &battery_power;
 				/* Send event */
-				if (RTK_BT_OK != rtk_bt_evt_indicate(p_evt, &battery_power)) {
+				if (RTK_BT_OK != rtk_bt_evt_indicate(p_evt, NULL)) {
 					handle = false;
 					break;
 				}
@@ -634,6 +635,7 @@ static void app_hfp_bt_cback(T_BT_EVENT event_type, void *event_buf, uint16_t bu
 
 	case BT_EVENT_HFP_AG_INDICATORS_STATUS_REQ: {
 		rtk_bt_hfp_ag_indicators_status_req_t *p_ag_ind_status_req = NULL;
+		rtk_bt_hfp_ag_indicators_status_t ind_t = {0};
 
 		p_link = app_find_br_link(param->hfp_ag_indicators_status_req.bd_addr);
 		if (p_link != NULL) {
@@ -648,33 +650,21 @@ static void app_hfp_bt_cback(T_BT_EVENT event_type, void *event_buf, uint16_t bu
 				}
 				p_ag_ind_status_req = (rtk_bt_hfp_ag_indicators_status_req_t *)p_evt->data;
 				memcpy((void *)p_ag_ind_status_req->bd_addr, (void *)p_link->bd_addr, 6);
+				p_ag_ind_status_req->ret_info = (uint8_t *)&ind_t;
 				/* Send event */
 				if (RTK_BT_OK != rtk_bt_evt_indicate(p_evt, NULL)) {
 					handle = false;
 					break;
 				}
-				/* use directly calling and waiting for return TODO*/
-				//Td App provide current network status.
-				// T_BT_HFP_AG_SERVICE_INDICATOR service_indicator = BT_HFP_AG_SERVICE_STATUS_AVAILABLE;
-				// T_BT_HFP_AG_CALL_INDICATOR call_indicator = BT_HFP_AG_NO_CALL_IN_PROGRESS;
-				// T_BT_HFP_AG_CALL_SETUP_INDICATOR call_setup_indicator = BT_HFP_AG_CALL_SETUP_STATUS_IDLE;
-				// T_BT_HFP_AG_CALL_HELD_INDICATOR call_held_indicator = BT_HFP_AG_CALL_HELD_STATUS_IDLE;
-
-				// //Td App provide current signal status.
-				// uint8_t signal_indicator = 5;
-				// //Td App provide current roaming status.
-				// T_BT_HFP_AG_ROAMING_INICATOR roaming_indicator = BT_HFP_AG_ROAMING_STATUS_ACTIVE;
-				// //Td App provide current battery status.
-				// uint8_t batt_chg_indicator = 5;
-				// bt_hfp_ag_indicators_send(p_link->bd_addr,
-				// 						service_indicator,
-				// 						call_indicator,
-				// 						call_setup_indicator,
-				// 						call_held_indicator,
-				// 						signal_indicator,
-				// 						roaming_indicator,
-				// 						batt_chg_indicator);
-				// bt_hfp_ag_ok_send(param->hfp_ag_indicators_status_req.bd_addr);
+				bt_hfp_ag_indicators_send(p_link->bd_addr,
+										  (T_BT_HFP_AG_SERVICE_INDICATOR)ind_t.service_indicator,
+										  (T_BT_HFP_AG_CALL_INDICATOR)ind_t.call_indicator,
+										  (T_BT_HFP_AG_CALL_SETUP_INDICATOR)ind_t.call_setup_indicator,
+										  (T_BT_HFP_AG_CALL_HELD_INDICATOR)ind_t.call_held_indicator,
+										  ind_t.signal_indicator,
+										  (T_BT_HFP_AG_ROAMING_INDICATOR)ind_t.roaming_indicator,
+										  ind_t.batt_chg_indicator);
+				bt_hfp_ag_ok_send(param->hfp_ag_indicators_status_req.bd_addr);
 			}
 		} else {
 			APP_PRINT_INFO0("HFP p_link is NULL");

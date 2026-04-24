@@ -418,17 +418,6 @@ static void bt_stack_br_gap_config(void *evt_msg_q)
 	gap_br_set_param(GAP_BR_PARAM_INQUIRY_MODE, sizeof(uint8_t), &inquiry_t.inquiry_mode);
 }
 
-static void bt_stack_br_framework_init(void *evt_msg_q)
-{
-	// printf("[LEGACY GAP]framework_init\n");
-	/* System Manager */
-	sys_mgr_init(evt_msg_q);
-	/* Initialize remote control manager*/
-	remote_mgr_init(REMOTE_SESSION_ROLE_SINGLE);
-	/* Bluetooth Manager */
-	bt_mgr_init();
-}
-
 extern void gap_br_register_cb(P_GAP_BR_CBACK cback);
 
 static void bt_stack_br_app_gap_init(void)
@@ -448,7 +437,6 @@ uint16_t bt_stack_br_gap_set_default_param(rtk_bt_br_gap_default_param_t *param)
 
 uint16_t bt_stack_br_gap_init(void *p_evt_msg_q)
 {
-	bt_stack_br_framework_init(p_evt_msg_q);
 	bt_stack_br_gap_config(p_evt_msg_q);
 	bt_stack_br_app_gap_init();
 
@@ -474,12 +462,6 @@ uint16_t rtk_stack_framework_event_handler(uint8_t event)
 uint16_t bt_stack_br_gap_deinit(void)
 {
 	bt_stack_br_gap_ready = false;
-	/* bt mgr deinit */
-	bt_mgr_deinit();
-	/* remote mgr deinit */
-	remote_mgr_deinit();
-	/* deinit bt framework */
-	sys_mgr_deinit();
 
 	return 0;
 }

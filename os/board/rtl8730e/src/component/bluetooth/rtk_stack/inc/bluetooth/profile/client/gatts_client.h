@@ -15,10 +15,6 @@
 #ifndef _GATTS_CLIENT_H_
 #define _GATTS_CLIENT_H_
 
-#include "platform_opts_bt.h"
-
-#if UPPER_STACK_VERSION == VERSION_2021
-
 #ifdef  __cplusplus
 extern "C" {
 #endif      /* __cplusplus */
@@ -345,7 +341,5 @@ bool gatts_set_hdl_cache(uint8_t conn_id, uint16_t *p_hdl_cache, uint8_t len);
 #ifdef  __cplusplus
 }
 #endif      /*  __cplusplus */
-
-#endif
 
 #endif  /* _GATTS_CLIENT_H_ */
