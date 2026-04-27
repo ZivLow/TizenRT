@@ -98,7 +98,7 @@ void wifi_event_join_status_internal_hdl(u8 *evt_info)
 #else
 		dbg_noarg("wifi connected\r\n");
 		if (g_link_up) {
-			RTK_LOGD(TAG_WLAN_INIC, "%s() send link_up\n", __func__);
+			nvdbg("%s() send link_up\n", __func__);
 			rtk_reason_t reason = {0};
 			reason.if_id = RTK_WIFI_STATION_IF;
 			reason.reason_code = join_status;
@@ -192,7 +192,7 @@ void wifi_event_join_status_internal_hdl(u8 *evt_info)
 		rtw_psk_disconnect_hdl(join_status_info->bssid, IFACE_PORT0);
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
 		if (g_link_down) {
-			RTK_LOGD(TAG_WLAN_INIC, "%s() send link_down\n", __func__);
+			nvdbg("%s() send link_down\n", __func__);
 			rtk_reason_t reason = {0};
 			reason.if_id = RTK_WIFI_STATION_IF;
 			reason.reason_code = join_status;
@@ -226,6 +226,12 @@ void rtw_ap_sta_assoc_hdl(u8 *evt_info)
 	at_printf_indicate("client connected:\""MAC_FMT"\"\r\n", MAC_ARG(mac_addr));
 #else
 	dbg_noarg("client connected:\""MAC_FMT"\"\r\n", MAC_ARG(mac_addr));
+	if (g_link_up) {
+		nvdbg("%s() send link_up\n", __func__);
+		rtk_reason_t reason = {0};
+		reason.if_id = RTK_WIFI_SOFT_AP_IF;
+		g_link_up(&reason);
+	}
 #endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 }
 
@@ -242,6 +248,12 @@ void rtw_ap_sta_disassoc_hdl(u8 *evt_info)
 	dbg_noarg("client disconnected:\""MAC_FMT"\"\r\n", MAC_ARG(mac_addr));
 #endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 	rtw_psk_disconnect_hdl(mac_addr, IFACE_PORT1);
+	if (g_link_down) {
+		nvdbg("%s() send link_down\n", __func__);
+		rtk_reason_t reason = {0};
+		reason.if_id = RTK_WIFI_SOFT_AP_IF;
+		g_link_down(&reason);
+	}
 }
 
 void rtw_join_status_hdl(u8 *evt_info)
