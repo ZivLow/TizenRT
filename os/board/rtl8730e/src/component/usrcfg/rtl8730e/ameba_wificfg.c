@@ -142,6 +142,10 @@ _WEAK void wifi_set_user_config(void)
 	/* TizenRT bugfix: softap silent table to reduce probe response under probe request spam */
 	wifi_user_config.softap_keep_silent_table_enable = 1;
 	wifi_user_config.softap_keep_silent_table_interval = 500; /* ms. Once interval period is reached, remove from silent table, so can send probe response to same STA again. */
+
+	/* TizenRT customization: prefer 5GHz */
+	wifi_user_config.sta_prefer_5ghz_enable = 1;
+	wifi_user_config.sta_prefer_5ghz_rssi_threshold = -70; /* if same ssid, prefer 5GHz network higher than threshold */
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 }
 
