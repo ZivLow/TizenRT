@@ -67,6 +67,7 @@ trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_
 trwifi_result_e wifi_netmgr_utils_get_disconn_reason(struct netdev *dev, int *deauth_reason);
 trwifi_result_e wifi_netmgr_utils_get_driver_info(struct netdev *dev, trwifi_driver_info *driver_info);
 trwifi_result_e wifi_netmgr_utils_get_wpa_supplicant_state(struct netdev *dev, trwifi_wpa_states *wpa_supplicant_state);
+trwifi_result_e wifi_netmgr_utils_disable_11ax_mode(struct netdev *dev, uint8_t disable);
 trwifi_result_e wifi_netmgr_utils_set_bridge(struct netdev *dev, uint8_t control);
 
 struct trwifi_ops g_trwifi_drv_ops = {
@@ -87,7 +88,10 @@ struct trwifi_ops g_trwifi_drv_ops = {
 	wifi_netmgr_utils_get_disconn_reason,		/* get_deauth_reason */
 	wifi_netmgr_utils_get_driver_info,			/* get_driver_info */
 	wifi_netmgr_utils_get_wpa_supplicant_state,	/* get_wpa_supplicant_state */
+	wifi_netmgr_utils_disable_11ax_mode,	/* disable_11ax_mode */
+#ifdef CONFIG_ENABLE_HOMELYNK
 	wifi_netmgr_utils_set_bridge,		/* set_bridge */
+#endif //#ifdef CONFIG_ENABLE_HOMELYNK
 };
 
 static trwifi_scan_list_s *g_scan_list;
@@ -880,6 +884,29 @@ trwifi_result_e wifi_netmgr_utils_set_bridge(struct netdev *dev, uint8_t control
 		g_bridge_on = FALSE;
 	}
 	nvdbg("[RTK] External Bridge mode set to %d\n", control);
+	return wuret;
+}
+
+trwifi_result_e wifi_netmgr_utils_disable_11ax_mode(struct netdev *dev, uint8_t disable)
+{
+	trwifi_result_e wuret = TRWIFI_FAIL;
+	u8 connect_status = RTW_JOINSTATUS_UNKNOWN;
+	if (wifi_get_join_status(&connect_status) != RTK_SUCCESS) {
+		dbg_noarg("[RTK] Failed to get connection status!");
+		return wuret;
+	}
+
+	if (((connect_status != RTW_JOINSTATUS_UNKNOWN) && (connect_status != RTW_JOINSTATUS_FAIL) && (connect_status != RTW_JOINSTATUS_DISCONNECT)) || (wifi_is_running(SOFTAP_WLAN_INDEX))){
+		dbg_noarg("[RTK] Failed to change network mode, disconnect from AP or stop SoftAP first\n");
+		return wuret;
+	}
+	enum rtw_wireless_mode mode = RTW_80211_MAX;
+	if (disable) {
+		mode = (mode & (~RTW_80211_AX));
+	}
+	if (wifi_set_wireless_mode(mode) == RTK_SUCCESS) {
+		wuret = TRWIFI_SUCCESS;
+	}
 	return wuret;
 }
 
