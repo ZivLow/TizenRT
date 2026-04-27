@@ -292,6 +292,10 @@ struct wifi_user_conf {
 	/* TizenRT bugfix: softap silent table to reduce probe response under probe request spam */
 	u8 softap_keep_silent_table_enable;
 	u16 softap_keep_silent_table_interval;
+
+	/* TizenRT customization: prefer 5GHz */
+	u8 sta_prefer_5ghz_enable;
+	s32 sta_prefer_5ghz_rssi_threshold;
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 };
 
