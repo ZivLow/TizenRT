@@ -636,6 +636,7 @@ trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_
 trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_signal_quality *signal_quality)
 {
 	trwifi_result_e wuret = TRWIFI_INVALID_ARGS;
+	int ret;
 
 	if (signal_quality) {
 		wuret = TRWIFI_FAIL;
@@ -653,12 +654,18 @@ trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_
 					signal_quality->channel = channel;
 				}
 				wifi_get_sw_statistic(SOFTAP_WLAN_INDEX, &sw_stats);
-				tx_rty = wifi_get_tx_retry(SOFTAP_WLAN_INDEX);
+				ret = wifi_get_tx_retry(SOFTAP_WLAN_INDEX, &tx_rty);
+				if (ret != RTK_SUCCESS) {
+					dbg_noarg("[RTK] Failed to get tx retry for softap. ret=%d\n", ret);
+				}
 			} else
 #endif //#ifndef CONFIG_ENABLE_HOMELYNK
 			{
 				wifi_get_sw_statistic(STA_WLAN_INDEX, &sw_stats);
-				tx_rty = wifi_get_tx_retry(STA_WLAN_INDEX);
+				ret = wifi_get_tx_retry(STA_WLAN_INDEX, &tx_rty);
+				if (ret != RTK_SUCCESS) {
+					dbg_noarg("[RTK] Failed to get tx retry for sta. ret=%d\n", ret);
+				}
 				if (wifi_is_connected_to_ap() == RTK_STATUS_SUCCESS) {
 					rtw_phy_statistics_t phy_statistics;
 					if (wifi_fetch_phy_statistic(&phy_statistics) == RTK_STATUS_SUCCESS){

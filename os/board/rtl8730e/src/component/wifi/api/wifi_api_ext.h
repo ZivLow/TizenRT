@@ -680,6 +680,23 @@ s32 wifi_get_current_bw(void);
  *    - @ref RTK_ERR_BADARG : NULL pointer passed for `key_mgmt`.
  */
 s32 wifi_get_key_mgmt(u32 *key_mgmt);
+
+/**
+ * @brief  Get TX retry count
+ * @param[in]  wlan_idx: @ref STA_WLAN_INDEX (0) for STA mode, @ref SOFTAP_WLAN_INDEX (1) for SoftAP mode.
+ * @param[out]  tx_retry: Pointer to store the TX retry count.
+ * @return
+ *    - @ref RTK_SUCCESS : The API executed successfully.
+ *    - -@ref RTK_ERR_BADARG :
+ *      - `wlan_idx` is invalid.
+ *      - NULL pointer passed for `tx_retry`.
+ *    - -@ref RTK_ERR_TIMEOUT : IPC communication with firmware timed out.
+ *    - -@ref RTK_ERR_NOMEM : Malloc failed.
+ * @note  For STA mode, returns TX retry count for the connected AP.
+ *        For SoftAP mode, returns sum of TX retry counts for all connected STAs.
+ *        Counters are cumulative since Wi-Fi interface is powered on.
+ */
+s32 wifi_get_tx_retry(u8 wlan_idx, u32 *tx_retry);
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 /** @} End of Extended_Functions group */
