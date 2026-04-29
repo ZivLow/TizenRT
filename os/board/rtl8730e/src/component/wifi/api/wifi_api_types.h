@@ -952,10 +952,20 @@ union rtw_traffic_stats {
 		u32	tx_packets;			/**< Total packets transmitted .*/
 		u8	cur_rx_data_rate;	/**< Current rx data rate. Values: @ref RTW_RATE_1M, @ref RTW_RATE_2M, etc. */
 		u8	cur_tx_data_rate;	/**< Current tx data rate. Values: @ref RTW_RATE_1M, @ref RTW_RATE_2M, etc. */
+		/* TizenRT customization: get wifi tx_drop, rx_drop */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+		u32	tx_drop;
+		u32	rx_drop;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	} sta; /**< Statistic for STA mode.*/
 	struct rtw_ap_traffic_stats {
 		u32	rx_packets;			/**< Total packets received (excluding custom packets).*/
 		u32	tx_packets;			/**< Total packets transmitted.*/
+		/* TizenRT customization: get wifi tx_drop, rx_drop */
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+		u32	tx_drop;
+		u32	rx_drop;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	} ap; /**< Statistic for SoftAP mode.*/
 };
 
