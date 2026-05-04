@@ -85,6 +85,7 @@
 
 #include "ameba_soc.h"
 #include "platform_opts_bt.h"
+#include "amebasmart_reboot_reason.h"
 
 #ifdef CONFIG_AMEBASMART_BOR
 #include "ameba_bor.h"
@@ -382,7 +383,8 @@ static void np_lp_status_timer_hdl(void)
 {
 	/* Added to inspect the value of BKUP_REG2 */
 	u32 boot_reason_reg2 = BKUP_Read(BKUP_REG2);
-	if (boot_reason_reg2 != 0x0) {
+	/* NP_LP_FAULT indicates hard fault in NP/LP core, IPC_DEV_WAITING indicates IPC dev waiting for ACK from host */
+	if (boot_reason_reg2 == NP_LP_FAULT || boot_reason_reg2 == IPC_DEV_WAITING) {
 		lldbg("boot_reason_reg2 0x%x \n", boot_reason_reg2);
 		ASSERT(boot_reason_reg2 == 0x0);
 	}
