@@ -528,9 +528,6 @@ void board_initialize(void)
 	ipc_msg_loguart.rsvd = 0; /* for coverity init issue */
 	ipc_send_message(IPC_AP_TO_LP, IPC_A2L_DISLOGUART, &ipc_msg_loguart);
 
-	/* Enable IPC buffered print */
-	whc_ipc_buffered_printf_set_np_enable(1);
-
 	up_print_iwdg_status();
 }
 #else
