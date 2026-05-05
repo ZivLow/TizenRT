@@ -978,6 +978,9 @@ union rtw_phy_stats {
 		s8	data_rssi;          /**< Average data rssi in last 1 sec. */
 		s8	beacon_rssi;          /**< Average beacon rssi in last 1 sec. */
 		s8	snr;          /**< Average snr in 1 sec (excluding CCK rate).*/
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+		u8	supported_max_rate; /* TizenRT customization for reporting max supported rate */
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	} sta; /**< Statistics for STA mode */
 	struct rtw_ap_phy_stats {
 		s8	data_rssi;          /**< Average data rssi in last 1 sec. */

@@ -624,15 +624,7 @@ trwifi_result_e wifi_netmgr_utils_disconnect_ap(struct netdev *dev, void *arg)
 
 	return wuret;
 }
-trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_signal_quality *signal_quality)
-{
-	trwifi_result_e wuret = TRWIFI_INVALID_ARGS;
 
-	dbg_noarg("G2 TODO\n");
-
-	return wuret;
-}
-#if 0 //G2 TODO
 trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_signal_quality *signal_quality)
 {
 	trwifi_result_e wuret = TRWIFI_INVALID_ARGS;
@@ -642,16 +634,17 @@ trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_
 		wuret = TRWIFI_FAIL;
 		if (g_netmgr_init) {
 			union rtw_traffic_stats traffic_stats = {0};
-			u8 channel;
+			union rtw_phy_stats phy_stats = {0};
+			struct rtw_wifi_setting wifi_setting = {0};
 			u32 tx_rty = 0;
 #ifndef CONFIG_ENABLE_HOMELYNK
 			if (wifi_is_running(SOFTAP_WLAN_INDEX)) {
-				if (wifi_get_channel(1, &channel) < 0){
+				if (wifi_get_setting(SOFTAP_WLAN_INDEX, &wifi_setting) < 0) {
 					/* Failed to get channel */
 					signal_quality->channel = 0;
 				}
 				else {
-					signal_quality->channel = channel;
+					signal_quality->channel = wifi_setting.channel;
 				}
 				ret = wifi_get_traffic_stats(SOFTAP_WLAN_INDEX, &traffic_stats);
 				if (ret != RTK_SUCCESS) {
@@ -676,18 +669,22 @@ trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_
 				if (ret != RTK_SUCCESS) {
 					dbg_noarg("[RTK] Failed to get tx retry for sta. ret=%d\n", ret);
 				}
-				if (wifi_is_connected_to_ap() == RTK_STATUS_SUCCESS) {
-					rtw_phy_statistics_t phy_statistics;
-					if (wifi_fetch_phy_statistic(&phy_statistics) == RTK_STATUS_SUCCESS){
-						memcpy(&signal_quality->snr, &phy_statistics.snr, sizeof(signed char));
-						signal_quality->max_rate = (unsigned int)phy_statistics.supported_max_rate;
+				u8 connect_status = RTW_JOINSTATUS_UNKNOWN;
+				if (wifi_get_join_status(&connect_status) != RTK_SUCCESS) {
+					dbg_noarg("[RTK] Failed to get connection status!");
+					return wuret;
+				}
+				if (connect_status == RTW_JOINSTATUS_SUCCESS) {
+					if (wifi_get_phy_stats(STA_WLAN_INDEX, NULL, &phy_stats) == RTK_SUCCESS) {
+						memcpy(&signal_quality->snr, &phy_stats.sta.snr, sizeof(signed char));
+						signal_quality->max_rate = (unsigned int)phy_stats.sta.supported_max_rate;
 					}
-					if (wifi_get_channel(0, &channel) < 0){
+					if (wifi_get_setting(STA_WLAN_INDEX, &wifi_setting) < 0) {
 						/* Failed to get channel */
 						signal_quality->channel = 0;
 					}
 					else {
-						signal_quality->channel = channel;
+						signal_quality->channel = wifi_setting.channel;
 					}
 					signal_quality->network_bw = wifi_get_current_bw();
 				}
@@ -701,7 +698,7 @@ trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_
 
 	return wuret;
 }
-#endif
+
 trwifi_result_e wifi_netmgr_utils_get_info(struct netdev *dev, trwifi_info *wifi_info)
 {
 	trwifi_result_e wuret = TRWIFI_INVALID_ARGS;
