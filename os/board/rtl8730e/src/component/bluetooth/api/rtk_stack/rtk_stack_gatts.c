@@ -6,9 +6,9 @@
 
 #include <osif.h>
 #include <dlist.h>
-#include <platform_stdlib.h>
+#include "platform_stdlib.h"
+#include "basic_types.h"
 
-#include <bt_utils.h>
 #include <rtk_bt_def.h>
 #include <rtk_stack_config.h>
 #include <rtk_bt_att_defs.h>
@@ -27,18 +27,22 @@
 #include <profile_server.h>
 #endif
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
 rtk_bt_gatts_app_priv_t *g_rtk_bt_gatts_priv = NULL;
+#else
+static rtk_bt_gatts_app_priv_t *g_rtk_bt_gatts_priv = NULL;
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 static struct rtk_bt_gatt_service *bt_stack_gatts_find_service_node_by_server_id(T_SERVER_ID server_id);
 static T_APP_RESULT bt_stack_gatts_attr_read_cb(
-											#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
-												uint16_t conn_handle, uint16_t cid,
-											#else
-												uint8_t conn_id,
-											#endif
-												T_SERVER_ID service_id,
-												uint16_t attrib_index, uint16_t offset,
-												uint16_t *p_length, uint8_t **pp_value)
+#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
+	uint16_t conn_handle, uint16_t cid,
+#else
+	uint8_t conn_id,
+#endif
+	T_SERVER_ID service_id,
+	uint16_t attrib_index, uint16_t offset,
+	uint16_t *p_length, uint8_t **pp_value)
 {
 	(void)p_length;
 	(void)pp_value;
@@ -50,12 +54,13 @@ static T_APP_RESULT bt_stack_gatts_attr_read_cb(
 #endif
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_server_id(service_id);
-	if (!p_srv_node)
+	if (!p_srv_node) {
 		return APP_RESULT_REJECT;
+	}
 
-	p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS,RTK_BT_GATTS_EVT_READ_IND,sizeof(rtk_bt_gatts_read_ind_t));
+	p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS, RTK_BT_GATTS_EVT_READ_IND, sizeof(rtk_bt_gatts_read_ind_t));
 
-	p_read_ind = (rtk_bt_gatts_read_ind_t*)p_evt->data;
+	p_read_ind = (rtk_bt_gatts_read_ind_t *)p_evt->data;
 	p_read_ind->app_id = p_srv_node->app_id;
 	p_read_ind->conn_handle = conn_handle;
 	p_read_ind->index = attrib_index;
@@ -66,7 +71,7 @@ static T_APP_RESULT bt_stack_gatts_attr_read_cb(
 	p_read_ind->cid = L2C_FIXED_CID_ATT;
 #endif
 
-	if (RTK_BT_OK != rtk_bt_evt_indicate(p_evt, NULL)){
+	if (RTK_BT_OK != rtk_bt_evt_indicate(p_evt, NULL)) {
 		return APP_RESULT_REJECT;
 	}
 
@@ -74,20 +79,20 @@ static T_APP_RESULT bt_stack_gatts_attr_read_cb(
 }
 
 static T_APP_RESULT bt_stack_gatts_attr_write_cb(
-										#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
-											uint16_t conn_handle, uint16_t cid,
-										#else
-											uint8_t conn_id,
-										#endif
-										T_SERVER_ID service_id,
-										uint16_t attrib_index, T_WRITE_TYPE write_type,
-										uint16_t length, uint8_t *p_value,
-										#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
-											P_FUN_EXT_WRITE_IND_POST_PROC *p_write_ind_post_proc
-										#else
-											P_FUN_WRITE_IND_POST_PROC *p_write_ind_post_proc
-										#endif
-										)
+#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
+	uint16_t conn_handle, uint16_t cid,
+#else
+	uint8_t conn_id,
+#endif
+	T_SERVER_ID service_id,
+	uint16_t attrib_index, T_WRITE_TYPE write_type,
+	uint16_t length, uint8_t *p_value,
+#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
+	P_FUN_EXT_WRITE_IND_POST_PROC *p_write_ind_post_proc
+#else
+	P_FUN_WRITE_IND_POST_PROC *p_write_ind_post_proc
+#endif
+)
 {
 	(void)p_write_ind_post_proc;
 	struct rtk_bt_gatt_service *p_srv_node = NULL;
@@ -98,12 +103,14 @@ static T_APP_RESULT bt_stack_gatts_attr_write_cb(
 #endif
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_server_id(service_id);
-	if (!p_srv_node)
+	if (!p_srv_node) {
 		return APP_RESULT_REJECT;
+	}
 
 	p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS, RTK_BT_GATTS_EVT_WRITE_IND, sizeof(rtk_bt_gatts_write_ind_t) + length);
-	if (!p_evt)
+	if (!p_evt) {
 		return APP_RESULT_REJECT;
+	}
 
 	p_write_ind = p_evt->data;
 
@@ -122,25 +129,25 @@ static T_APP_RESULT bt_stack_gatts_attr_write_cb(
 	p_write_ind->cid = L2C_FIXED_CID_ATT;
 #endif
 
-	switch(write_type){
-		case WRITE_REQUEST:
-			p_write_ind->type = RTK_BT_GATTS_WRITE_REQ;
-			break;
-		case WRITE_WITHOUT_RESPONSE:
-			p_write_ind->type = RTK_BT_GATTS_WRITE_NO_RESP;
-			break;
-		case WRITE_SIGNED_WITHOUT_RESPONSE:
-			p_write_ind->type = RTK_BT_GATTS_WRITE_NO_RESP_SIGNED;
-			break;
-		case WRITE_LONG:
-			p_write_ind->type = RTK_BT_GATTS_WRITE_LONG;
-			break;
-		default:
-			p_write_ind->type = RTK_BT_GATTS_WRITE_REQ;
-			break;
+	switch (write_type) {
+	case WRITE_REQUEST:
+		p_write_ind->type = RTK_BT_GATTS_WRITE_REQ;
+		break;
+	case WRITE_WITHOUT_RESPONSE:
+		p_write_ind->type = RTK_BT_GATTS_WRITE_NO_RESP;
+		break;
+	case WRITE_SIGNED_WITHOUT_RESPONSE:
+		p_write_ind->type = RTK_BT_GATTS_WRITE_NO_RESP_SIGNED;
+		break;
+	case WRITE_LONG:
+		p_write_ind->type = RTK_BT_GATTS_WRITE_LONG;
+		break;
+	default:
+		p_write_ind->type = RTK_BT_GATTS_WRITE_REQ;
+		break;
 	}
 
-	if (RTK_BT_OK != rtk_bt_evt_indicate(p_evt, NULL)){
+	if (RTK_BT_OK != rtk_bt_evt_indicate(p_evt, NULL)) {
 		return APP_RESULT_REJECT;
 	}
 
@@ -148,13 +155,13 @@ static T_APP_RESULT bt_stack_gatts_attr_write_cb(
 }
 
 static void bt_stack_gatts_cccd_update_cb(
-										#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
-											uint16_t conn_handle, uint16_t cid,
-										#else
-											uint8_t conn_id,
-										#endif
-										T_SERVER_ID service_id,
-										uint16_t index, uint16_t cccbits)
+#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
+	uint16_t conn_handle, uint16_t cid,
+#else
+	uint8_t conn_id,
+#endif
+	T_SERVER_ID service_id,
+	uint16_t index, uint16_t cccbits)
 {
 	struct rtk_bt_gatt_service *p_srv_node = NULL;
 	rtk_bt_evt_t *p_evt = NULL;
@@ -164,12 +171,14 @@ static void bt_stack_gatts_cccd_update_cb(
 #endif
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_server_id(service_id);
-	if (!p_srv_node)
+	if (!p_srv_node) {
 		return;
+	}
 
-	p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS,RTK_BT_GATTS_EVT_CCCD_IND,sizeof(rtk_bt_gatts_cccd_ind_t));
-	if (!p_evt)
+	p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS, RTK_BT_GATTS_EVT_CCCD_IND, sizeof(rtk_bt_gatts_cccd_ind_t));
+	if (!p_evt) {
 		return;
+	}
 
 	p_cccd_ind = (rtk_bt_gatts_cccd_ind_t *)p_evt->data;
 
@@ -212,7 +221,7 @@ static void bt_stack_gatts_free_srv_tbl(T_ATTRIB_APPL *rtk_srv_table, uint16_t c
 
 static struct rtk_bt_gatt_service *bt_stack_gatts_find_service_node_by_app_id(uint16_t app_id)
 {
-	struct rtk_bt_gatt_service * p_service_node = NULL;
+	struct rtk_bt_gatt_service *p_service_node = NULL;
 
 	list_for_each_entry(p_service_node, &g_rtk_bt_gatts_priv->service_list, list, struct rtk_bt_gatt_service) {
 		if (p_service_node->app_id == app_id) {
@@ -225,7 +234,7 @@ static struct rtk_bt_gatt_service *bt_stack_gatts_find_service_node_by_app_id(ui
 
 static struct rtk_bt_gatt_service *bt_stack_gatts_find_service_node_by_server_id(T_SERVER_ID server_id)
 {
-	struct rtk_bt_gatt_service * p_service_node = NULL;
+	struct rtk_bt_gatt_service *p_service_node = NULL;
 
 	list_for_each_entry(p_service_node, &g_rtk_bt_gatts_priv->service_list, list, struct rtk_bt_gatt_service) {
 		if ((T_SERVER_ID)p_service_node->server_info == server_id) {
@@ -238,20 +247,23 @@ static struct rtk_bt_gatt_service *bt_stack_gatts_find_service_node_by_server_id
 
 static void bt_stack_gatts_insert_service_node(struct rtk_bt_gatt_service *p_srv_node)
 {
-	if (!p_srv_node)
+	if (!p_srv_node) {
 		return;
+	}
 
 	list_add_tail(&p_srv_node->list, &g_rtk_bt_gatts_priv->service_list);
 }
 
 static void bt_stack_gatts_delete_service_node(struct rtk_bt_gatt_service *p_srv_node)
 {
-	if (!p_srv_node)
+	if (!p_srv_node) {
 		return;
+	}
 
 	list_del(&p_srv_node->list);
-	if (p_srv_node->alloc_ind)
+	if (p_srv_node->alloc_ind) {
 		osif_mem_free(p_srv_node);
+	}
 }
 
 static bool _indicate_data_send_compelete(bool notify, uint16_t cause, rtk_bt_gatts_req_t *req)
@@ -293,14 +305,12 @@ static uint16_t _send_data(bool notify, rtk_bt_gatts_req_t *req)
 	struct rtk_bt_gatt_service *node = NULL;
 	uint8_t conn_id;
 	bool sent;
-
-#if !defined(RTK_BLE_MGR_LIB) || !RTK_BLE_MGR_LIB
-	/* ble_mgr.a will queue packets, no need to care credits. */
 	uint16_t credits = 0;
+
 	le_get_gap_param(GAP_PARAM_LE_REMAIN_CREDITS, &credits);
-	if (!credits)
+	if (!credits) {
 		return RTK_BT_ERR_NO_CREDITS;
-#endif
+	}
 
 	if (!le_get_conn_id_by_handle(req->conn_handle, &conn_id)) {
 		return RTK_BT_ERR_PARAM_INVALID;
@@ -329,7 +339,7 @@ static uint16_t _send_data(bool notify, rtk_bt_gatts_req_t *req)
 
 static void _handle_indicate_pending_queue(void)
 {
-/* btgap.a NOT queue indicate packets. Add packet to list then send it when no indicate is pending in stack */
+	/* btgap.a NOT queue indicate packets. Add packet to list then send it when no indicate is pending in stack */
 #if !defined(RTK_BLE_MGR_LIB) || !RTK_BLE_MGR_LIB
 	rtk_bt_gatt_queue_t *queue, *send_q = NULL;
 	rtk_bt_gatts_req_t *req;
@@ -338,11 +348,13 @@ static void _handle_indicate_pending_queue(void)
 
 	for (i = 0; i < RTK_BLE_GAP_MAX_LINKS; i++) {
 		queue =  &g_rtk_bt_gatts_priv->indicate_queue[i];
-		if (list_empty(&queue->pending_list))
+		if (list_empty(&queue->pending_list)) {
 			continue;
+		}
 		req = (rtk_bt_gatts_req_t *)queue->pending_list.next;
-		if (req->flag & REQ_FLAG_ALREADY_SENT)
+		if (req->flag & REQ_FLAG_ALREADY_SENT) {
 			continue;
+		}
 		if (req->seq <= min_seq) {
 			min_seq = req->seq;
 			send_q = queue;
@@ -385,17 +397,18 @@ static bool _register_service(struct rtk_bt_gatt_service *node)
 	uint16_t length = node->attr_count * sizeof(T_ATTRIB_APPL);
 	bool ret;
 
-	if (g_rtk_bt_gatts_priv->srv_registering)
+	if (g_rtk_bt_gatts_priv->srv_registering) {
 		return false;
+	}
 
 	g_rtk_bt_gatts_priv->srv_registering = 1;
 
 #if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
-	ret = gatt_svc_add(p_id, database, length, &rtk_bt_ext_gatts_cb, NULL);
+	ret = gatt_svc_add(p_id, database, length, &rtk_bt_ext_gatts_cb, bt_stack_gatts_send_data_cb);
 #else
 	if (true == node->assgin_handle_flag) {
 		ret = server_add_service_by_start_handle(p_id, database, length,
-									rtk_bt_gatts_cb, node->start_handle);
+												 rtk_bt_gatts_cb, node->start_handle);
 	} else {
 		ret = server_add_service(p_id, database, length, rtk_bt_gatts_cb);
 	}
@@ -406,7 +419,7 @@ static bool _register_service(struct rtk_bt_gatt_service *node)
 	} else {
 		bt_stack_gatts_free_srv_tbl((T_ATTRIB_APPL *)database, node->attr_count);
 		bt_stack_gatts_delete_service_node(node);
-		dbg("register service to stack failed \r\n");
+		BT_LOGE("register service to stack failed \r\n");
 		g_rtk_bt_gatts_priv->srv_registering = 0;
 	}
 
@@ -422,13 +435,13 @@ static T_APP_RESULT _register_service_complete_cb(T_SERVER_ID srv_id, uint16_t c
 
 	node = bt_stack_gatts_find_service_node_by_server_id(srv_id);
 	if (!node) {
-		dbg("Cannot get the app_id from srv_id in SRV_REGISTERING srv\r\n");
+		BT_LOGE("Cannot get the app_id from srv_id in SRV_REGISTERING srv\r\n");
 		return APP_RESULT_REJECT;
 	}
 
 	if (cause) {
-		dbg("result is fail: cause = 0x%x \r\n", cause);
-		if (node->user_data){
+		BT_LOGE("result is fail: cause = 0x%x \r\n", cause);
+		if (node->user_data) {
 			bt_stack_gatts_free_srv_tbl(node->user_data, node->attr_count);
 		}
 		bt_stack_gatts_delete_service_node(node);
@@ -436,7 +449,7 @@ static T_APP_RESULT _register_service_complete_cb(T_SERVER_ID srv_id, uint16_t c
 	} else {
 		/* Change register status */
 		node->register_status = SRV_REGISTERED;
-		// dbg("result is successfully \r\n");
+		// BT_LOGA("result is successfully \r\n");
 		ret = APP_RESULT_SUCCESS;
 	}
 
@@ -448,15 +461,16 @@ static T_APP_RESULT _register_service_complete_cb(T_SERVER_ID srv_id, uint16_t c
 
 		rtk_bt_evt_indicate(p_gatts_evt, NULL);
 	} else {
-		dbg("p_gatts_evt alloc fail \r\n");
+		BT_LOGE("p_gatts_evt alloc fail \r\n");
 	}
 
 	g_rtk_bt_gatts_priv->srv_registering = 0;
 
 	list_for_each_entry_safe(node, next, &g_rtk_bt_gatts_priv->service_list, list, struct rtk_bt_gatt_service) {
 		if (node->register_status == SRV_WAIT_FOR_REG) {
-			if (_register_service(node))
+			if (_register_service(node)) {
 				break;
+			}
 		}
 	}
 	return ret;
@@ -475,13 +489,15 @@ static bool _send_data_complete_cb(T_SERVER_ID server_id, uint16_t index, uint8_
 	}
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_server_id(server_id);
-	if (!p_srv_node)
+	if (!p_srv_node) {
 		return false;
+	}
 
 	req = bt_stack_gatts_remove_sent_req(notify, conn_id, p_srv_node->app_id, index);
 
-	if (!req || !_indicate_data_send_compelete(notify, cause, req))
+	if (!req || !_indicate_data_send_compelete(notify, cause, req)) {
 		return false;
+	}
 
 	if (!notify) {
 		_handle_indicate_pending_queue();
@@ -520,8 +536,9 @@ static T_APP_RESULT bt_stack_gatts_app_service_callback(T_SERVER_ID service_id, 
 	T_SERVER_APP_CB_DATA *p_param = (T_SERVER_APP_CB_DATA *)data;
 
 	/* Only handle 'GENERAL ID' callback */
-	if (!p_param || SERVICE_PROFILE_GENERAL_ID != service_id)
+	if (!p_param || SERVICE_PROFILE_GENERAL_ID != service_id) {
 		return APP_RESULT_APP_ERR;
+	}
 
 	if (p_param->eventId == PROFILE_EVT_SRV_REG_AFTER_INIT_COMPLETE) {
 		T_SERVER_ID srv_id = p_param->event_data.server_reg_after_init_result.service_id;
@@ -536,49 +553,47 @@ static T_APP_RESULT bt_stack_gatts_app_service_callback(T_SERVER_ID service_id, 
 		uint16_t cause = p_param->event_data.send_data_result.cause;
 		T_GATT_PDU_TYPE data_type = p_param->event_data.send_data_result.data_type;
 
-		app_result = _send_data_complete_cb(server_id, index, conn_id, cause, data_type);
+		app_result = (T_APP_RESULT)_send_data_complete_cb(server_id, index, conn_id, cause, data_type);
 	}
 
 	return app_result;
 }
+
 #endif /* !RTK_BLE_MGR_LIB */
 
 static T_APP_RESULT bt_stack_le_gap_service_callback(T_SERVER_ID service_id, void *param)
 {
 	(void)service_id;
 	T_APP_RESULT result = APP_RESULT_SUCCESS;
+	rtk_bt_evt_t *p_evt = NULL;
 	T_GAPS_CALLBACK_DATA *p_gap_data = (T_GAPS_CALLBACK_DATA *)param;
 
 	if (SERVICE_CALLBACK_TYPE_WRITE_CHAR_VALUE == p_gap_data->msg_type) {
-		switch (p_gap_data->msg_data.opcode)
-		{
-		case GAPS_WRITE_DEVICE_NAME:
-		{
+		switch (p_gap_data->msg_data.opcode) {
+		case GAPS_WRITE_DEVICE_NAME: {
 			T_LOCAL_NAME device_name;
 			memcpy(device_name.local_name, p_gap_data->msg_data.p_value, p_gap_data->msg_data.len);
 			device_name.local_name[p_gap_data->msg_data.len] = 0;
 			flash_save_local_name(&device_name);
 			break;
 		}
-		case GAPS_WRITE_APPEARANCE:
-		{
+		case GAPS_WRITE_APPEARANCE: {
 			T_LOCAL_APPEARANCE appearance = {.local_appearance = *(uint16_t *)p_gap_data->msg_data.p_value};
 			flash_save_local_appearance(&appearance);
 			break;
 		}
-		case GATT_SERVICE_WRITE_CLIENT_SUPPORTED_FEATURES:
-		{
-			rtk_bt_evt_t *p_evt = NULL;
+		case GATT_SERVICE_WRITE_CLIENT_SUPPORTED_FEATURES: {
 			rtk_bt_gatts_client_supported_features_ind_t *p_ind = NULL;
 			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS,
 										RTK_BT_GATTS_EVT_CLIENT_SUPPORTED_FEATURES,
 										sizeof(rtk_bt_gatts_client_supported_features_ind_t));
-			if (!p_evt)
+			if (!p_evt) {
 				break;
+			}
 
 			p_ind = (rtk_bt_gatts_client_supported_features_ind_t *)p_evt->data;
 			p_ind->conn_handle = le_get_conn_handle(p_gap_data->conn_id);
-#if F_BT_GATT_SERVER_EXT_API
+#if defined(F_BT_GATT_SERVER_EXT_API) && F_BT_GATT_SERVER_EXT_API
 			p_ind->cid = p_gap_data->cid;
 #else
 			p_ind->cid = L2C_FIXED_CID_ATT;
@@ -591,6 +606,29 @@ static T_APP_RESULT bt_stack_le_gap_service_callback(T_SERVER_ID service_id, voi
 		}
 		default:
 			break;
+		}
+	} else if (SERVICE_CALLBACK_TYPE_INDIFICATION_NOTIFICATION == p_gap_data->msg_type) {
+		if (GATT_SERVICE_CHANGE_CCCD_ENABLE == p_gap_data->msg_data.opcode ||
+			GATT_SERVICE_CHANGE_CCCD_DISABLE == p_gap_data->msg_data.opcode) {
+			rtk_bt_gatts_service_changed_cccd_ind_t *srv_change = NULL;
+			p_evt = rtk_bt_event_create(RTK_BT_LE_GP_GATTS,
+										RTK_BT_GATTS_EVT_SERVICE_CHANGED_CCCD_IND,
+										sizeof(rtk_bt_gatts_service_changed_cccd_ind_t));
+			if (!p_evt) {
+				return result;
+			}
+
+			srv_change = (rtk_bt_gatts_service_changed_cccd_ind_t *)p_evt->data;
+#if (defined(F_BT_GATT_SERVER_EXT_API) && F_BT_GATT_SERVER_EXT_API) && (defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB)
+			srv_change->conn_handle = p_gap_data->conn_handle;
+			srv_change->cid = p_gap_data->cid;
+#else
+			srv_change->conn_handle = le_get_conn_handle(p_gap_data->conn_id);
+			srv_change->cid = L2C_FIXED_CID_ATT;
+#endif
+			srv_change->cccd_enable = (GATT_SERVICE_CHANGE_CCCD_ENABLE == p_gap_data->msg_data.opcode) ? true : false;
+
+			rtk_bt_evt_indicate(p_evt, NULL);
 		}
 	}
 
@@ -608,15 +646,16 @@ uint16_t  bt_stack_gatts_init(rtk_bt_app_conf_t *app_conf)
 	uint8_t svc_num;
 	uint8_t i = 0;
 
-	g_rtk_bt_gatts_priv = osif_mem_alloc(RAM_TYPE_DATA_ON,sizeof(rtk_bt_gatts_app_priv_t));
-	if (!g_rtk_bt_gatts_priv)
+	g_rtk_bt_gatts_priv = osif_mem_alloc(RAM_TYPE_DATA_ON, sizeof(rtk_bt_gatts_app_priv_t));
+	if (!g_rtk_bt_gatts_priv) {
 		return RTK_BT_ERR_NO_MEMORY;
+	}
 
-	memset(g_rtk_bt_gatts_priv,0,sizeof(rtk_bt_gatts_app_priv_t));
+	memset(g_rtk_bt_gatts_priv, 0, sizeof(rtk_bt_gatts_app_priv_t));
 
 	INIT_LIST_HEAD(&g_rtk_bt_gatts_priv->service_list);
 
-	for (i=0;i<RTK_BLE_GAP_MAX_LINKS;i++){
+	for (i = 0; i < RTK_BLE_GAP_MAX_LINKS; i++) {
 		INIT_LIST_HEAD(&g_rtk_bt_gatts_priv->notify_queue[i].pending_list);
 		g_rtk_bt_gatts_priv->notify_queue[i].pending_ele_num = 0;
 		INIT_LIST_HEAD(&g_rtk_bt_gatts_priv->indicate_queue[i].pending_list);
@@ -628,14 +667,16 @@ uint16_t  bt_stack_gatts_init(rtk_bt_app_conf_t *app_conf)
 	}
 
 	if (app_conf && false == app_conf->user_def_service) {
-		if (flash_load_local_name(&local_device_name) == 0)
+		if (flash_load_local_name(&local_device_name) == 0) {
 			gaps_set_parameter(GAPS_PARAM_DEVICE_NAME, GAP_DEVICE_NAME_LEN, local_device_name.local_name);
-		else
+		} else {
 			gaps_set_parameter(GAPS_PARAM_DEVICE_NAME, GAP_DEVICE_NAME_LEN, default_device_name);
-		if (flash_load_local_appearance(&appearance_local) == 0)
+		}
+		if (flash_load_local_appearance(&appearance_local) == 0) {
 			gaps_set_parameter(GAPS_PARAM_APPEARANCE, sizeof(uint16_t), &appearance_local.local_appearance);
-		else
+		} else {
 			gaps_set_parameter(GAPS_PARAM_APPEARANCE, sizeof(uint16_t), &default_appearance);
+		}
 
 		/* Make device name and appearance writable, because these can be configured by API */
 		gaps_set_parameter(GAPS_PARAM_APPEARANCE_PROPERTY, sizeof(appearance_prop), &appearance_prop);
@@ -650,7 +691,7 @@ uint16_t  bt_stack_gatts_init(rtk_bt_app_conf_t *app_conf)
 	}
 #if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
 	if (!gatt_svc_init(GATT_SVC_USE_EXT_SERVER, svc_num)) {
-		dbg("gatt_svc_init fail \r\n");
+		BT_LOGE("gatt_svc_init fail \r\n");
 		return RTK_BT_ERR_LOWER_STACK_API;
 	}
 	gatt_svc_register_general_cb(bt_stack_gatts_general_callback);
@@ -704,238 +745,268 @@ static uint32_t bt_stack_gatts_permission_trans(uint8_t perm)
 	uint32_t permission = 0x0000;
 
 	/* Get all read permission */
-	if (perm & RTK_BT_GATT_PERM_READ)
+	if (perm & RTK_BT_GATT_PERM_READ) {
 		permission |= GATT_PERM_READ;
-	if (perm & RTK_BT_GATT_PERM_READ_ENCRYPT)
+	}
+	if (perm & RTK_BT_GATT_PERM_READ_ENCRYPT) {
 		permission |= GATT_PERM_READ_ENCRYPTED_REQ;
-	if (perm & RTK_BT_GATT_PERM_READ_AUTHEN)
+	}
+	if (perm & RTK_BT_GATT_PERM_READ_AUTHEN) {
 		permission |= GATT_PERM_READ_AUTHEN_MITM_REQ;
+	}
 
 	/* Get all write permission */
-	if (perm & RTK_BT_GATT_PERM_WRITE)
+	if (perm & RTK_BT_GATT_PERM_WRITE) {
 		permission |= GATT_PERM_WRITE;
-	if (perm & RTK_BT_GATT_PERM_WRITE_ENCRYPT)
+	}
+	if (perm & RTK_BT_GATT_PERM_WRITE_ENCRYPT) {
 		permission |= GATT_PERM_WRITE_ENCRYPTED_REQ;
-	if (perm & RTK_BT_GATT_PERM_WRITE_AUTHEN)
+	}
+	if (perm & RTK_BT_GATT_PERM_WRITE_AUTHEN) {
 		permission |= GATT_PERM_WRITE_AUTHEN_MITM_REQ;
+	}
 
 	return permission;
 }
 
+static uint16_t bt_stack_uuid16_common_attr_convert(rtk_bt_gatt_attr_t *app_attr, T_ATTRIB_APPL *stack_attr)
+{
+	uint16_t uuid16 = BT_UUID_16(app_attr->uuid)->val;
 
-static uint16_t bt_stack_uuid16_attr_convert(uint16_t gatt_type, rtk_bt_gatt_attr_t * p_app_gatt_attr,T_ATTRIB_APPL* p_stack_gatt_attr)
+	stack_attr->flags = (RTK_BT_GATT_APP == app_attr->flag) ? ATTRIB_FLAG_VALUE_APPL : ATTRIB_FLAG_VOID;
+	stack_attr->type_value[0] = LO_WORD(uuid16);
+	stack_attr->type_value[1] = HI_WORD(uuid16);
+	if (ATTRIB_FLAG_VALUE_APPL == stack_attr->flags) {
+		stack_attr->value_len = 0;
+		stack_attr->p_value_context = NULL;
+		if (GATT_UUID_CHAR_CLIENT_CONFIG == uuid16) {
+			stack_attr->flags |= ATTRIB_FLAG_CCCD_APPL;
+		}
+	} else {
+		stack_attr->value_len = app_attr->len;
+		stack_attr->p_value_context = osif_mem_alloc(RAM_TYPE_DATA_ON, stack_attr->value_len);
+		if (!stack_attr->p_value_context) {
+			return RTK_BT_ERR_NO_MEMORY;
+		}
+		memcpy(stack_attr->p_value_context, app_attr->user_data, stack_attr->value_len);
+	}
+	stack_attr->permissions = bt_stack_gatts_permission_trans(app_attr->perm);
+
+	return RTK_BT_OK;
+}
+
+static uint16_t bt_stack_uuid16_attr_convert(uint16_t gatt_type, rtk_bt_gatt_attr_t *p_app_gatt_attr, T_ATTRIB_APPL *p_stack_gatt_attr)
 {
 	uint16_t uuid16 = BT_UUID_16(p_app_gatt_attr->uuid)->val;
 
-	switch(uuid16){
-		case GATT_UUID_PRIMARY_SERVICE:
-		case GATT_UUID_SECONDARY_SERVICE:
-		{
-			uint8_t uuid_type = ((struct bt_uuid *)p_app_gatt_attr->user_data)->type;
-			uint8_t *uuid = NULL;
-			p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
-			p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
-			p_stack_gatt_attr->permissions = GATT_PERM_READ;
-			if (BT_UUID_TYPE_16 == uuid_type){
-				uuid = (uint8_t *)&(BT_UUID_16((struct bt_uuid *)p_app_gatt_attr->user_data)->val);
-				p_stack_gatt_attr->flags = (ATTRIB_FLAG_VALUE_INCL | gatt_type);
-				// dbg("uuid16 case p_stack_gatt_attr->flags = 0x%x \r\n",p_stack_gatt_attr->flags);
-				p_stack_gatt_attr->type_value[2] = uuid[0];
-				p_stack_gatt_attr->type_value[3] = uuid[1];
-				p_stack_gatt_attr->p_value_context = NULL;
-				p_stack_gatt_attr->value_len = 2;
-			}
-			else if (BT_UUID_TYPE_128 == uuid_type){
-				uuid = BT_UUID_128((struct bt_uuid *)p_app_gatt_attr->user_data)->val;
-				p_stack_gatt_attr->flags = ATTRIB_FLAG_VOID | gatt_type;
-				p_stack_gatt_attr->value_len = 16;
-				p_stack_gatt_attr->p_value_context = osif_mem_alloc(RAM_TYPE_DATA_ON, p_stack_gatt_attr->value_len);
-				if (!p_stack_gatt_attr->p_value_context)
-					return RTK_BT_ERR_NO_MEMORY;
-				memcpy(p_stack_gatt_attr->p_value_context, (void *)uuid, p_stack_gatt_attr->value_len);
-			}
-				break;
-		}
-
-		case GATT_UUID_INCLUDE:
-		{
-			struct rtk_bt_gatt_service *p_incl_srv = (struct rtk_bt_gatt_service *)(p_app_gatt_attr->user_data);
-			struct rtk_bt_gatt_service *p_gatts_srv_node = NULL;
-			T_ATTRIB_APPL *p_bt_stack_attr_tbl = NULL;
-			p_gatts_srv_node = bt_stack_gatts_find_service_node_by_app_id(p_incl_srv->app_id);
-			if (!p_gatts_srv_node){
-				// dbg("include srv is null case \r\n");
-				p_gatts_srv_node = (struct rtk_bt_gatt_service *)osif_mem_alloc(RAM_TYPE_DATA_ON,sizeof(struct rtk_bt_gatt_service));
-				if (!p_gatts_srv_node)
-					return RTK_BT_ERR_NO_MEMORY;
-				memset(p_gatts_srv_node,0,sizeof(struct rtk_bt_gatt_service));
-				p_gatts_srv_node->alloc_ind = 1;
-				p_bt_stack_attr_tbl = (T_ATTRIB_APPL *)osif_mem_alloc(RAM_TYPE_DATA_ON, p_incl_srv->attr_count*sizeof(T_ATTRIB_APPL));
-				if (!p_bt_stack_attr_tbl){
-					osif_mem_free(p_gatts_srv_node);
-					return RTK_BT_ERR_NO_MEMORY;
-				}
-
-				// dbg("p_incl_srv->attr_count: %d \r\n",p_incl_srv->attr_count);
-				memset(p_bt_stack_attr_tbl,0,p_incl_srv->attr_count*sizeof(T_ATTRIB_APPL));
-				p_gatts_srv_node->app_id = p_incl_srv->app_id;
-				p_gatts_srv_node->register_status = SRV_ALLOC_FOR_INCLUDE;
-				p_gatts_srv_node->user_data = p_bt_stack_attr_tbl;
-				p_gatts_srv_node->attr_count = p_incl_srv->attr_count;
-				bt_stack_gatts_insert_service_node(p_gatts_srv_node);
-			}
-			else{
-				p_bt_stack_attr_tbl = p_gatts_srv_node->user_data;
-			}
-			p_stack_gatt_attr->flags = ATTRIB_FLAG_VOID;
-			p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
-			p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
-			p_stack_gatt_attr->value_len = 0;
-			p_stack_gatt_attr->p_value_context = p_bt_stack_attr_tbl;
-			p_stack_gatt_attr->permissions = GATT_PERM_READ;
-			break;
-		}
-
-		case GATT_UUID_CHARACTERISTIC:
-		{
-			struct rtk_bt_gatt_chrc *char_attr_val = (struct rtk_bt_gatt_chrc *)p_app_gatt_attr->user_data;
-			p_stack_gatt_attr->flags = ATTRIB_FLAG_VALUE_INCL;
-			p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
-			p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
-			p_stack_gatt_attr->type_value[2] = char_attr_val->properties;
-			p_stack_gatt_attr->value_len = 1;
+	switch (uuid16) {
+	case GATT_UUID_PRIMARY_SERVICE:
+	case GATT_UUID_SECONDARY_SERVICE: {
+		uint8_t uuid_type = ((struct bt_uuid *)p_app_gatt_attr->user_data)->type;
+		uint8_t *uuid = NULL;
+		p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
+		p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
+		p_stack_gatt_attr->permissions = GATT_PERM_READ;
+		if (BT_UUID_TYPE_16 == uuid_type) {
+			uuid = (uint8_t *) & (BT_UUID_16((struct bt_uuid *)p_app_gatt_attr->user_data)->val);
+			p_stack_gatt_attr->flags = (ATTRIB_FLAG_VALUE_INCL | gatt_type);
+			// BT_LOGA("uuid16 case p_stack_gatt_attr->flags = 0x%x \r\n",p_stack_gatt_attr->flags);
+			p_stack_gatt_attr->type_value[2] = uuid[0];
+			p_stack_gatt_attr->type_value[3] = uuid[1];
 			p_stack_gatt_attr->p_value_context = NULL;
-			p_stack_gatt_attr->permissions = GATT_PERM_READ;
-
-			break;
-		}
-
-		case GATT_UUID_CHAR_EXTENDED_PROP:
-		{
-			struct rtk_bt_gatt_cep *cep_attr_val = (struct rtk_bt_gatt_cep *)p_app_gatt_attr->user_data;
-			p_stack_gatt_attr->flags = ATTRIB_FLAG_VALUE_INCL;
-			p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
-			p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
-			p_stack_gatt_attr->type_value[2] = LO_WORD(cep_attr_val->properties);
-			p_stack_gatt_attr->type_value[3] = HI_WORD(cep_attr_val->properties);
 			p_stack_gatt_attr->value_len = 2;
-			p_stack_gatt_attr->p_value_context = NULL;
-			p_stack_gatt_attr->permissions = GATT_PERM_READ;
-			break;
+		} else if (BT_UUID_TYPE_128 == uuid_type) {
+			uuid = BT_UUID_128((struct bt_uuid *)p_app_gatt_attr->user_data)->val;
+			p_stack_gatt_attr->flags = ATTRIB_FLAG_VOID | gatt_type;
+			p_stack_gatt_attr->value_len = 16;
+			p_stack_gatt_attr->p_value_context = osif_mem_alloc(RAM_TYPE_DATA_ON, p_stack_gatt_attr->value_len);
+			if (!p_stack_gatt_attr->p_value_context) {
+				return RTK_BT_ERR_NO_MEMORY;
+			}
+			memcpy(p_stack_gatt_attr->p_value_context, (void *)uuid, p_stack_gatt_attr->value_len);
 		}
+		break;
+	}
 
-		case GATT_UUID_CHAR_USER_DESCR:
-		{
-			p_stack_gatt_attr->flags = ATTRIB_FLAG_VOID | ATTRIB_FLAG_ASCII_Z;
-			p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
-			p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
-			p_stack_gatt_attr->value_len = strlen((const char*)p_app_gatt_attr->user_data);
-			if (!p_stack_gatt_attr->value_len){
-				p_stack_gatt_attr->p_value_context = NULL;
-			}else{
-				p_stack_gatt_attr->p_value_context = osif_mem_alloc(RAM_TYPE_DATA_ON, p_stack_gatt_attr->value_len);
-				if (!p_stack_gatt_attr->p_value_context)
-					return RTK_BT_ERR_NO_MEMORY;
-				memcpy(p_stack_gatt_attr->p_value_context, p_app_gatt_attr->user_data, p_stack_gatt_attr->value_len);
+	case GATT_UUID_INCLUDE: {
+		struct rtk_bt_gatt_service *p_incl_srv = (struct rtk_bt_gatt_service *)(p_app_gatt_attr->user_data);
+		struct rtk_bt_gatt_service *p_gatts_srv_node = NULL;
+		T_ATTRIB_APPL *p_bt_stack_attr_tbl = NULL;
+		p_gatts_srv_node = bt_stack_gatts_find_service_node_by_app_id(p_incl_srv->app_id);
+		if (!p_gatts_srv_node) {
+			// BT_LOGE("include srv is null case \r\n");
+			p_gatts_srv_node = (struct rtk_bt_gatt_service *)osif_mem_alloc(RAM_TYPE_DATA_ON, sizeof(struct rtk_bt_gatt_service));
+			if (!p_gatts_srv_node) {
+				return RTK_BT_ERR_NO_MEMORY;
 			}
-			p_stack_gatt_attr->permissions = bt_stack_gatts_permission_trans(p_app_gatt_attr->perm);
-			break;
-		}
-		case GATT_UUID_CHAR_CLIENT_CONFIG:
-		{
-			p_stack_gatt_attr->flags = ATTRIB_FLAG_VALUE_INCL | ATTRIB_FLAG_CCCD_APPL;//ATTRIB_FLAG_CCCD_NO_FILTER
-			p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
-			p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
-			p_stack_gatt_attr->type_value[2] = 0;
-			p_stack_gatt_attr->type_value[3] = 0;
-			p_stack_gatt_attr->value_len = 2;
-			p_stack_gatt_attr->p_value_context = NULL;
-			p_stack_gatt_attr->permissions = bt_stack_gatts_permission_trans(p_app_gatt_attr->perm);
-			/* Force readable and writable, because Core_spec_v5.2 p1556 Table 3.10 defines it. */
-			if ((p_stack_gatt_attr->permissions & 0x0f) == 0)
-				p_stack_gatt_attr->permissions |= GATT_PERM_READ;
-			if ((p_stack_gatt_attr->permissions & 0xf0) == 0)
-				p_stack_gatt_attr->permissions |= GATT_PERM_WRITE;
-			break;
-		}
-		case GATT_UUID_CHAR_SERVER_CONFIG:
-		{
-			struct rtk_bt_gatt_scc* scc_attr_val = (struct rtk_bt_gatt_scc*)p_app_gatt_attr->user_data;
-			p_stack_gatt_attr->flags = ATTRIB_FLAG_VALUE_INCL;
-			p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
-			p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
-			p_stack_gatt_attr->type_value[2] = LO_WORD(scc_attr_val->flags);
-			p_stack_gatt_attr->type_value[3] = LO_WORD(scc_attr_val->flags);
-			p_stack_gatt_attr->value_len = 2;
-			p_stack_gatt_attr->p_value_context = NULL;
-			p_stack_gatt_attr->permissions = bt_stack_gatts_permission_trans(p_app_gatt_attr->perm);
-			/* Force readable and writable, because Core_spec_v5.2 p1557 Table 3.12 defines it. */
-			if ((p_stack_gatt_attr->permissions & 0x0f) == 0)
-				p_stack_gatt_attr->permissions |= GATT_PERM_READ;
-			if ((p_stack_gatt_attr->permissions & 0xf0) == 0)
-				p_stack_gatt_attr->permissions |= GATT_PERM_WRITE;
+			memset(p_gatts_srv_node, 0, sizeof(struct rtk_bt_gatt_service));
+			p_gatts_srv_node->alloc_ind = 1;
+			p_bt_stack_attr_tbl = (T_ATTRIB_APPL *)osif_mem_alloc(RAM_TYPE_DATA_ON, p_incl_srv->attr_count * sizeof(T_ATTRIB_APPL));
+			if (!p_bt_stack_attr_tbl) {
+				osif_mem_free(p_gatts_srv_node);
+				return RTK_BT_ERR_NO_MEMORY;
+			}
 
-			break;
+			// BT_LOGA("p_incl_srv->attr_count: %d \r\n",p_incl_srv->attr_count);
+			memset(p_bt_stack_attr_tbl, 0, p_incl_srv->attr_count * sizeof(T_ATTRIB_APPL));
+			p_gatts_srv_node->app_id = p_incl_srv->app_id;
+			p_gatts_srv_node->register_status = SRV_ALLOC_FOR_INCLUDE;
+			p_gatts_srv_node->user_data = p_bt_stack_attr_tbl;
+			p_gatts_srv_node->attr_count = p_incl_srv->attr_count;
+			bt_stack_gatts_insert_service_node(p_gatts_srv_node);
+		} else {
+			p_bt_stack_attr_tbl = p_gatts_srv_node->user_data;
 		}
-		case GATT_UUID_CHAR_FORMAT:
-		{
-			struct rtk_bt_gatt_cpf* format = (struct rtk_bt_gatt_cpf*)p_app_gatt_attr->user_data;
-			p_stack_gatt_attr->flags = ATTRIB_FLAG_VALUE_INCL;
-			p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
-			p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
-			p_stack_gatt_attr->type_value[2] = format->format;
-			p_stack_gatt_attr->type_value[3] = format->exponent;
-			p_stack_gatt_attr->type_value[4] = ((format->unit >> 0) & 0xff);
-			p_stack_gatt_attr->type_value[5] = ((format->unit >> 8) & 0xff);
-			p_stack_gatt_attr->type_value[6] = format->name_space;
-			p_stack_gatt_attr->type_value[7] = ((format->description >> 0) & 0xff);
-			p_stack_gatt_attr->type_value[8] = ((format->description >> 8) & 0xff);
-			p_stack_gatt_attr->p_value_context = NULL;
-			p_stack_gatt_attr->value_len = 7;
-			p_stack_gatt_attr->permissions = GATT_PERM_READ;
-			break;
-		}
-		case GATT_UUID_CHAR_AGGR_FORMAT:
-		{
-			struct rtk_bt_gatt_caf* agg_format = (struct rtk_bt_gatt_caf*)p_app_gatt_attr->user_data;
-			p_stack_gatt_attr->flags = ATTRIB_FLAG_VOID;
-			p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
-			p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
-			p_stack_gatt_attr->value_len = agg_format->count*2;
-			if (!p_stack_gatt_attr->value_len){
-				p_stack_gatt_attr->p_value_context = NULL;
-			}
-			else{
-				p_stack_gatt_attr->p_value_context = osif_mem_alloc(RAM_TYPE_DATA_ON, p_stack_gatt_attr->value_len);
-				if (!p_stack_gatt_attr->p_value_context)
-					return RTK_BT_ERR_NO_MEMORY;
-				memcpy(p_stack_gatt_attr->p_value_context, (void *)agg_format->handles, p_stack_gatt_attr->value_len);
-			}
-			p_stack_gatt_attr->permissions = GATT_PERM_READ;
-			break;
-		}
-		default:
-		{
-			p_stack_gatt_attr->flags = (RTK_BT_GATT_APP == p_app_gatt_attr->flag) ? ATTRIB_FLAG_VALUE_APPL : ATTRIB_FLAG_VOID;
-			p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
-			p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
-			p_stack_gatt_attr->value_len = p_app_gatt_attr->len;
-			if (ATTRIB_FLAG_VALUE_APPL == p_stack_gatt_attr->flags){
-				p_stack_gatt_attr->value_len = 0;
-				p_stack_gatt_attr->p_value_context = NULL;
-			}
-			else{
-				if (!p_stack_gatt_attr->value_len)
-					return RTK_BT_ERR_PARAM_INVALID;
+		p_stack_gatt_attr->flags = ATTRIB_FLAG_VOID;
+		p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
+		p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
+		p_stack_gatt_attr->value_len = 0;
+		p_stack_gatt_attr->p_value_context = p_bt_stack_attr_tbl;
+		p_stack_gatt_attr->permissions = GATT_PERM_READ;
+		break;
+	}
 
-				p_stack_gatt_attr->p_value_context = osif_mem_alloc(RAM_TYPE_DATA_ON, p_stack_gatt_attr->value_len);
-				if (!p_stack_gatt_attr->p_value_context)
-					return RTK_BT_ERR_NO_MEMORY;
-				memcpy(p_stack_gatt_attr->p_value_context, p_app_gatt_attr->user_data, p_stack_gatt_attr->value_len);
-			}
-			p_stack_gatt_attr->permissions = bt_stack_gatts_permission_trans(p_app_gatt_attr->perm);
-			break;
+	case GATT_UUID_CHARACTERISTIC: {
+		struct rtk_bt_gatt_chrc *char_attr_val = (struct rtk_bt_gatt_chrc *)p_app_gatt_attr->user_data;
+		p_stack_gatt_attr->flags = ATTRIB_FLAG_VALUE_INCL;
+		p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
+		p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
+		p_stack_gatt_attr->type_value[2] = char_attr_val->properties;
+		p_stack_gatt_attr->value_len = 1;
+		p_stack_gatt_attr->p_value_context = NULL;
+		p_stack_gatt_attr->permissions = GATT_PERM_READ;
+		break;
+	}
+
+	case GATT_UUID_CHAR_EXTENDED_PROP: {
+		if (RTK_BT_GATT_APP == p_app_gatt_attr->flag || RTK_BT_GATT_VOID == p_app_gatt_attr->flag) {
+			return bt_stack_uuid16_common_attr_convert(p_app_gatt_attr, p_stack_gatt_attr);
 		}
+		struct rtk_bt_gatt_cep *cep_attr_val = (struct rtk_bt_gatt_cep *)p_app_gatt_attr->user_data;
+		p_stack_gatt_attr->flags = ATTRIB_FLAG_VALUE_INCL;
+		p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
+		p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
+		p_stack_gatt_attr->type_value[2] = LO_WORD(cep_attr_val->properties);
+		p_stack_gatt_attr->type_value[3] = HI_WORD(cep_attr_val->properties);
+		p_stack_gatt_attr->value_len = 2;
+		p_stack_gatt_attr->p_value_context = NULL;
+		p_stack_gatt_attr->permissions = GATT_PERM_READ;
+		break;
+	}
+
+	case GATT_UUID_CHAR_USER_DESCR: {
+		if (RTK_BT_GATT_APP == p_app_gatt_attr->flag || RTK_BT_GATT_VOID == p_app_gatt_attr->flag) {
+			return bt_stack_uuid16_common_attr_convert(p_app_gatt_attr, p_stack_gatt_attr);
+		}
+		p_stack_gatt_attr->flags = ATTRIB_FLAG_VOID | ATTRIB_FLAG_ASCII_Z;
+		p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
+		p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
+		p_stack_gatt_attr->value_len = strlen((const char *)p_app_gatt_attr->user_data);
+		if (!p_stack_gatt_attr->value_len) {
+			p_stack_gatt_attr->p_value_context = NULL;
+		} else {
+			p_stack_gatt_attr->p_value_context = osif_mem_alloc(RAM_TYPE_DATA_ON, p_stack_gatt_attr->value_len);
+			if (!p_stack_gatt_attr->p_value_context) {
+				return RTK_BT_ERR_NO_MEMORY;
+			}
+			memcpy(p_stack_gatt_attr->p_value_context, p_app_gatt_attr->user_data, p_stack_gatt_attr->value_len);
+		}
+		p_stack_gatt_attr->permissions = bt_stack_gatts_permission_trans(p_app_gatt_attr->perm);
+		break;
+	}
+
+	case GATT_UUID_CHAR_CLIENT_CONFIG: {
+		if (RTK_BT_GATT_APP == p_app_gatt_attr->flag || RTK_BT_GATT_VOID == p_app_gatt_attr->flag) {
+			return bt_stack_uuid16_common_attr_convert(p_app_gatt_attr, p_stack_gatt_attr);
+		}
+		p_stack_gatt_attr->flags = ATTRIB_FLAG_VALUE_INCL | ATTRIB_FLAG_CCCD_APPL;//ATTRIB_FLAG_CCCD_NO_FILTER
+		p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
+		p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
+		p_stack_gatt_attr->type_value[2] = 0;
+		p_stack_gatt_attr->type_value[3] = 0;
+		p_stack_gatt_attr->value_len = 2;
+		p_stack_gatt_attr->p_value_context = NULL;
+		p_stack_gatt_attr->permissions = bt_stack_gatts_permission_trans(p_app_gatt_attr->perm);
+		/* Force readable and writable, because Core_spec_v5.2 p1556 Table 3.10 defines it. */
+		if ((p_stack_gatt_attr->permissions & 0x0f) == 0) {
+			p_stack_gatt_attr->permissions |= GATT_PERM_READ;
+		}
+		if ((p_stack_gatt_attr->permissions & 0xf0) == 0) {
+			p_stack_gatt_attr->permissions |= GATT_PERM_WRITE;
+		}
+		break;
+	}
+
+	case GATT_UUID_CHAR_SERVER_CONFIG: {
+		if (RTK_BT_GATT_APP == p_app_gatt_attr->flag || RTK_BT_GATT_VOID == p_app_gatt_attr->flag) {
+			return bt_stack_uuid16_common_attr_convert(p_app_gatt_attr, p_stack_gatt_attr);
+		}
+		struct rtk_bt_gatt_scc *scc_attr_val = (struct rtk_bt_gatt_scc *)p_app_gatt_attr->user_data;
+		p_stack_gatt_attr->flags = ATTRIB_FLAG_VALUE_INCL;
+		p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
+		p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
+		p_stack_gatt_attr->type_value[2] = LO_WORD(scc_attr_val->flags);
+		p_stack_gatt_attr->type_value[3] = LO_WORD(scc_attr_val->flags);
+		p_stack_gatt_attr->value_len = 2;
+		p_stack_gatt_attr->p_value_context = NULL;
+		p_stack_gatt_attr->permissions = bt_stack_gatts_permission_trans(p_app_gatt_attr->perm);
+		/* Force readable and writable, because Core_spec_v5.2 p1557 Table 3.12 defines it. */
+		if ((p_stack_gatt_attr->permissions & 0x0f) == 0) {
+			p_stack_gatt_attr->permissions |= GATT_PERM_READ;
+		}
+		if ((p_stack_gatt_attr->permissions & 0xf0) == 0) {
+			p_stack_gatt_attr->permissions |= GATT_PERM_WRITE;
+		}
+		break;
+	}
+
+	case GATT_UUID_CHAR_FORMAT: {
+		if (RTK_BT_GATT_APP == p_app_gatt_attr->flag || RTK_BT_GATT_VOID == p_app_gatt_attr->flag) {
+			return bt_stack_uuid16_common_attr_convert(p_app_gatt_attr, p_stack_gatt_attr);
+		}
+		struct rtk_bt_gatt_cpf *format = (struct rtk_bt_gatt_cpf *)p_app_gatt_attr->user_data;
+		p_stack_gatt_attr->flags = ATTRIB_FLAG_VALUE_INCL;
+		p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
+		p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
+		p_stack_gatt_attr->type_value[2] = format->format;
+		p_stack_gatt_attr->type_value[3] = format->exponent;
+		p_stack_gatt_attr->type_value[4] = ((format->unit >> 0) & 0xff);
+		p_stack_gatt_attr->type_value[5] = ((format->unit >> 8) & 0xff);
+		p_stack_gatt_attr->type_value[6] = format->name_space;
+		p_stack_gatt_attr->type_value[7] = ((format->description >> 0) & 0xff);
+		p_stack_gatt_attr->type_value[8] = ((format->description >> 8) & 0xff);
+		p_stack_gatt_attr->p_value_context = NULL;
+		p_stack_gatt_attr->value_len = 7;
+		p_stack_gatt_attr->permissions = GATT_PERM_READ;
+		break;
+	}
+
+	case GATT_UUID_CHAR_AGGR_FORMAT: {
+		if (RTK_BT_GATT_APP == p_app_gatt_attr->flag || RTK_BT_GATT_VOID == p_app_gatt_attr->flag) {
+			return bt_stack_uuid16_common_attr_convert(p_app_gatt_attr, p_stack_gatt_attr);
+		}
+		struct rtk_bt_gatt_caf *agg_format = (struct rtk_bt_gatt_caf *)p_app_gatt_attr->user_data;
+		p_stack_gatt_attr->flags = ATTRIB_FLAG_VOID;
+		p_stack_gatt_attr->type_value[0] = LO_WORD(uuid16);
+		p_stack_gatt_attr->type_value[1] = HI_WORD(uuid16);
+		p_stack_gatt_attr->value_len = agg_format->count * 2;
+		if (!p_stack_gatt_attr->value_len) {
+			p_stack_gatt_attr->p_value_context = NULL;
+		} else {
+			p_stack_gatt_attr->p_value_context = osif_mem_alloc(RAM_TYPE_DATA_ON, p_stack_gatt_attr->value_len);
+			if (!p_stack_gatt_attr->p_value_context) {
+				return RTK_BT_ERR_NO_MEMORY;
+			}
+			memcpy(p_stack_gatt_attr->p_value_context, (void *)agg_format->handles, p_stack_gatt_attr->value_len);
+		}
+		p_stack_gatt_attr->permissions = GATT_PERM_READ;
+		break;
+	}
+
+	default: {
+		return bt_stack_uuid16_common_attr_convert(p_app_gatt_attr, p_stack_gatt_attr);
+		break;
+	}
 	}
 
 	return RTK_BT_OK;
@@ -944,10 +1015,10 @@ static uint16_t bt_stack_uuid16_attr_convert(uint16_t gatt_type, rtk_bt_gatt_att
 static uint16_t bt_stack_uuid128_attr_convert(uint16_t gatt_type, rtk_bt_gatt_attr_t *app_attr, T_ATTRIB_APPL *attr)
 {
 	(void)gatt_type;
-	uint8_t* uuid128 = BT_UUID_128(app_attr->uuid)->val;
+	uint8_t *uuid128 = BT_UUID_128(app_attr->uuid)->val;
 
 	attr->flags = ATTRIB_FLAG_UUID_128BIT | ATTRIB_FLAG_VALUE_APPL;
-	memcpy(attr->type_value, (void*)uuid128, 16);
+	memcpy(attr->type_value, (void *)uuid128, 16);
 	attr->value_len = 0;
 	attr->p_value_context = NULL;
 	attr->permissions = bt_stack_gatts_permission_trans(app_attr->perm);
@@ -961,24 +1032,25 @@ static uint16_t bt_stack_gatts_register_service(void  *p_gatts_srv)
 	struct rtk_bt_gatt_service *node = NULL;
 	T_ATTRIB_APPL *attrs = NULL;
 	uint16_t gatt_type = 0;
-	rtk_bt_gatt_attr_t * app_attr = NULL;
+	rtk_bt_gatt_attr_t *app_attr = NULL;
 	T_ATTRIB_APPL *attr = NULL;
 	uint16_t ret = 0;
 	uint32_t i = 0;
 
 	app_srv->alloc_ind = 0;
-	gatt_type = (GATT_SERVICE_OVER_BLE == app_srv->type)?ATTRIB_FLAG_LE:ATTRIB_FLAG_BREDR;
+	gatt_type = (GATT_SERVICE_OVER_BLE == app_srv->type) ? ATTRIB_FLAG_LE : ATTRIB_FLAG_BREDR;
 
 	node = bt_stack_gatts_find_service_node_by_app_id(app_srv->app_id);
 
 	if (node) {
-		if (node->register_status > SRV_ALLOC_FOR_INCLUDE)
+		if (node->register_status > SRV_ALLOC_FOR_INCLUDE) {
 			return RTK_BT_ERR_ALREADY_IN_PROGRESS;
+		}
 	}
 
 	if (!node) {
-		attrs = (T_ATTRIB_APPL*)osif_mem_alloc(RAM_TYPE_DATA_ON,app_srv->attr_count * sizeof(T_ATTRIB_APPL));
-		if (!attrs){
+		attrs = (T_ATTRIB_APPL *)osif_mem_alloc(RAM_TYPE_DATA_ON, app_srv->attr_count * sizeof(T_ATTRIB_APPL));
+		if (!attrs) {
 			return RTK_BT_ERR_NO_MEMORY;
 		}
 
@@ -986,10 +1058,11 @@ static uint16_t bt_stack_gatts_register_service(void  *p_gatts_srv)
 		bt_stack_gatts_insert_service_node(app_srv);
 
 	} else {
-		if (node->attr_count < app_srv->attr_count)
+		if (node->attr_count < app_srv->attr_count) {
 			return RTK_BT_ERR_MISMATCH;
+		}
 
-		attrs = (T_ATTRIB_APPL*)node->user_data;
+		attrs = (T_ATTRIB_APPL *)node->user_data;
 		app_srv->user_data = attrs;
 		bt_stack_gatts_delete_service_node(node);
 		bt_stack_gatts_insert_service_node(app_srv);
@@ -1000,21 +1073,23 @@ static uint16_t bt_stack_gatts_register_service(void  *p_gatts_srv)
 		app_attr = &app_srv->attrs[i];
 		attr = &attrs[i];
 		if (BT_UUID_TYPE_16 == app_attr->uuid->type) {
-			ret = bt_stack_uuid16_attr_convert(gatt_type,app_attr, attr);
+			ret = bt_stack_uuid16_attr_convert(gatt_type, app_attr, attr);
 		} else if (BT_UUID_TYPE_128 == app_attr->uuid->type) {
-			ret = bt_stack_uuid128_attr_convert(gatt_type,app_attr, attr);
+			ret = bt_stack_uuid128_attr_convert(gatt_type, app_attr, attr);
 		} else {
-			dbg("unknown uuid type: 0x%x \r\n",app_attr->uuid->type);
+			BT_LOGE("unknown uuid type: 0x%x \r\n", app_attr->uuid->type);
 		}
-		if (ret)
+		if (ret) {
 			return ret;
+		}
 	}
 
 	if (g_rtk_bt_gatts_priv->srv_registering) {
 		app_srv->register_status = SRV_WAIT_FOR_REG;
 	} else {
-		if (!_register_service(app_srv))
+		if (!_register_service(app_srv)) {
 			return RTK_BT_ERR_LOWER_STACK_API;
+		}
 	}
 
 	return 0;
@@ -1025,9 +1100,10 @@ void bt_stack_gatts_evt_indicate_mtu_exchange(uint16_t conn_handle, uint16_t mtu
 	rtk_bt_gatt_mtu_exchange_ind_t *p_gatt_mtu_exchange_ind = NULL;
 	rtk_bt_evt_t *p_evt_t = NULL;
 
-	p_evt_t = rtk_bt_event_create(RTK_BT_LE_GP_GATTS,RTK_BT_GATTS_EVT_MTU_EXCHANGE,sizeof(rtk_bt_gatt_mtu_exchange_ind_t));
-	if (!p_evt_t)
+	p_evt_t = rtk_bt_event_create(RTK_BT_LE_GP_GATTS, RTK_BT_GATTS_EVT_MTU_EXCHANGE, sizeof(rtk_bt_gatt_mtu_exchange_ind_t));
+	if (!p_evt_t) {
 		return;
+	}
 
 	p_gatt_mtu_exchange_ind = (rtk_bt_gatt_mtu_exchange_ind_t *)p_evt_t->data;
 	p_gatt_mtu_exchange_ind->result = RTK_BT_OK;
@@ -1040,44 +1116,22 @@ void bt_stack_gatts_evt_indicate_mtu_exchange(uint16_t conn_handle, uint16_t mtu
 /* convert ATT error to T_APP_RESULT which is used in rtk ble stack */
 static T_APP_RESULT att_err_to_app_result(uint8_t att_err)
 {
-	T_APP_RESULT app_res = APP_RESULT_SUCCESS;
-
-	switch (att_err) {
-	case 0:
-		break;
-	case RTK_BT_ATT_ERR_PREP_QUEUE_FULL:
-	case RTK_BT_ATT_ERR_INVALID_OFFSET:
-	case RTK_BT_ATT_ERR_INVALID_VALUE_SIZE:
-	case RTK_BT_ATT_ERR_INVALID_PDU:
-	case RTK_BT_ATT_ERR_ATTR_NOT_FOUND:
-	case RTK_BT_ATT_ERR_ATTR_NOT_LONG:
-	case RTK_BT_ATT_ERR_INSUFFICIENT_RESOURCES:
-	case RTK_BT_ATT_ERR_VALUE_NOT_ALLOWED:
-	case RTK_BT_ATT_ERR_MIN_APPLIC_CODE:
-	case RTK_BT_ATT_ERR_CCCD_IMPROPERLY_CONFIGURED:
-	case RTK_BT_ATT_ERR_PROC_ALREADY_IN_PROGRESS:
-		app_res = (ATT_ERR | att_err);
-		break;
-	default:
-		app_res = APP_RESULT_REJECT;
-		break;
-	}
-
-	return app_res;
+	return att_err ? (ATT_ERR | att_err) : APP_RESULT_SUCCESS;
 }
 
 static uint16_t bt_stack_gatts_read_rsp(void *param)
 {
 	rtk_bt_gatts_read_resp_param_t *p_read_rsp = (rtk_bt_gatts_read_resp_param_t *)param;
-	struct rtk_bt_gatt_service * p_srv_node = NULL;
+	struct rtk_bt_gatt_service *p_srv_node = NULL;
 	T_APP_RESULT cause = APP_RESULT_SUCCESS;
 #if !defined(RTK_BLE_MGR_LIB) || !RTK_BLE_MGR_LIB
 	uint8_t conn_id;
 #endif
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_app_id(p_read_rsp->app_id);
-	if (!p_srv_node)
+	if (!p_srv_node) {
 		return RTK_BT_ERR_NO_ENTRY;
+	}
 
 	cause = att_err_to_app_result(p_read_rsp->err_code);
 
@@ -1085,19 +1139,22 @@ static uint16_t bt_stack_gatts_read_rsp(void *param)
 	if (!gatt_svc_read_confirm(p_read_rsp->conn_handle,
 							   p_read_rsp->cid ? p_read_rsp->cid : L2C_FIXED_CID_ATT, /* just in case APP forget set cid */
 							   (T_SERVER_ID)p_srv_node->server_info,
-							   p_read_rsp->index, (uint8_t*)p_read_rsp->data,
-							   p_read_rsp->len, p_read_rsp->len, cause))
+							   p_read_rsp->index, (uint8_t *)p_read_rsp->data,
+							   p_read_rsp->len, p_read_rsp->len, cause)) {
 		return RTK_BT_ERR_LOWER_STACK_API;
+	}
 #else
 
-	if (!le_get_conn_id_by_handle(p_read_rsp->conn_handle, &conn_id))
+	if (!le_get_conn_id_by_handle(p_read_rsp->conn_handle, &conn_id)) {
 		return RTK_BT_ERR_PARAM_INVALID;
+	}
 
 	if (!server_attr_read_confirm(conn_id,
 								  (T_SERVER_ID)p_srv_node->server_info,
 								  p_read_rsp->index,
-								  (uint8_t*)p_read_rsp->data, p_read_rsp->len, cause))
+								  (uint8_t *)p_read_rsp->data, p_read_rsp->len, cause)) {
 		return RTK_BT_ERR_LOWER_STACK_API;
+	}
 #endif
 
 	return RTK_BT_OK;
@@ -1113,8 +1170,9 @@ static uint16_t bt_stack_gatts_write_rsp(void *param)
 #endif
 
 	p_srv_node = bt_stack_gatts_find_service_node_by_app_id(p_write_rsp_t->app_id);
-	if (!p_srv_node)
+	if (!p_srv_node) {
 		return RTK_BT_ERR_NO_ENTRY;
+	}
 
 	cause = att_err_to_app_result(p_write_rsp_t->err_code);
 
@@ -1122,22 +1180,26 @@ static uint16_t bt_stack_gatts_write_rsp(void *param)
 	if (!gatt_svc_write_confirm(p_write_rsp_t->conn_handle,
 								p_write_rsp_t->cid ? p_write_rsp_t->cid : L2C_FIXED_CID_ATT, /* just in case APP forget set cid */
 								(T_SERVER_ID)p_srv_node->server_info,
-								p_write_rsp_t->index, cause))
+								p_write_rsp_t->index, cause)) {
 		return RTK_BT_ERR_LOWER_STACK_API;
+	}
 #else
 
-	if (!le_get_conn_id_by_handle(p_write_rsp_t->conn_handle, &conn_id))
+	if (!le_get_conn_id_by_handle(p_write_rsp_t->conn_handle, &conn_id)) {
 		return RTK_BT_ERR_PARAM_INVALID;
+	}
 
-	if (RTK_BT_GATTS_WRITE_LONG == p_write_rsp_t->type){
-		if (!server_exec_write_confirm(conn_id, cause, 0))
+	if (RTK_BT_GATTS_WRITE_LONG == p_write_rsp_t->type) {
+		if (!server_exec_write_confirm(conn_id, cause, 0)) {
 			return RTK_BT_ERR_LOWER_STACK_API;
+		}
 
-	}else if (RTK_BT_GATTS_WRITE_REQ == p_write_rsp_t->type){
+	} else if (RTK_BT_GATTS_WRITE_REQ == p_write_rsp_t->type) {
 		if (!server_attr_write_confirm(conn_id,
-										p_srv_node->server_info,
-										p_write_rsp_t->index, cause))
+									   p_srv_node->server_info,
+									   p_write_rsp_t->index, cause)) {
 			return RTK_BT_ERR_LOWER_STACK_API;
+		}
 	}
 #endif
 	return RTK_BT_OK;
@@ -1153,20 +1215,22 @@ static uint16_t bt_stack_gatts_send_data(void *param, bool notify)
 	rtk_bt_gatt_queue_t *queue;
 	rtk_bt_gatts_req_t *req = NULL;
 
-	if (!le_get_conn_id_by_handle(conn_handle, &conn_id))
+	if (!le_get_conn_id_by_handle(conn_handle, &conn_id)) {
 		return RTK_BT_ERR_PARAM_INVALID;
+	}
 
 	queue = notify ? &g_rtk_bt_gatts_priv->notify_queue[conn_id] : &g_rtk_bt_gatts_priv->indicate_queue[conn_id];
 
 	/* Save memory when high throughput */
 	if (queue->pending_ele_num >= BT_QUEUE_PENDING_ELEMENT_MAX) {
-		// dbg("Error: GATTS pending queue full, wait a moment to send data again !!!\r\n");
+		// BT_LOGE("Error: GATTS pending queue full, wait a moment to send data again !!!\r\n");
 		return RTK_BT_ERR_QUEUE_FULL;
 	}
 
 	req = (rtk_bt_gatts_req_t *)osif_mem_alloc(RAM_TYPE_DATA_ON, sizeof(rtk_bt_gatts_req_t) + len);
-	if (!req)
+	if (!req) {
 		return RTK_BT_ERR_NO_MEMORY;
+	}
 
 	memset(req, 0, sizeof(rtk_bt_gatts_req_t));
 
@@ -1209,8 +1273,9 @@ uint16_t bt_stack_le_gatts_get_tx_pending_num(uint16_t conn_handle, uint16_t *tx
 {
 	uint8_t conn_id;
 
-	if (!le_get_conn_id_by_handle(conn_handle, &conn_id))
+	if (!le_get_conn_id_by_handle(conn_handle, &conn_id)) {
 		return RTK_BT_ERR_PARAM_INVALID;
+	}
 
 	if (tx_pending_num == NULL || conn_id >= RTK_BLE_GAP_MAX_LINKS) {
 		return RTK_BT_ERR_PARAM_INVALID;
@@ -1225,36 +1290,85 @@ uint16_t bt_stack_le_gatts_get_tx_pending_num(uint16_t conn_handle, uint16_t *tx
 	return RTK_BT_OK;
 }
 
+uint16_t bt_stack_gatts_service_changed_indicate(void *param)
+{
+	rtk_bt_gatts_service_changed_indicate_param_t *srv_change = (rtk_bt_gatts_service_changed_indicate_param_t *)param;
+
+#if defined(RTK_BLE_MGR_LIB) && RTK_BLE_MGR_LIB
+	if (!gatt_svc_service_changed_indicate(srv_change->conn_handle,
+										   srv_change->cid ? srv_change->cid : L2C_FIXED_CID_ATT,
+										   srv_change->start_handle,
+										   srv_change->end_handle)) {
+		return RTK_BT_ERR_LOWER_STACK_API;
+	}
+#else
+	uint8_t conn_id;
+	if (!le_get_conn_id_by_handle(srv_change->conn_handle, &conn_id)) {
+		return RTK_BT_ERR_PARAM_INVALID;
+	}
+
+	if (!gatts_service_changed_indicate(conn_id,
+										srv_change->start_handle,
+										srv_change->end_handle)) {
+		return RTK_BT_ERR_LOWER_STACK_API;
+	}
+#endif
+
+	return RTK_BT_OK;
+}
+
+uint16_t bt_stack_gatts_get_attribute_handle(void *param)
+{
+	rtk_bt_gatts_get_attr_handle_param_t *get_handle = (rtk_bt_gatts_get_attr_handle_param_t *)param;
+	struct rtk_bt_gatt_service *p_srv_node = NULL;
+
+	p_srv_node = bt_stack_gatts_find_service_node_by_app_id(get_handle->app_id);
+	if (!p_srv_node) {
+		return RTK_BT_ERR_NO_ENTRY;
+	}
+
+	*get_handle->attr_handle = server_get_start_handle((T_SERVER_ID)p_srv_node->server_info)
+							   + get_handle->attr_index;
+
+	return RTK_BT_OK;
+}
+
 extern bool bt_stack_profile_check(rtk_bt_profile_t profile);
 uint16_t bt_stack_gatts_act_handle(rtk_bt_cmd_t *p_cmd)
 {
 	uint16_t ret = RTK_BT_OK;
 
 	if (true != bt_stack_profile_check(RTK_BT_PROFILE_GATTS)) {
-		dbg("Error: GATTS profile is not initiated\r\n");
+		BT_LOGE("Error: Gatts profile is not initiated\r\n");
 		ret = RTK_BT_ERR_UNSUPPORTED;
 		goto end;
 	}
-	switch(p_cmd->act){
-		case RTK_BT_GATTS_ACT_REGISTER_SERVICE:
-			ret = bt_stack_gatts_register_service(p_cmd->param);
-			break;
-		case RTK_BT_GATTS_ACT_READ_RSP:
-			ret = bt_stack_gatts_read_rsp(p_cmd->param);
-			break;
-		case RTK_BT_GATTS_ACT_WRITE_RSP:
-			ret = bt_stack_gatts_write_rsp(p_cmd->param);
-			break;
-		case RTK_BT_GATTS_ACT_NOTIFY:
-			ret = bt_stack_gatts_send_data(p_cmd->param, true);
-			break;
-		case RTK_BT_GATTS_ACT_INDICATE:
-			ret = bt_stack_gatts_send_data(p_cmd->param, false);
-			break;
-		default:
-			dbg("bt_stack_le_act_handle:unknown act: %d \r\n",p_cmd->act);
-			ret = RTK_BT_ERR_NO_CASE_ELEMENT;
-			break;
+	switch (p_cmd->act) {
+	case RTK_BT_GATTS_ACT_REGISTER_SERVICE:
+		ret = bt_stack_gatts_register_service(p_cmd->param);
+		break;
+	case RTK_BT_GATTS_ACT_READ_RSP:
+		ret = bt_stack_gatts_read_rsp(p_cmd->param);
+		break;
+	case RTK_BT_GATTS_ACT_WRITE_RSP:
+		ret = bt_stack_gatts_write_rsp(p_cmd->param);
+		break;
+	case RTK_BT_GATTS_ACT_NOTIFY:
+		ret = bt_stack_gatts_send_data(p_cmd->param, true);
+		break;
+	case RTK_BT_GATTS_ACT_INDICATE:
+		ret = bt_stack_gatts_send_data(p_cmd->param, false);
+		break;
+	case RTK_BT_GATTS_ACT_SERVICE_CHANGED_INDICATE:
+		ret = bt_stack_gatts_service_changed_indicate(p_cmd->param);
+		break;
+	case RTK_BT_GATTS_ACT_GET_ATTR_HANDLE:
+		ret = bt_stack_gatts_get_attribute_handle(p_cmd->param);
+		break;
+	default:
+		BT_LOGE("bt_stack_le_act_handle:unknown act: %d \r\n", p_cmd->act);
+		ret = RTK_BT_ERR_NO_CASE_ELEMENT;
+		break;
 	}
 
 end:

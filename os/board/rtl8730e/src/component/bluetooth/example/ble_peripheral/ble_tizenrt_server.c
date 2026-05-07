@@ -83,7 +83,7 @@ trble_result_e rtw_ble_server_get_mac_address(uint8_t mac[TRBLE_BD_ADDR_MAX_LEN]
 
 	rtk_bt_le_addr_t rtk_bd_addr;
 
-	if (RTK_BT_FAIL == rtk_bt_le_gap_get_address(&rtk_bd_addr)) {
+	if (RTK_BT_FAIL == rtk_bt_le_gap_get_bd_addr(&rtk_bd_addr)) {
 		debug_print("Failed to get local addr. \n");
 		return TRBLE_FAIL;
 	}
@@ -133,13 +133,12 @@ trble_result_e rtw_ble_server_att_set_data_ptr(trble_attr_handle attr_handle, ui
 
 	for (int i = 0; i < tizenrt_ble_srv_count; i++) {
 		if (tizenrt_ble_srv_database[i].start_handle < attr_handle &&
-			tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle)
-		{
+			tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle) {
 			for (int j = 0; j < TIZENRT_MAX_ATTR_NUM; j++) {
 				if (attr_handle == tizenrt_ble_srv_database[i].chrc_info[j].abs_handle) {
 					tizenrt_ble_srv_database[i].chrc_info[j].read_ptr = new_data_ptr;
 					debug_print("tizenrt_ble_srv_database[%d].chrc_info[%d].read_ptr %p \n", i, j,
-								tizenrt_ble_srv_database[i].chrc_info[j].read_ptr);
+														tizenrt_ble_srv_database[i].chrc_info[j].read_ptr);
 					return TRBLE_SUCCESS;
 				}
 			}
@@ -157,8 +156,7 @@ trble_result_e rtw_ble_server_att_set_length(trble_attr_handle attr_handle, uint
 
 	for (int i = 0; i < tizenrt_ble_srv_count; i++) {
 		if ((tizenrt_ble_srv_database[i].start_handle < attr_handle) &&
-			(tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle))
-		{
+			(tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle)) {
 			for (int j = 0; j < TIZENRT_MAX_ATTR_NUM; j++) {
 				if (attr_handle == tizenrt_ble_srv_database[i].chrc_info[j].abs_handle) {
 					tizenrt_ble_srv_database[i].chrc_info[j].read_len = new_length;
@@ -181,13 +179,12 @@ uint8_t* rtw_ble_server_att_get_data_ptr(trble_attr_handle attr_handle)
 
 	for (int i = 0; i < tizenrt_ble_srv_count; i++) {
 		if (tizenrt_ble_srv_database[i].start_handle < attr_handle &&
-			tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle)
-		{
+			tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle) {
 			for (int j = 0; j < TIZENRT_MAX_ATTR_NUM; j++) {
 				if (attr_handle == tizenrt_ble_srv_database[i].chrc_info[j].abs_handle) {
 					debug_print("abs_handle 0x%x index 0x%x %p \n", tizenrt_ble_srv_database[i].chrc_info[j].abs_handle,
-								tizenrt_ble_srv_database[i].chrc_info[j].index,
-								tizenrt_ble_srv_database[i].chrc_info[j].data);
+									tizenrt_ble_srv_database[i].chrc_info[j].index,
+									tizenrt_ble_srv_database[i].chrc_info[j].data);
 					return tizenrt_ble_srv_database[i].chrc_info[j].data;
 				}
 			}
@@ -206,13 +203,12 @@ uint16_t rtw_ble_server_att_get_length(trble_attr_handle attr_handle)
 
 	for (int i = 0; i < tizenrt_ble_srv_count; i++) {
 		if (tizenrt_ble_srv_database[i].start_handle < attr_handle &&
-			tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle)
-		{
+			tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle) {
 			for (int j = 0; j < TIZENRT_MAX_ATTR_NUM; j++) {
 				if (attr_handle == tizenrt_ble_srv_database[i].chrc_info[j].abs_handle) {
 					debug_print("abs_handle 0x%x att_index 0x%x %d \n", tizenrt_ble_srv_database[i].chrc_info[j].abs_handle,
-								tizenrt_ble_srv_database[i].chrc_info[j].index,
-								tizenrt_ble_srv_database[i].chrc_info[j].data_len);
+									tizenrt_ble_srv_database[i].chrc_info[j].index,
+									tizenrt_ble_srv_database[i].chrc_info[j].data_len);
 					return tizenrt_ble_srv_database[i].chrc_info[j].data_len;
 				}
 			}
@@ -246,8 +242,7 @@ trble_result_e rtw_ble_server_charact_notify(trble_attr_handle attr_handle, trbl
 
 	for (uint8_t i = 0; i < tizenrt_ble_srv_count; i++) {
 		if (tizenrt_ble_srv_database[i].start_handle < attr_handle &&
-			tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle)
-		{
+			tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle) {
 			app_id = TIZENRT_SRV_ID + i;
 			cha_index = attr_handle - tizenrt_ble_srv_database[i].start_handle;
 		}
@@ -292,8 +287,7 @@ trble_result_e rtw_ble_server_charact_indicate(trble_attr_handle attr_handle, tr
 
 	for (uint8_t i = 0; i < tizenrt_ble_srv_count; i++) {
 		if (tizenrt_ble_srv_database[i].start_handle < attr_handle &&
-			tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle)
-		{
+			tizenrt_ble_srv_database[i].start_handle + tizenrt_ble_srv_database[i].att_count >= attr_handle) {
 			app_id = TIZENRT_SRV_ID + i;
 			cha_index = attr_handle - tizenrt_ble_srv_database[i].start_handle;
 		}
@@ -326,7 +320,7 @@ trble_result_e rtw_ble_server_indicate_queue_cnt(trble_conn_handle *con_handle, 
 	/* The number of element in pending queue should be limited, otherwise
 		the notification of high frequnce will use up memory */
 	if (queue->pending_ele_num >= BT_QUEUE_PENDING_ELEMENT_MAX) {
-		debug_print("Error: Server indicate pending queue full, wait a moment to send data again !!!\r\n");
+		debug_print("Error: GATTS pending queue full, wait a moment to send data again !!!\r\n");
 		return TRBLE_BUSY;
 	}
 
@@ -339,8 +333,7 @@ trble_result_e rtw_ble_server_reject(trble_attr_handle attr_handle, uint8_t app_
 		return TRBLE_INVALID_STATE;
 	}
 
-	if (attr_handle == 0x0000) /* invalid attr_handle */
-	{
+	if (attr_handle == 0x0000) {	/* invalid attr_handle */
 		return TRBLE_NOT_FOUND;
 	}
 
@@ -790,7 +783,7 @@ trble_result_e rtw_ble_server_get_bonded_device(trble_bonded_device_list_s* bond
 		return TRBLE_INVALID_ARGS;
 	}
 
-	if (RTK_BT_OK != rtk_bt_le_sm_get_bond_num((uint8_t *)device_count)){
+	if (RTK_BT_OK != rtk_bt_le_sm_get_bond_num((uint8_t *)device_count)) {
 		debug_print("get bond num failed \n");
 	}
 	debug_print("bonded num : %d \n", *device_count);
@@ -806,12 +799,12 @@ trble_result_e rtw_ble_server_get_bonded_device(trble_bonded_device_list_s* bond
 		return TRBLE_FAIL;
 	}
 	memset(bond_info, 0, (*device_count) * sizeof(rtk_bt_le_bond_info_t));
-	if (RTK_BT_OK != rtk_bt_le_sm_get_bond_info(bond_info, (uint8_t *)device_count)){
+	if (RTK_BT_OK != rtk_bt_le_sm_get_bond_info(bond_info, (uint8_t *)device_count)) {
 		debug_print("get bond info failed \n");
 		osif_mem_free(bond_info);
 		return TRBLE_FAIL;
 	}
-	for (int i = 0; i < (*device_count); i++){
+	for (int i = 0; i < (*device_count); i++) {
 		memcpy(bonded_device_list[i].bd_addr.mac, bond_info[i].remote_addr.addr_val, TRBLE_BD_ADDR_MAX_LEN);
 		bonded_device_list[i].bd_addr.type = bond_info[i].remote_addr.type;
 		debug_print("bond_dev[%d]: bd 0x%02x%02x%02x%02x%02x%02x, addr_type %d \n",

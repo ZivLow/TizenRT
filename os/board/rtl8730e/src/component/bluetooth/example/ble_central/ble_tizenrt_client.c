@@ -20,7 +20,7 @@
 #include <rtk_stack_config.h>
 #include <rtk_stack_gatt.h>
 
-extern rtk_bt_gattc_read_ind_t ble_tizenrt_read_result[GAP_MAX_LINKS];
+extern rtk_bt_gattc_read_ind_t ble_tizenrt_read_result[RTK_BLE_GAP_MAX_LINKS];
 extern rtk_bt_gattc_write_ind_t g_write_result;
 extern rtk_bt_gattc_write_ind_t g_write_no_rsp_result;
 
@@ -44,7 +44,7 @@ trble_result_e rtw_ble_client_init(trble_client_init_config* init_parm)
 	ble_tizenrt_conn_ind = (rtk_bt_le_conn_ind_t *)osif_mem_alloc(0, sizeof(rtk_bt_le_conn_ind_t));
 
 	if (client_init_parm == NULL) {
-	dbg("Memory allocation failed \n");
+		dbg("Memory allocation failed \n");
 		return TRBLE_FAIL;
 	}
 
@@ -197,7 +197,7 @@ trble_result_e rtw_ble_client_start_scan_with_filter(trble_scan_filter* scan_par
 
 	rtk_bt_le_gap_dev_state_t new_state;
 	if (RTK_BT_OK != rtk_bt_le_gap_get_dev_state(&new_state)) {
-		dbg("get dev state fail \n");
+		dbg("Get dev state fail \n");
 	}
 
 	if (new_state.gap_scan_state != GAP_SCAN_STATE_IDLE) {
@@ -211,10 +211,10 @@ trble_result_e rtw_ble_client_start_scan_with_filter(trble_scan_filter* scan_par
 		scan_info.p_filter = scan_parm->raw_data;
 		scan_info.offset = 0;
 		if (RTK_BT_OK != rtk_bt_le_gap_scan_info_filter(&scan_info)) {
-			dbg("set scan info fail !! \n");
+			dbg("Scan set info fail !! \n");
 			return TRBLE_FAIL;
 		} else {
-			dbg("set scan info success \n");
+			dbg("Scan set info success \n");
 		}
 	} else {
 		scan_info.enable = false;
@@ -222,13 +222,13 @@ trble_result_e rtw_ble_client_start_scan_with_filter(trble_scan_filter* scan_par
 		scan_info.p_filter = NULL;
 		scan_info.offset = 0;
 		if (RTK_BT_OK == rtk_bt_le_gap_scan_info_filter(&scan_info)) {
-			dbg("disable scan info filter success \n");
+			dbg("Disable scan info filter success \n");
 		} else {
-			dbg("disable scan info filter fail!!! \n");
+			dbg("Disable scan info filter fail!!! \n");
 		}
 	}
 
-	if (whitelist_enable){
+	if (whitelist_enable) {
 		rtk_bt_le_scan_param_t gap_scan_param;
 		gap_scan_param.type = RTK_BT_LE_SCAN_TYPE_ACTIVE;
 		gap_scan_param.interval = 0x60;
@@ -237,37 +237,32 @@ trble_result_e rtw_ble_client_start_scan_with_filter(trble_scan_filter* scan_par
 		gap_scan_param.filter_policy = RTK_BT_LE_SCAN_FILTER_ALLOW_ONLY_WLST;
 		gap_scan_param.duplicate_opt = RTK_BT_LE_SCAN_DUPLICATE_DISABLE;
 		if (RTK_BT_OK != rtk_bt_le_gap_set_scan_param(&gap_scan_param)) {
-			dbg("set scan param fail \n");
+			dbg("Set scan param fail \n");
 		}
 	}
 	if (RTK_BT_OK != rtk_bt_le_gap_start_scan()) {
-		dbg("start scan failed! \n");
+		dbg("Start scan failed! \n");
 		return TRBLE_FAIL;
 	}
 
 	if (scan_parm->scan_duration != 0) {
 		if (NULL == scan_filter_tmr_handle) {
 			if (!osif_timer_create(&scan_filter_tmr_handle, "scan_with_filter", 0, scan_parm->scan_duration, 0, scan_stop_cb)) {
-				dbg("timer creat fail!! \n");
+				dbg("Scan timer creat fail!! \n");
 				return TRBLE_FAIL;
-			} else {
-				dbg("timer creat success \n");
 			}
 
 			if (!osif_timer_start(&scan_filter_tmr_handle)) {
-				dbg("timer start fail!! \n");
+				dbg("Scan timer start fail!! \n");
 				return TRBLE_FAIL;
-			} else {
-				dbg("timer start success \n");
 			}
 		} else {
 			if (!osif_timer_restart(&scan_filter_tmr_handle, scan_parm->scan_duration)) {
-				dbg("timer restart fail!! \n");
+				dbg("Scan timer restart fail!! \n");
 				return TRBLE_FAIL;
-			} else {
-				dbg("timer restart success \n");
 			}
 		}
+		dbg("Scan timer start success \n");
 	}
 	return TRBLE_SUCCESS;
 }
@@ -276,18 +271,37 @@ trble_result_e rtw_ble_client_stop_scan(void)
 {
 	rtk_bt_le_gap_dev_state_t new_state;
 	if (RTK_BT_OK != rtk_bt_le_gap_get_dev_state(&new_state)) {
-		dbg("get dev state fail \n");
+		dbg("Get dev state fail \n");
 	}
 
 	if (new_state.gap_scan_state != GAP_SCAN_STATE_SCANNING) {
 		return TRBLE_INVALID_STATE;
 	}
 
-	if (RTK_BT_OK != rtk_bt_le_gap_stop_scan()) {
-		dbg("stop scan failed! \n");
-		return TRBLE_FAIL;
+	if (scan_filter_tmr_handle) {
+		if (!osif_timer_stop(&scan_filter_tmr_handle)) {
+			dbg("timer stop fail!! \n");
+		}
 	}
 
+ 	if (RTK_BT_OK != rtk_bt_le_gap_stop_scan()) {
+		dbg("Stop scan failed! \n");
+		return TRBLE_FAIL;
+	}
+	if (!osif_timer_stop(&scan_filter_tmr_handle)) {
+		dbg("Scan timer stop fail!! \n");
+	}
+	return TRBLE_SUCCESS;
+}
+
+trble_result_e rtw_ble_client_delete_scan_timer(void)
+{
+	if (scan_filter_tmr_handle) {
+		if (!osif_timer_delete(&scan_filter_tmr_handle)) {
+			dbg("Scan timer delete fail!! \n");
+			return TRBLE_FAIL;
+		}
+	}
 	return TRBLE_SUCCESS;
 }
 
@@ -400,8 +414,8 @@ trble_result_e rtw_ble_client_read_connected_info(trble_conn_handle conn_handle,
 	}
 
 	if (RTK_BT_OK != rtk_bt_le_gap_get_conn_info((uint8_t)conn_handle, &conn_info)) {
-		dbg("get connenct info failed! \n");
-		return TRBLE_FAIL;
+ 		dbg("get connenct info failed! \n");
+ 		return TRBLE_FAIL;
 	}
 
 	if (RTK_BT_OK != rtk_bt_le_gap_get_mtu_size(conn_handle, &mtu_size)) {
@@ -661,7 +675,7 @@ trble_result_e rtw_ble_client_write_read_queue_cnt(trble_conn_handle* handle, ui
 	/* The number of element in pending queue should be limited, otherwise
 		the notification of high frequnce will use up memory */
 	if (queue->pending_ele_num >= BT_QUEUE_PENDING_ELEMENT_MAX) {
-		debug_print("Error: Client write/read pending queue full, wait a moment to send data again !!!\r\n");
+		dbg("Error: GATTC pending queue full, wait a moment to send data again !!!\r\n");
 		return TRBLE_BUSY;
 	}
 
@@ -778,6 +792,8 @@ trble_result_e rtw_ble_client_operation_enable_notification_and_indication(trble
 trble_result_e rtw_ble_client_deinit(void)
 {
 	ble_tizenrt_central_main(0);
+
+	rtw_ble_client_delete_scan_timer();
 
 	osif_mem_free(client_init_parm);
 	client_init_parm = NULL;

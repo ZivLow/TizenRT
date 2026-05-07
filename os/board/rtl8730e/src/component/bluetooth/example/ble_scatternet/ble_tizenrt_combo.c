@@ -12,12 +12,11 @@
 #include "stddef.h"
 #include <rtk_bt_gattc.h>
 #include <rtk_bt_le_gap.h>
-#include <rtk_client_config.h>
 #include <rtk_stack_config.h>
 #include <bt_utils.h>
 #include <ble_tizenrt_service.h>
 
-extern rtk_bt_gattc_read_ind_t ble_tizenrt_scatternet_read_results[GAP_MAX_LINKS];
+extern rtk_bt_gattc_read_ind_t ble_tizenrt_scatternet_read_results[RTK_BLE_GAP_MAX_LINKS];
 extern rtk_bt_gattc_write_ind_t g_scatternet_write_result;
 extern rtk_bt_gattc_write_ind_t g_scatternet_write_no_rsp_result;
 
@@ -39,8 +38,6 @@ extern int attr_counter;
 
 trble_le_coc_init_config le_coc_init_parm;
 rtk_bt_le_conn_ind_t *ble_tizenrt_scatternet_conn_ind = NULL;
-
-static void *bt_service_add_task_hdl = NULL;
 
 trble_result_e rtw_ble_combo_init(trble_client_init_config* init_client, trble_server_init_config* init_server)
 {
@@ -97,14 +94,16 @@ trble_result_e rtw_ble_combo_init(trble_client_init_config* init_client, trble_s
 		server_init_parm.is_secured_connect_allowed = init_server->is_secured_connect_allowed;
 	}
 
-	ble_tizenrt_scatternet_main(1);
+	ble_scatternet_main(1);
 	is_server_init = true;
 	return TRBLE_SUCCESS;
 }
 
 trble_result_e rtw_ble_combo_deinit(void)
 {
-	ble_tizenrt_scatternet_main(0);
+	ble_scatternet_main(0);
+
+	rtw_ble_client_delete_scan_timer();
 
 	osif_mem_free(client_init_parm);
 	client_init_parm = NULL;
@@ -150,6 +149,7 @@ trble_result_e rtw_ble_combo_set_server_config(trble_server_init_config* init_se
 
 		ble_tizenrt_srv_add();	/* Add service */
 	}
+	return TRBLE_SUCCESS;
 }
 
 #endif /* TRBLE_COMBO_C_ */

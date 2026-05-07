@@ -148,6 +148,8 @@
 //#define RA_RX_ACK_RSSI
 
 #define CONFIG_P2P
+#define COEX_IPC_HST_API_BASIC_SIZE               376
+#define COEX_IPC_DEV_API_BASIC_SIZE               632
 
 /*************************** Config for Gen TxPower Tool *******************************/
 /** VERSION 0: only support extending one EXT PWR_LIMIT table
