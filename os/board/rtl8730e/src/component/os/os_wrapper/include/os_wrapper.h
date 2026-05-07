@@ -213,7 +213,8 @@ extern u32 random_seed;
 /**
  * @brief  General macro definition
  */
-#define RTOS_MAX_DELAY    				0xFFFFFFFFUL
-#define RTOS_MAX_TIMEOUT    			0xFFFFFFFFUL
+#define RTOS_TIMEOUT_NONE				0
+#define RTOS_MAX_DELAY					0xFFFFFFFFUL
+#define RTOS_MAX_TIMEOUT				0xFFFFFFFFUL
 
 #endif //#ifndef __OS_WRAPPER_H__

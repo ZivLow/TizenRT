@@ -29,7 +29,6 @@
 #include <tinyara/irq.h>
 #include <os_wrapper.h>
 #include "rtk_km4log.h"
-#include "osif.h"
 
 /* -------------------------------- Defines --------------------------------- */
 #ifndef CONFIG_RTL8730E_KM4_LOGTASK_PRIO
@@ -60,15 +59,15 @@ static void rtl8730e_km4_logtask(void)
 	static km4log_msg_t event = { 0 };
 
 	/* initialize the queue that will hold the messages */
-	if (!osif_msg_queue_create(&g_km4_log_queue, CONFIG_KM4_MAX_LOG_QUEUE_SIZE, sizeof(km4log_msg_t))) {
-		DBG_8195A("Fail to init km4/np log msg queue\n");
+	if (FAIL == rtos_queue_create(&g_km4_log_queue, CONFIG_KM4_MAX_LOG_QUEUE_SIZE, sizeof(km4log_msg_t))) {
+		dbg("Fail to init km4/np log msg queue\n");
 		g_km4_log_queue = NULL;	// ensure that checking against this handle will be NULL
 		return;
 	}
 
 	while (true) {
 		/* loop and consume an item from the queue to print */
-		if (osif_msg_recv(g_km4_log_queue, &event, 0xFFFFFFFF)) {
+		if (SUCCESS == rtos_queue_receive(g_km4_log_queue, &event, RTOS_MAX_TIMEOUT)) {
 			/* prevent accidental buffer overflow when printf */
 			((uint8_t *)event.buffer)[CONFIG_KM4_MAX_LOG_BUFFER_SIZE - 1] = 0;
 			dbg_noarg("%s", event.buffer);
@@ -92,11 +91,11 @@ void rtl8730e_km4_logtask_initialize(void)
 	if (!initialized) {
 		/* create the log consumption task */
 		if (FAIL == rtos_task_create(&km4_log_task, (const char *)"km4_log_task", (void *)rtl8730e_km4_logtask, NULL, CONFIG_RTL8730E_KM4_LOGTASK_STACK, CONFIG_RTL8730E_KM4_LOGTASK_PRIO)) {
-			printf("Fail to create init km4/np logtask\n");
+			dbg("Fail to create init km4/np logtask\n");
 			return;
 		}
 
-		printf("Logtask init ok!\n");
+		dbg("Logtask init ok!\n");
 		initialized = true;
 	}
 
@@ -118,10 +117,10 @@ void whc_ipc_print_int_hdl(VOID *Data, u32 IrqStatus, u32 ChanNum)
 	DCache_Invalidate((u32)tmp_buffer, ipc_recv_msg->msg_len);
 
 	/* fill the buffer only if the first byte is empty, otherwise SKIP and do not increment counter */
-	if((char)g_whc_ipc_logging_buf[g_whc_ipc_logging_buf_ctr][0] == 0) {
+	if ((char)g_whc_ipc_logging_buf[g_whc_ipc_logging_buf_ctr][0] == 0) {
 		strncpy((char *)g_whc_ipc_logging_buf[g_whc_ipc_logging_buf_ctr], tmp_buffer, ipc_recv_msg->msg_len);
 	} else {
-		DBG_8195A("WARN: KM4 logbuf full, dropped log!\n");
+		dbg("WARN: KM4 logbuf full, dropped log!\n");
 		return;
 	}
 	
@@ -130,9 +129,9 @@ void whc_ipc_print_int_hdl(VOID *Data, u32 IrqStatus, u32 ChanNum)
 	message_event.buffer_len = CONFIG_KM4_MAX_LOG_BUFFER_SIZE;
 
 	/* use mq_send via osif api directly in ISR instead of semaphore-based */
-	if (g_km4_log_queue == NULL || (!osif_msg_send(g_km4_log_queue, &message_event, 0))) {
+	if ((NULL == g_km4_log_queue) || (FAIL == rtos_queue_send(g_km4_log_queue, &message_event, 0))) {
 		/* mixlog queue handle was invalid, or sending to queue failed, clear the memory here. */
-		DBG_8195A("queue hndl is null or send failed\n");
+		dbg("queue hndl is null or send failed\n");
 
 		/* set the first byte to null to cause string to print empty in case this buffer slot is accidentally reused */
 		g_whc_ipc_logging_buf[g_whc_ipc_logging_buf_ctr][0] = 0;
