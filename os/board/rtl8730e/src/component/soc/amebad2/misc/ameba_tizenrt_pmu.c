@@ -302,12 +302,11 @@ void pmu_release_wakelock(uint32_t nDeviceId)
 #endif
 }
 
-#endif
 uint32_t pmu_get_wakelock_status(void)
 {
-	dbg_noarg("%s not implemented yet!\n",__func__);
-	return 0;
+	return wakelock;
 }
+#endif
 
 uint32_t pmu_set_sleep_type(uint32_t type)
 {
