@@ -181,7 +181,11 @@ void  cancel_timer_ex(struct timer_list *timer)
 
 	if (plist == &timer_table) {
 		RTK_LOGS(TAG, RTK_LOG_ERROR, "CancelTimer Fail(%x)\n", (unsigned int)timer->timer_hdl);
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+	} else if (rtos_timer_is_timer_active(timer->timer_hdl) == TRUE) {
+#else
 	} else {
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 		rtos_timer_stop(timer->timer_hdl, RTOS_TIMER_MAX_DELAY);
 	}
 }
