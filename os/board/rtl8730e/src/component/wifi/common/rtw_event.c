@@ -50,10 +50,13 @@ extern int join_fail_reason;
 extern struct internal_block_param *join_block_param;
 extern void (*p_wifi_join_info_free)(u8 iface_type);
 extern void eap_disconnected_hdl(void);
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
+/* Not used by TizenRT */
 #if !defined(CONFIG_MP_SHRINK) && defined (CONFIG_WHC_HOST)
 extern u8 wifi_cast_get_initialized(void);
 extern void wifi_cast_wifi_join_status_ev_hdl(u8 *evt_info);
 #endif
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #if defined(CONFIG_WHC_HOST) && !defined(CONFIG_PLATFORM_ZEPHYR) && !defined(CONFIG_MP_SHRINK) && defined(CONFIG_RMESH_EN)
 extern void wtn_zrpp_get_ap_info_evt_hdl(u8 *evt_info);
 #endif
@@ -205,11 +208,14 @@ void wifi_event_join_status_internal_hdl(u8 *evt_info)
 	rtw_reconn_join_status_hdl(evt_info);
 #endif
 
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
+/* Not used by TizenRT */
 #if defined(CONFIG_WHC_HOST) && !defined(CONFIG_PLATFORM_ZEPHYR)
 	if (wifi_cast_get_initialized()) {
 		wifi_cast_wifi_join_status_ev_hdl(evt_info);
 	}
 #endif
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #else
 	UNUSED(evt_info);
 #endif
