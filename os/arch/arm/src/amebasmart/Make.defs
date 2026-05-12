@@ -290,6 +290,9 @@ ifeq ($(CONFIG_SMP),y)
 CHIP_CSRCS += amebasmart_smp.c
 endif
 
+# EXTRA_LIBS start
+EXTRA_LIBS += --whole-archive
+
 # trustzone library
 ifeq ($(CONFIG_ARCH_FPU),y)
 #EXTRA_LIBS += ${TOPDIR}/board/
@@ -309,4 +312,7 @@ else
 #EXTRA_LIBS += $(TOPDIR)/board/
 endif
 endif
+
+# EXTRA_LIBS end
+EXTRA_LIBS += --no-whole-archive
 
