@@ -136,3 +136,25 @@ void rtk_bt_trace_log_close(void)
 	LOGUART_AGGPathCmd(LOGUART_DEV, LOGUART_PATH_INDEX_3, DISABLE);
 #endif
 }
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+static uint8_t bt_log_level = BT_LOG_LEVEL_ALWAYS;
+void rtk_tizenrt_bt_log_level(uint8_t level)
+{
+	bt_log_level = level;
+}
+
+void rtk_tizenrt_bt_print(uint8_t level, const char *fmt, ...)
+{
+	if (level <= bt_log_level) {
+		u8 tmp_buffer[256] = { 0 };
+		va_list arglist;
+
+		va_start(arglist, fmt);
+		vsnprintf((char *)tmp_buffer, sizeof(tmp_buffer), fmt, arglist);
+		va_end(arglist);
+
+		dbg_noarg("%s", tmp_buffer);
+	}
+}
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS

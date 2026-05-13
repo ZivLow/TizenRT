@@ -10,6 +10,9 @@
 #include <diag.h>
 #include <log.h>
 #include <osif.h>
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#include <debug.h>
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 #define BT_LOG_USE_MUTEX 0
 
@@ -57,9 +60,17 @@ extern void *bt_log_mtx;
         }\
     }while(0)
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+void rtk_tizenrt_bt_log_level(uint8_t level);
+void rtk_tizenrt_bt_print(uint8_t level, const char *fmt, ...);
+#define BT_LOGA(fmt,...)  rtk_tizenrt_bt_print(BT_LOG_LEVEL_ALWAYS, fmt, ##__VA_ARGS__)
+#define BT_LOGE(fmt,...)  rtk_tizenrt_bt_print(BT_LOG_LEVEL_ERROR, fmt, ##__VA_ARGS__)
+#define BT_LOGD(fmt,...)  rtk_tizenrt_bt_print(BT_LOG_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
+#else
 #define BT_LOGA(fmt,...)  BT_LOG_PRINTS(BT_LOG_LEVEL_ALWAYS, fmt, ##__VA_ARGS__)
 #define BT_LOGE(fmt,...)  BT_LOG_PRINTS(BT_LOG_LEVEL_ERROR, fmt, ##__VA_ARGS__)
 #define BT_LOGD(fmt,...)  BT_LOG_PRINTS(BT_LOG_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 /* [60344458] 01 02 0a 0b ...*/
 #define BT_DUMPD(_str, _buf, _len) BT_BUF_PRINT(BT_LOG_LEVEL_DEBUG, _str, _buf, _len)
