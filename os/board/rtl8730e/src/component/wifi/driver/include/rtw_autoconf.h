@@ -89,12 +89,15 @@
 
 
 /************************ For EAP auth configurations *************************/
+/* TizenRT customization: Do not support EAP */
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 /* wpa_supplicant_std handles EAP configuration in its own config.
  * Do not include autoconf_eap.h to avoid configuration conflicts.
  */
 #ifndef CONFIG_WPA_STD
 #include "autoconf_eap.h"
 #endif
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 /************************ For EAP auth configurations *************************/
 /* KVR macro is default opened, but actually not working. To use it, need turn on the switch in menuconfig */
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
