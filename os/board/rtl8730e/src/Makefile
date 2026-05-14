@@ -186,6 +186,7 @@ CFLAGS += -I$(DIR_OSDEP)/include
 CFLAGS += -I$(COMPONENT_DIR)/os/tizenrt
 CFLAGS += -I$(DIR_MBED)
 CFLAGS += -I$(DIR_WIFI)/wpa_supplicant/wpa_lite
+CFLAGS += -I$(DIR_WIFI)/wpa_supplicant/wpa_lite/rom
 CFLAGS += -I$(COMPONENT_DIR)/mbed/api
 CFLAGS += -I$(COMPONENT_DIR)/mbed/hal
 CFLAGS += -I$(COMPONENT_DIR)/mbed/hal_ext
