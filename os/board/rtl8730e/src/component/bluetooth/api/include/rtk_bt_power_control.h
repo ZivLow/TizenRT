@@ -61,4 +61,13 @@ void rtk_bt_power_save_deinit(void);
 }
 #endif
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#ifdef CONFIG_PM
+void rtk_tizenrt_bt_pm_suspend(unsigned int milliseconds);
+void rtk_tizenrt_bt_pm_resume(void);
+void rtk_tizenrt_bt_pm_init(void);
+void rtk_tizenrt_bt_pm_deinit(void);
+#endif //#ifdef CONFIG_PM
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
+
 #endif /* __RTK_BT_POWER_CONTROL_H__ */

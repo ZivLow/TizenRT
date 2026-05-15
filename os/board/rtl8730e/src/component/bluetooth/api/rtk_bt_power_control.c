@@ -15,13 +15,70 @@
 #include "rtk_bt_power_control.h"
 #include "ameba_soc.h"
 #ifdef CONFIG_PM
+#include <tinyara/pm/pm.h>
 #include "ameba_tizenrt_pmu.h"
-#endif
+#endif //#ifdef CONFIG_PM
 
 /* This file has been modified for TizenRT only RTK related code has been removed */
 
 rtk_bt_ps_callback rtk_bt_suspend_callback = NULL;
 rtk_bt_ps_callback rtk_bt_resume_callback = NULL;
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#ifdef CONFIG_PM
+struct pm_domain_s *rtk_ble_domain = NULL;
+
+void rtk_tizenrt_bt_pm_suspend(unsigned int milliseconds)
+{
+	if (rtk_ble_domain == NULL) {
+		BT_LOGE("BLE PM DOMAIN not init \r\n");
+		return;
+	}
+
+	if (pm_timedsuspend(rtk_ble_domain, milliseconds) != 0) {
+		BT_LOGE("Unable to perform PM suspend for %dms for BLE domain \r\n", milliseconds);
+	}
+}
+
+void rtk_tizenrt_bt_pm_resume(void)
+{
+	if (rtk_ble_domain == NULL) {
+		BT_LOGE("BLE PM DOMAIN not init \r\n");
+		return;
+	}
+
+	if (pm_resume(rtk_ble_domain) != 0) {
+		BT_LOGE("Unable to perform PM resume for BLE domain  \r\n");
+	}
+}
+
+void rtk_tizenrt_bt_pm_init(void)
+{
+	/* Register PM_BLE_DOMAIN and Perform 10 minutes timedsuspend */
+	rtk_ble_domain = pm_domain_register("BLE");
+	if (rtk_ble_domain < 0) {
+		BT_LOGA("Unable to register BLE PM DOMAIN \r\n");
+	} else {
+		BT_LOGA("Registered BLE PM DOMAIN \r\n");
+	}
+}
+
+void rtk_tizenrt_bt_pm_deinit(void)
+{
+	if (rtk_ble_domain == NULL) {
+		BT_LOGE("BLE PM DOMAIN not init \r\n");
+		return;
+	}
+
+	if (pm_domain_unregister(rtk_ble_domain)) {
+		rtk_ble_domain = NULL;
+		BT_LOGA("Unable to unregister BLE PM DOMAIN \r\n");
+	} else {
+		BT_LOGA("Unregister BLE PM DOMAIN \r\n");
+	}
+}
+#endif //#ifdef CONFIG_PM
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 _WEAK void hci_platform_force_uart_rts(bool op)
 {
@@ -39,7 +96,7 @@ static bool rtk_bt_get_wakelock_status(void)
 	} else {
 		return false;   //Already release bt wake lock
 	}
-#endif
+#endif //#ifdef CONFIG_PM
 	return false;       //Already acquire bt wake lock
 }
 
@@ -52,7 +109,7 @@ void rtk_bt_release_wakelock(void)
 	} else {
 		BT_LOGD("[BT_PS] already release PMU_BT_DEVICE\r\n");
 	}
-#endif
+#endif //#ifdef CONFIG_PM
 }
 
 void rtk_bt_acquire_wakelock(void)
@@ -64,7 +121,7 @@ void rtk_bt_acquire_wakelock(void)
 	} else {
 		BT_LOGD("[BT_PS] already acquire PMU_BT_DEVICE\r\n");
 	}
-#endif
+#endif //#ifdef CONFIG_PM
 }
 
 static void rtk_bt_enable_bt_wake_host(void)
@@ -141,7 +198,7 @@ void rtk_bt_power_save_init(rtk_bt_ps_callback p_suspend_callback, rtk_bt_ps_cal
 	pmu_register_sleep_callback(PMU_BT_DEVICE, (PSM_HOOK_FUN)rtk_bt_suspend, NULL, (PSM_HOOK_FUN)rtk_bt_resume, NULL);
 
 	InterruptRegister((IRQ_FUN)rtk_bt_wake_host_irq_handler, BT_WAKE_HOST_IRQ, (u32)NULL, INT_PRI_LOWEST);
-#endif
+#endif //#ifdef CONFIG_PM
 }
 
 void rtk_bt_power_save_deinit(void)
@@ -152,6 +209,6 @@ void rtk_bt_power_save_deinit(void)
 	pmu_unregister_sleep_callback(PMU_BT_DEVICE);
 	rtk_bt_suspend_callback = NULL;
 	rtk_bt_resume_callback = NULL;
-#endif
+#endif //#ifdef CONFIG_PM
 }
 #endif
