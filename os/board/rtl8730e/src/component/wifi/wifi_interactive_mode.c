@@ -145,7 +145,7 @@ static int _get_ap_security_mode(IN char *ssid, OUT u32 *security_mode, OUT u8 *
 	memset(&wifi, 0, sizeof(wifi));
 
 	memset(&scan_param, 0, sizeof(struct rtw_scan_param));
-	scan_param.ssid = ssid;
+	scan_param.ssid = (u8 *)ssid;
 	scanned_ap_num = wifi_scan_networks(&scan_param, 1);
 
 	if (scanned_ap_num <= 0) {

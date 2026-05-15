@@ -611,16 +611,16 @@ trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_
 		if (g_netmgr_init) {
 			union rtw_traffic_stats traffic_stats = {0};
 			union rtw_phy_stats phy_stats = {0};
-			struct rtw_wifi_setting wifi_setting = {0};
+			struct rtw_wifi_setting wifi_setting_local = {0};
 			u32 tx_rty = 0;
 #ifndef CONFIG_ENABLE_HOMELYNK
 			if (wifi_is_running(SOFTAP_WLAN_INDEX)) {
-				if (wifi_get_setting(SOFTAP_WLAN_INDEX, &wifi_setting) < 0) {
+				if (wifi_get_setting(SOFTAP_WLAN_INDEX, &wifi_setting_local) < 0) {
 					/* Failed to get channel */
 					signal_quality->channel = 0;
 				}
 				else {
-					signal_quality->channel = wifi_setting.channel;
+					signal_quality->channel = wifi_setting_local.channel;
 				}
 				ret = wifi_get_traffic_stats(SOFTAP_WLAN_INDEX, &traffic_stats);
 				if (ret != RTK_SUCCESS) {
@@ -655,12 +655,12 @@ trwifi_result_e wifi_netmgr_utils_get_signal_quality(struct netdev *dev, trwifi_
 						memcpy(&signal_quality->snr, &phy_stats.sta.snr, sizeof(signed char));
 						signal_quality->max_rate = (unsigned int)phy_stats.sta.supported_max_rate;
 					}
-					if (wifi_get_setting(STA_WLAN_INDEX, &wifi_setting) < 0) {
+					if (wifi_get_setting(STA_WLAN_INDEX, &wifi_setting_local) < 0) {
 						/* Failed to get channel */
 						signal_quality->channel = 0;
 					}
 					else {
-						signal_quality->channel = wifi_setting.channel;
+						signal_quality->channel = wifi_setting_local.channel;
 					}
 					signal_quality->network_bw = wifi_get_current_bw();
 				}
