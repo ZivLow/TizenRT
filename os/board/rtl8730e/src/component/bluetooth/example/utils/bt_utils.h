@@ -20,11 +20,6 @@ extern "C"
 {
 #endif
 
-#ifdef CONFIG_PLATFORM_TIZENRT_OS
-#include <debug.h>
-#define debug_print blevdbg
-#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
-
 #if defined(CONFIG_ATCMD_HOST_CONTROL) && CONFIG_ATCMD_HOST_CONTROL
 #define BT_AT_SYNC      (1)
 #endif

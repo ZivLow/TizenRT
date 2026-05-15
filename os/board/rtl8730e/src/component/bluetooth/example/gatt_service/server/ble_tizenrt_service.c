@@ -30,7 +30,7 @@ bool ble_tizenrt_set_server_reject(trble_attr_handle abs_handle, uint8_t app_err
 			for (int j = 0; j < TIZENRT_MAX_ATTR_NUM; j++) {
 				if (abs_handle == tizenrt_ble_srv_database[i].chrc_info[j].abs_handle) {
 					tizenrt_ble_srv_database[i].chrc_info[j].app_reject = ATT_ERR | app_errorcode;
-					debug_print("abs_handle = 0x%x app_reject = 0x%x \n", abs_handle,
+					BT_LOGD("abs_handle = 0x%x app_reject = 0x%x \r\n", abs_handle,
 												tizenrt_ble_srv_database[i].chrc_info[j].app_reject);
 					 return true;
 				}
@@ -49,9 +49,9 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 	case RTK_BT_GATTS_EVT_REGISTER_SERVICE: {
 		rtk_bt_gatts_reg_ind_t* data = (rtk_bt_gatts_reg_ind_t *)p_data;
 		if (data->reg_status == RTK_BT_OK)
-			debug_print("[APP] ble tizenrt service register succeed \r\n");
+			BT_LOGD("BLE Tizenrt service register succeed \r\n");
 		else
-			debug_print("[APP] ble tizenrt service register failed \r\n");
+			BT_LOGE("BLE Tizenrt service register failed \r\n");
 		break;
 	}
 
@@ -67,21 +67,21 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 		}
 
 		if (p_cccd_ind->value & RTK_BT_GATT_CCC_NOTIFY) {
-			dbg("[APP] BLE tizenrt notify cccd, notify bit enable\r\n");
+			BT_LOGA("BLE Tizenrt notify cccd, notify bit enable \r\n");
 		} else {
-			dbg("[APP] BLE tizenrt notify cccd, notify bit disable\r\n");
+			BT_LOGA("BLE Tizenrt notify cccd, notify bit disable \r\n");
 		}
 
 		if (p_cccd_ind->value & RTK_BT_GATT_CCC_INDICATE) {
-			dbg("[APP] BLE tizenrt indicate cccd, indicate bit enable\r\n");
+			BT_LOGA("BLE Tizenrt indicate cccd, indicate bit enable \r\n");
 		} else {
-			dbg("[APP] BLE tizenrt indicate cccd, indicate bit disable\r\n");
+			BT_LOGA("BLE Tizenrt indicate cccd, indicate bit disable \r\n");
 		}
 
 		if (p_cha_info->cb) {
 			p_cha_info->cb(TRBLE_ATTR_CB_CCCD, p_cccd_ind->conn_handle, p_cha_info->abs_handle, p_cha_info->arg, p_cccd_ind->value, 0);
 		} else {
-			debug_print("NULL read callback abs_handle 0x%x \n", p_cha_info->abs_handle);
+			BT_LOGD("NULL read callback abs_handle 0x%x \r\n", p_cha_info->abs_handle);
 		}
 		break;
 	}
@@ -89,9 +89,9 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 	case RTK_BT_GATTS_EVT_NOTIFY_COMPLETE_IND: {
 		rtk_bt_gatts_ntf_and_ind_ind_t *p_ntf_ind = (rtk_bt_gatts_ntf_and_ind_ind_t*)p_data;
 		if (RTK_BT_OK == p_ntf_ind->err_code)
-			dbg("[APP] BLE tizenrt notify succeed!\r\n");
+			BT_LOGA("BLE Tizenrt notify succeed! \r\n");
 		else
-			dbg("[APP] BLE tizenrt notify failed, local error: %d\r\n", p_ntf_ind->err_code);
+			BT_LOGE("BLE Tizenrt notify failed, local error: %d \r\n", p_ntf_ind->err_code);
 		break;
 	}
 
@@ -107,7 +107,7 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 		}
 
 		if (p_cha_info == NULL) {
-			dbg("[APP] p_cha_info is null\r\n");
+			BT_LOGE("p_cha_info is null \r\n");
 			break;
 		}
 
@@ -121,13 +121,13 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 													p_cha_info->abs_handle, p_cha_info->arg, p_ind_ind->err_code, queue->pending_ele_num);
 
 		} else {
-			debug_print("NULL read callback abs_handle 0x%x \n", p_cha_info->abs_handle);
+			BT_LOGD("NULL read callback abs_handle 0x%x \r\n", p_cha_info->abs_handle);
 		}
 
 		if (RTK_BT_OK == p_ind_ind->err_code)
-			dbg("[APP] BLE tizenrt indication succeed!\r\n");
+			BT_LOGA("BLE tizenrt indication succeed! \r\n");
 		else
-			dbg("[APP] BLE tizenrt indication failed, local error: %d\r\n", p_ind_ind->err_code);
+			BT_LOGE("BLE tizenrt indication failed, local error: %d \r\n", p_ind_ind->err_code);
 		break;
 	}
 
@@ -143,11 +143,11 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 		}
 
 		if (p_cha_info == NULL) {
-			dbg("[APP] p_cha_info is null\r\n");
+			BT_LOGE("p_cha_info is null \r\n");
 			break;
 		}
 
-		debug_print("app_id 0x%x index 0x%x abs_handle 0x%x \n",
+		BT_LOGD("app_id 0x%x index 0x%x abs_handle 0x%x \r\n",
 						tizenrt_ble_srv_database[srv_index].app_id,
 						p_cha_info->index,
 						p_cha_info->abs_handle);
@@ -164,13 +164,13 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 
 		for (i = 0; i < 3; i++) {
 			if (RTK_BT_OK == rtk_bt_gatts_read_resp(&read_resp)) {
-				debug_print("[APP] BLE tizenrt respond for client read success, offset: %d\r\n", p_read_ind->offset);
+				BT_LOGD("BLE Tizenrt respond for client read success, offset: %d \r\n", p_read_ind->offset);
 				break;
 			}
 			osif_delay(50);
 		}
 		if (i >= 3) {
-			debug_print("[APP] BLE tizenrt respond for client read failed!\r\n");
+			BT_LOGE("BLE Tizenrt respond for client read failed! \r\n");
 		}
 
 		/* call user defined callback */
@@ -179,7 +179,7 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 			p_func(TRBLE_ATTR_CB_READING, p_read_ind->conn_handle,
 					p_cha_info->abs_handle, p_cha_info->arg, 0, 0);
 		} else {
-			debug_print("NULL read callback abs_handle 0x%x \n", p_cha_info->abs_handle);
+			BT_LOGD("NULL read callback abs_handle 0x%x \r\n", p_cha_info->abs_handle);
 		}
 		break;
 	}
@@ -196,23 +196,22 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 		}
 
 		if (p_cha_info == NULL) {
-			dbg("[APP] p_cha_info is null\r\n");
+			BT_LOGE("p_cha_info is null \r\n");
 			break;
 		}
 
 		p_cha_info->data_len = p_write_ind->len;
 		memcpy(p_cha_info->data, p_write_ind->value, p_write_ind->len);
 
-		debug_print("app_id 0x%x Attribute 0x%x write_type %d len %d data 0x \n",
+		BT_LOGD("app_id 0x%x Attribute 0x%x write_type %d len %d data 0x \r\n",
 						tizenrt_ble_srv_database[srv_index].app_id,
 						p_cha_info->abs_handle,
 						p_write_ind->type,
 						p_cha_info->data_len);
 		for (i = 0; i < p_cha_info->data_len; i++) {
-			debug_print("%x", *(p_cha_info->data + i));
+			BT_LOGD("%x", *(p_cha_info->data + i));
 		}
-		switch (p_write_ind->type)
-		{
+		switch (p_write_ind->type) {
 		case RTK_BT_GATTS_WRITE_REQ: {
 			/* call user defined callback */
 			if (p_cha_info->cb) {
@@ -220,7 +219,7 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 				p_func(TRBLE_ATTR_CB_WRITING, p_write_ind->conn_handle,
 														p_cha_info->abs_handle, p_cha_info->arg, 0, 0);
 			} else {
-				debug_print("NULL write callback abs_handle 0x%x \n", p_cha_info->abs_handle);
+				BT_LOGD("NULL write callback abs_handle 0x%x \r\n", p_cha_info->abs_handle);
 			}
 			break;
 		}
@@ -232,7 +231,7 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 				p_func(TRBLE_ATTR_CB_WRITING_NO_RSP, p_write_ind->conn_handle,
 														p_cha_info->abs_handle, p_cha_info->arg, 0, 0);
 			} else {
-				debug_print("NULL write callback abs_handle 0x%x \n", p_cha_info->abs_handle);
+				BT_LOGD("NULL write callback abs_handle 0x%x \r\n", p_cha_info->abs_handle);
 			}
 			break;
 		}
@@ -250,13 +249,13 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 
 		for (i = 0; i < 3; i++) {
 			if (RTK_BT_OK == rtk_bt_gatts_write_resp(&write_resp)) {
-				debug_print("[APP] respond for client write success\r\n");
+				BT_LOGD("Respond for client write success\r\n");
 				break;
 			}
 			osif_delay(10);
 		}
 		if (i >= 3)
-			dbg("[APP] respond for client write failed!\r\n");
+			BT_LOGE("Respond for client write failed!\r\n");
 		break;
 	}
 
@@ -306,7 +305,7 @@ static int setup_ble_srv_dec_add_attr(rtk_bt_gatt_attr_t *attr, uint8_t profile_
 	}
 	struct bt_uuid_16 * attuuid = (struct bt_uuid_16 *)osif_mem_alloc(RAM_TYPE_DATA_ON, sizeof(struct bt_uuid_16));
 	if (!attuuid) {
-		debug_print("[%s]malloc attuuid fail\r\n", __func__);
+		BT_LOGE("Malloc attuuid fail \r\n");
 		return -1;
 	}
 	memset(attuuid, 0, sizeof(struct bt_uuid_16));
@@ -376,7 +375,7 @@ static int setup_ble_char_ccc_add_attr(rtk_bt_gatt_attr_t *attr, uint8_t profile
 {
 	struct bt_uuid_16 * attuuid = (struct bt_uuid_16 *)osif_mem_alloc(RAM_TYPE_DATA_ON, sizeof(struct bt_uuid_16));
 	if (!attuuid) {
-		debug_print("[%s]malloc attuuid fail\r\n", __func__);
+		BT_LOGE("Malloc attuuid fail\r\n");
 		return -1;
 	}
 	memset(attuuid, 0, sizeof(struct bt_uuid_16));
@@ -447,7 +446,7 @@ trble_result_e tizenrt_add_service(uint8_t index, uint16_t app_id)
 	}
 
 	ble_tizenrt_srv.attrs = ble_tizenrt_attrs_ptr;
-	debug_print("tizenrt_ble_srv_database[%d].abs_handle = %d tizenrt_attr_tbl_size = %d start_handle = 0x%x \n",
+	BT_LOGD("tizenrt_ble_srv_database[%d].abs_handle = %d tizenrt_attr_tbl_size = %d start_handle = 0x%x \r\n",
 					index,
 					tizenrt_ble_srv_database[index].abs_handle,
 					ble_tizenrt_srv.attr_count * sizeof(T_ATTRIB_APPL),
@@ -457,12 +456,12 @@ trble_result_e tizenrt_add_service(uint8_t index, uint16_t app_id)
 	int ret = rtk_bt_gatts_register_service(&ble_tizenrt_srv_array_ptr[app_id]);
 
 	if (RTK_BT_OK != ret) {
-		dbg("add service fail \n");
+		BT_LOGE("Add service fail \r\n");
 		ble_tizenrt_free_srv_info(&ble_tizenrt_srv);
 		return TRBLE_FAIL;
 	}
 	tizenrt_ble_srv_database[index].app_id = app_id;
-	debug_print("add service success \n");
+	BT_LOGD("Add service success \r\n");
 	ble_tizenrt_free_srv_info(&ble_tizenrt_srv);
 	return TRBLE_SUCCESS;
 }
@@ -481,7 +480,7 @@ bool setup_ble_srv_info(uint8_t service_index, trble_gatt_t *profile)
 	tizenrt_ble_srv_database[service_index].att_count++;
 	tizenrt_ble_srv_database[service_index].abs_handle = abs_att_count++;
 
-	debug_print("tizenrt_ble_srv_database[%d].abs_handle = 0x%x \n",
+	BT_LOGD("tizenrt_ble_srv_database[%d].abs_handle = 0x%x \r\n",
 					service_index, tizenrt_ble_srv_database[service_index].abs_handle);
 	return true;
 }
@@ -505,7 +504,7 @@ bool setup_ble_char_info(uint8_t service_index, uint8_t character_index, trble_g
 	tizenrt_ble_srv_database[service_index].chrc_info[character_index].read_len = 0;
 	tizenrt_ble_srv_database[service_index].chrc_info[character_index].data = tizenrt_ble_write_value;
 	tizenrt_ble_srv_database[service_index].chrc_info[character_index].data_len = 0;
-	debug_print("tizenrt_ble_srv_database[%d].chrc_info[%d].abs_handle 0x%x .cb %p .index %d \n",
+	BT_LOGD("tizenrt_ble_srv_database[%d].chrc_info[%d].abs_handle 0x%x .cb %p .index %d \r\n",
 					service_index,
 					character_index,
 					tizenrt_ble_srv_database[service_index].chrc_info[character_index].abs_handle,
@@ -525,7 +524,7 @@ static int setup_ble_char_ccc_attr(T_ATTRIB_APPL *attr, uint16_t cccd, uint16_t 
 	attr->value_len = 2;
 	attr->p_value_context = NULL;
 	attr->permissions = GATT_PERM_READ | GATT_PERM_WRITE;
-	debug_print("cccd = 0x%x \n", cccd);
+	BT_LOGD("CCCD = 0x%x \r\n", cccd);
 	return 0;
 }
 
@@ -559,15 +558,15 @@ static int setup_ble_char_val_attr(T_ATTRIB_APPL *attr, uint8_t *uuid, uint8_t p
 	if (uuid_length == 16) {
 		attr->flags = ATTRIB_FLAG_UUID_128BIT | ATTRIB_FLAG_VALUE_APPL;
 		memcpy(attr->type_value, uuid, 16);
-		debug_print("char_val_uuid 0x \n");
+		BT_LOGD("char_val_uuid 0x \r\n");
 		for (uint16_t i = 0; i < 16; i++)
-			debug_print("%x", attr->type_value[i]);
-		debug_print(" permission = 0x%x \n", attr->permissions);
+			BT_LOGD("%x", attr->type_value[i]);
+		BT_LOGD(" Permission = 0x%x \r\n", attr->permissions);
 	} else {
 		attr->flags = ATTRIB_FLAG_VALUE_APPL;
 		attr->type_value[0] = uuid[0];
 		attr->type_value[1] = uuid[1];
-		debug_print("char_val_uuid = 0x%x%x \n", uuid[0], uuid[1]);
+		BT_LOGD("char_val_uuid = 0x%x%x \r\n", uuid[0], uuid[1]);
 	}
 	attr->value_len = 0;
 	attr->p_value_context = NULL;
@@ -584,7 +583,7 @@ static int setup_ble_char_dec_attr(T_ATTRIB_APPL *attr, uint8_t *uuid, uint8_t p
 	attr->value_len = 1;
 	attr->p_value_context = NULL;
 	attr->permissions = GATT_PERM_READ;
-	debug_print("set characteristic declartion \n");
+	BT_LOGD("Set characteristic declartion \r\n");
 	return 0;
 }
 
@@ -596,16 +595,16 @@ static int setup_ble_service_attr(T_ATTRIB_APPL *attr, uint8_t *uuid, uint16_t u
 		attr->flags = ATTRIB_FLAG_LE | ATTRIB_FLAG_VOID;
 		attr->p_value_context = uuid;
 		attr->value_len = uuid_length;
-		debug_print("srv_uuid 0x \n");
+		BT_LOGD("srv_uuid 0x \r\n");
 		for (uint16_t i = 0; i < 16; i++)
-			debug_print("%x", *(((uint8_t *)attr->p_value_context)+i));
+			BT_LOGD("%x", *(((uint8_t *)attr->p_value_context)+i));
 	} else {
 		attr->flags = ATTRIB_FLAG_LE | ATTRIB_FLAG_VALUE_INCL;
 		attr->type_value[2] = uuid[0];		/* value */
 		attr->type_value[3] = uuid[1];
 		attr->value_len = 2;
 		attr->p_value_context = NULL;
-		debug_print("srv_uuid 0x%x%x \n", uuid[0], uuid[1]);
+		BT_LOGD("srv_uuid 0x%x%x \r\n", uuid[0], uuid[1]);
 	}
 
 	attr->permissions = GATT_PERM_READ;
@@ -615,7 +614,7 @@ static int setup_ble_service_attr(T_ATTRIB_APPL *attr, uint8_t *uuid, uint16_t u
 extern uint16_t server_profile_count;
 bool parse_service_table(trble_gatt_t *profile, uint16_t profile_count)
 {
-	debug_print("tizenrt_ble_service_tbl profile %p profile_count %d \n", profile, profile_count);
+	BT_LOGD("tizenrt_ble_service_tbl profile %p profile_count %d \r\n", profile, profile_count);
 	abs_att_count = 0;
 	uint8_t srv_index = 0;
 	uint8_t char_index = 0;
@@ -623,7 +622,7 @@ bool parse_service_table(trble_gatt_t *profile, uint16_t profile_count)
 		if (profile[i].type ==  TRBLE_GATT_SERVICE) {
 			srv_index = tizenrt_ble_srv_count++;	/* add the service counter */
 			char_index = 0;		/* clr the char_index when begain parse a new service */
-			debug_print("Parse service decleration \n");
+			BT_LOGD("Parse service decleration \r\n");
 			setup_ble_srv_info(srv_index, &profile[i]);
 		} else if (profile[i].type ==  TRBLE_GATT_CHARACT) {
 			setup_ble_char_info(srv_index, char_index, &profile[i]);
@@ -633,8 +632,8 @@ bool parse_service_table(trble_gatt_t *profile, uint16_t profile_count)
 			char_index++;
 		}
 	}
-	debug_print("tizenrt_ble_srv_count = %d \n", tizenrt_ble_srv_count);
-	debug_print("Init Success \n");
+	BT_LOGD("tizenrt_ble_srv_count = %d \r\n", tizenrt_ble_srv_count);
+	BT_LOGD("Init Success \r\n");
 	return true;
 }
 

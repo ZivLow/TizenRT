@@ -15,6 +15,7 @@
 #include <rtk_stack_config.h>
 #include <bt_utils.h>
 #include <ble_tizenrt_service.h>
+#include <bt_debug.h>
 
 extern rtk_bt_gattc_read_ind_t ble_tizenrt_scatternet_read_results[RTK_BLE_GAP_MAX_LINKS];
 extern rtk_bt_gattc_write_ind_t g_scatternet_write_result;
@@ -42,6 +43,7 @@ rtk_bt_le_conn_ind_t *ble_tizenrt_scatternet_conn_ind = NULL;
 trble_result_e rtw_ble_combo_init(trble_client_init_config* init_client, trble_server_init_config* init_server)
 {
 	if (init_client == NULL) {
+		BT_LOGE("Client is not init \r\n");
 		return TRBLE_FAIL;
 	} else if (is_server_init != false || client_init_parm != NULL) {
 		return TRBLE_INVALID_STATE;
@@ -49,13 +51,13 @@ trble_result_e rtw_ble_combo_init(trble_client_init_config* init_client, trble_s
 
 	client_init_parm = (trble_client_init_config *)osif_mem_alloc(0, sizeof(trble_client_init_config));
 	if (client_init_parm == NULL) {
-		debug_print("Memory allocation failed \n");
+		BT_LOGE("Memory allocation failed \r\n");
 		return TRBLE_FAIL;
 	}
 
 	ble_tizenrt_scatternet_conn_ind = (rtk_bt_le_conn_ind_t *)osif_mem_alloc(0, sizeof(rtk_bt_le_conn_ind_t));
 	if (ble_tizenrt_scatternet_conn_ind == NULL) {
-		debug_print("Memory allocation failed \n");
+		BT_LOGE("Memory allocation failed \r\n");
 		return TRBLE_FAIL;
 	}
 
@@ -127,7 +129,7 @@ trble_result_e rtw_ble_combo_set_server_config(trble_server_init_config* init_se
 	uint16_t gatt_char_num = 0;
 
 	if (false == is_server_init) {
-		dbg("[APP] Server is not init\r\n");
+		BT_LOGE("Server is not init \r\n");
 		return TRBLE_FAIL;
 	}
 
