@@ -37,16 +37,21 @@
 /*msg q task*/
 #define CONFIG_INIC_IPC_MSG_Q_PRI	(6)
 #if defined(CONFIG_WHC_HOST)
-#define WIFI_STACK_SIZE_INIC_MSG_Q	(608 + 128 + CONTEXT_SAVE_SIZE) /* max 600 in smart */
+#define WIFI_STACK_SIZE_INIC_MSG_Q	(WIFI_INIC_MSG_Q_BASIC_SIZE + 128 + CONTEXT_SAVE_SIZE) /* max 568 in smart */
 #elif defined(CONFIG_WHC_DEV)
 #define WIFI_STACK_SIZE_INIC_MSG_Q	(688 + 128 + CONTEXT_SAVE_SIZE) /* max 688 in smart */
+#endif
+#if defined(CONFIG_EAP) || defined(CONFIG_WPS)
+#define STACK_SIZE_FOR_WPS_OR_EAP	1920   /* WA: for dp: enable WPS need 748, enable EAP need 1368; g2 EAP need 1880; smart EAP need 1192; lite EAP need 1404*/
+#else
+#define STACK_SIZE_FOR_WPS_OR_EAP   0
 #endif
 
 /*host api task*/
 #define CONFIG_INIC_IPC_HOST_API_PRIO 3
 #define CONFIG_INIC_IPC_HOST_EVT_API_PRIO 3
-#define WIFI_STACK_SIZE_INIC_IPC_HST_API (400 + 128 + CONTEXT_SAVE_SIZE)	// for psp overflow when update group key: jira: https://jira.realtek.com/browse/RSWLANQC-1027
-#define WIFI_STACK_SIZE_INIC_IPC_HST_EVT_API (3096 + 128 + CONTEXT_SAVE_SIZE)
+#define WIFI_STACK_SIZE_INIC_IPC_HST_API (WIFI_INIC_IPC_HST_API_BASIC_SIZE + 128 + CONTEXT_SAVE_SIZE)	// for psp overflow when update group key: jira: https://jira.realtek.com/browse/RSWLANQC-1027
+#define WIFI_STACK_SIZE_INIC_IPC_HST_EVT_API (WIFI_INIC_IPC_HST_EVT_API_BASIC_SIZE + STACK_SIZE_FOR_WPS_OR_EAP + 128 + CONTEXT_SAVE_SIZE)
 #define CONFIG_INIC_IPC_HOST_EVT_Q_DEPTH 10
 
 #define whc_dev_init                                     whc_ipc_dev_init
@@ -67,6 +72,7 @@
 #define whc_host_init                                    whc_ipc_host_init
 #define whc_host_api_message_send                        whc_ipc_host_api_message_send
 #define whc_host_init_skb                                whc_ipc_host_init_skb
+#define whc_host_wifi_indication_enqueue                 whc_ipc_host_wifi_indication_enqueue
 #endif
 
 #ifdef CONFIG_NAN
@@ -149,7 +155,7 @@ struct whc_ipc_host_unblk_api_node {
 struct ipc_host_unblk_api_func_t {
 	u32 host_evt_id;
 	void (*func)(struct whc_ipc_host_unblk_api_node *p_unblk_api_node);
-	u8 free_idx;	/* indicate whether there are buffers that need to free, 0xFF means no need free */
+	u16 free_bitmap;	/* indicate whether there are buffers that need to free, each bit indicate buf index, 0x0 means no need free */
 };
 #endif
 
@@ -159,6 +165,7 @@ struct ipc_host_unblk_api_func_t {
 void whc_ipc_host_init(void);
 void whc_ipc_host_trx_int_hdl(void *Data, u32 IrqStatus, u32 ChanNum);
 void whc_ipc_host_heap_statistics(u8 start);
+void whc_ipc_host_wifi_indication_enqueue(u32 event, u8 *evt_info, s32 evt_len);
 
 /*for ipc host api*/
 void whc_ipc_host_api_init(void);
@@ -177,7 +184,7 @@ void whc_ipc_dev_api_int_hdl(void *Data, u32 IrqStatus, u32 ChanNum);
 void whc_ipc_dev_wifi_event_indicate(u32 event_cmd, u8 *evt_info, s32 evt_len);
 void whc_ipc_dev_scan_user_callback_indicate(unsigned int ap_num, void *user_data);
 void whc_ipc_dev_acs_info_indicate(struct rtw_acs_mntr_rpt *acs_mntr_rpt);
-void whc_ipc_dev_scan_each_report_user_callback_indicate(struct rtw_scan_result *scanned_ap_info, void *user_data);
+void whc_ipc_dev_scan_each_report_user_callback_indicate(struct rtw_scan_result *scanned_ap_info, void *user_data, u8 *ies, u32 ie_len);
 u8 whc_ipc_dev_promisc_callback_indicate(struct rtw_rx_pkt_info *pkt_info);
 void whc_ipc_dev_ap_ch_switch_callback_indicate(unsigned char channel, s8 ret);
 void whc_ipc_dev_update_regd_event_indicate(struct rtw_country_code_table *table);

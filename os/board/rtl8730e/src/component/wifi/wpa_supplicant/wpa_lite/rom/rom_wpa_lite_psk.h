@@ -20,6 +20,7 @@
 #define GMK_LEN					32
 #define GTK_LEN					32
 #define IGTK_LEN				16
+#define IPN_LEN					6
 #define WPA_IGTK_MAX_LEN		32
 #define NumGroupKey				4
 #define KEY_NONCE_LEN		32
@@ -44,6 +45,8 @@
 #define EAPOLMSG_HDRLEN_SUITE_B_192		103  //diff=8bytes MIC(16->24)
 #define MAX_EAPOLMSG_LEN        512
 #define MAX_EAPOLKEYMSG_LEN		(MAX_EAPOLMSG_LEN-(ETH_HLEN+LIB1X_EAPOL_HDRLEN))
+
+#define PSK_LOCAL_BUF_LEN 257
 
 #define DescTypePos				0
 #define KeyInfoPos				1
@@ -215,6 +218,13 @@ struct eapol_params_2 {
 	union  _OCTET32_INTEGER *pCounter;
 };
 
+struct decrypt_gtk_data {
+	struct arc4context  rc4_ctx;
+	unsigned int		keydatapos;
+	unsigned char		tmp1[PSK_LOCAL_BUF_LEN];
+	unsigned char		tmp2[PSK_LOCAL_BUF_LEN];
+};
+
 struct _LIB1X_EAPOL_KEY {
 	unsigned char		key_desc_ver;
 	unsigned char		key_info[2];
@@ -285,4 +295,3 @@ int wifi_rom_eapol_check_rsne_pmkid(u8 *ie, u8 ie_len, u8 *pmkid);
 
 
 #endif	//_ROM_WPA_LITE_PSK_H_
-

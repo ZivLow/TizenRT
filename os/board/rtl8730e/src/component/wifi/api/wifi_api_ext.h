@@ -218,11 +218,11 @@ s32 wifi_set_countrycode(u8 *cntcode);
 
 /**
  * @brief  Retrieve current country code information.
- * @param[in]  table: Pointer to store the country code table containing country code,
+ * @param[in]  pinfo: Pointer to store the country code info table containing country code,
  *                    channel plan code, and TX power limit index.
  * @return  @ref RTK_SUCCESS : The API executed successfully.
  */
-s32 wifi_get_countrycode(struct rtw_country_code_table *table);
+s32 wifi_get_countrycode(struct rtw_country_code_table *pinfo);
 
 /**
  * @brief  Get the list of available WiFi channels for the current regulatory domain.
@@ -395,6 +395,16 @@ s32 wifi_get_txbuf_pkt_num(s32 *pkt_num);
  *    - -@ref RTK_ERR_BADARG : NULL pointer passed for `antdiv_mode` or `curr_ant`.
  */
 s32 wifi_get_antdiv_info(u8 *antdiv_mode, u8 *curr_ant);
+
+/**
+ * @brief  Set antenna diversity infomation.
+ * @param[in]  antdiv_mode: value of antenna diversity mode.
+ *                           Values: @ref RTW_ANTDIV_AUTO, @ref RTW_ANTDIV_FIX_MAIN, etc.
+ * @return
+ *    - @ref RTK_SUCCESS : The API executed successfully.
+ *    - @ref RTK_FAIL : CONFIG_WIFI_ANTDIV is not defined.
+ */
+s32 wifi_set_antdiv_info(u8 antdiv_mode);
 
 /**
  * @brief Get the supported frequency band type.

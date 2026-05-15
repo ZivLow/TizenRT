@@ -35,9 +35,7 @@
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
 /* Upper limit of multiple SSID scan */
 #define SSID_SCAN_NUM 6
-/* TizenRT customization: prefer 5GHz */
-#define CONFIG_STA_PREFER_5GHZ
-#endif //CONFIG_PLATFORM_TIZENRT_OS
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 #define MACID_HW_MAX_NUM		16
 /************************* Default Values of User Configure End***************************/
@@ -148,6 +146,23 @@
 //#define RA_RX_ACK_RSSI
 
 #define CONFIG_P2P
+
+/**************** configurations for task size **********************/
+#if defined (CONFIG_WHC_DEV)
+#if defined(CONFIG_WHC_INTF_IPC)
+#define WIFI_RECV_TASKLET_BASIC_SIZE	            1360
+#else
+#define WIFI_RECV_TASKLET_BASIC_SIZE	            3056
+#endif
+#else
+#define WIFI_RECV_TASKLET_BASIC_SIZE	            1024
+#endif
+
+#define WIFI_LITTLE_TASKLET_BASIC_SIZE		        368
+#define WIFI_INIC_IPC_DEV_API_BASIC_SIZE          1280
+#define WIFI_INIC_MSG_Q_BASIC_SIZE                576
+#define WIFI_INIC_IPC_HST_API_BASIC_SIZE          440
+#define WIFI_INIC_IPC_HST_EVT_API_BASIC_SIZE      1856
 #define COEX_IPC_HST_API_BASIC_SIZE               376
 #define COEX_IPC_DEV_API_BASIC_SIZE               632
 
@@ -204,4 +219,3 @@
 
 #define CONFIG_IOT_RS 1
 #endif /*#ifndef AUTOCONF_8730A_H */
-

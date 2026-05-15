@@ -486,7 +486,7 @@ void board_initialize(void)
 #endif
 	/* Set delay function & critical function for hw ipc sema */
 	IPC_patch_function(tizenrt_critical_enter, tizenrt_critical_exit);
-	IPC_SEMDelayStub(rtos_time_delay_ms);
+	IPC_SEMDelayStub(DelayMs);
 #ifdef CONFIG_WIFI_CSI
 	if (rtl8730e_rtk_csi_initialize(0) != 0) {
 		lldbg("rtl8730e_rtk_csi initialization failed\n");
