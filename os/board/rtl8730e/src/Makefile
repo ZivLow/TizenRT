@@ -179,7 +179,6 @@ CFLAGS += -I$(DIR_WIFI)/driver/intf
 CFLAGS += -I$(DIR_WIFI)/whc
 CFLAGS += -I$(DIR_WIFI)/whc/whc_host_rtos/ipc
 CFLAGS += -I$(DIR_WIFI)/wpa_supplicant/src
-CFLAGS += -I$(DIR_WIFI)/wpa_supplicant/src/crypto
 CFLAGS += -I$(COMPONENT_DIR)/lwip/api
 
 CFLAGS += -I$(DIR_OSDEP)/include
