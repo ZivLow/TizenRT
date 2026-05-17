@@ -33,7 +33,6 @@ rtos_sema_t wc_ready_sema = NULL;
 rtos_task_t wifi_csi_thread_task = NULL;
 struct rtw_csi_action_parm act_param = {0};
 struct rtw_client_list client_info = {0};
-struct csi_report_data	*csi_rpt_pkt = NULL;
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 struct rtw_event_hdl_func_t event_external_hdl[1] = {
@@ -212,7 +211,9 @@ static void wifi_csi_thread(void *param)
 	(void)param;
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 	struct rtw_csi_action_parm act_param = {0};
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 	struct csi_report_data	*csi_rpt_pkt = NULL;
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
 	unsigned char assoc_ap_mac[6] = {0xa4, 0x39, 0xb3, 0xa4, 0xbe, 0x2d};  /* need modify to mac address of associated AP when sta mode */
 	struct rtw_client_list client_info = {0};
 	memset(&client_info, 0, sizeof(struct rtw_client_list));
