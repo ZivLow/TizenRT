@@ -29,8 +29,8 @@
 /*	security api doesn't support key name now. it'll be supported later
  * currently ss/01 will be convert to slot 1.
  */
-#define AES128_KEY "ss/01"
-#define RSA1024_KEY "ss/02"
+#define AES128_KEY "ss/34"
+#define RSA1024_KEY "ss/35"
 
 void
 test_crypto(void)

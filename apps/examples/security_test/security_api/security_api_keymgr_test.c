@@ -21,10 +21,10 @@
 #include <security/security_keymgr.h>
 #include "security_api_utils.h"
 
-#define HMACSHA256_KEY "ss/01"
-#define AES128_KEY "ss/02"
+#define HMACSHA256_KEY "ss/33"
+#define AES128_KEY "ss/34"
 #define AES128SET_KEY "ss/03"
-#define RSA1024_KEY "ss/04"
+#define RSA1024_KEY "ss/35"
 
 void
 test_keymgr(void)
@@ -82,13 +82,14 @@ test_keymgr(void)
 	printf("  . SEC Get Publickey ...\n");
 	fflush(stdout);
 
-	security_key_type key_type = KEY_RSA_1024;
+	// Don't support RSA1024_KEY get key
+	/*	security_key_type key_type = KEY_RSA_1024;
 	if (0 != keymgr_get_key(hnd, key_type, RSA1024_KEY, &get_x_key, &get_y_key)) {
 		printf("Fail\n	! keymgr_get_pubkey\n");
 		goto exit;
 	}
 	printf("ok\n");
-	PrintBuffer("RSA1024 Public key", get_x_key.data, get_x_key.length);
+	PrintBuffer("RSA1024 Public key", get_x_key.data, get_x_key.length);*/
 
 	printf("  . SEC Set Key : AES128 ...\n");
 	fflush(stdout);
