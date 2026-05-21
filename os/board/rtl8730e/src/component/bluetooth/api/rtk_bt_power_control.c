@@ -56,7 +56,7 @@ void rtk_tizenrt_bt_pm_init(void)
 {
 	/* Register PM_BLE_DOMAIN and Perform 10 minutes timedsuspend */
 	rtk_ble_domain = pm_domain_register("BLE");
-	if (rtk_ble_domain < 0) {
+	if (rtk_ble_domain == NULL) {
 		BT_LOGA("Unable to register BLE PM DOMAIN \r\n");
 	} else {
 		BT_LOGA("Registered BLE PM DOMAIN \r\n");

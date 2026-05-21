@@ -78,6 +78,11 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 			BT_LOGA("BLE Tizenrt indicate cccd, indicate bit disable \r\n");
 		}
 
+		if (p_cha_info == NULL) {
+			BT_LOGE("p_cha_info is null \r\n");
+			break;
+		}
+
 		if (p_cha_info->cb) {
 			p_cha_info->cb(TRBLE_ATTR_CB_CCCD, p_cccd_ind->conn_handle, p_cha_info->abs_handle, p_cha_info->arg, p_cccd_ind->value, 0);
 		} else {
@@ -119,7 +124,6 @@ T_APP_RESULT ble_tizenrt_srv_callback(uint8_t event, void *p_data)
 		if (p_cha_info->cb) {
 			p_cha_info->cb(TRBLE_ATTR_CB_INDICATE, p_ind_ind->conn_handle,
 													p_cha_info->abs_handle, p_cha_info->arg, p_ind_ind->err_code, queue->pending_ele_num);
-
 		} else {
 			BT_LOGD("NULL read callback abs_handle 0x%x \r\n", p_cha_info->abs_handle);
 		}
