@@ -422,6 +422,11 @@ bool rtk_bt_pre_enable(void)
 	}
 #endif
 
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#ifdef CONFIG_PM
+	rtk_tizenrt_bt_pm_suspend(0);	/* Perform PM suspend */
+#endif //#ifdef CONFIG_PM
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	return true;
 }
 
@@ -432,6 +437,13 @@ void rtk_bt_post_enable(void)
 		wifi_ps_en_by_bt_on(ENABLE);
 	}
 #endif
+	BT_LOGE("rtk_bt_post_enable!\r\n");
+
+#ifdef CONFIG_PLATFORM_TIZENRT_OS
+#ifdef CONFIG_PM
+	rtk_tizenrt_bt_pm_resume();	/* Resume PM */
+#endif //#ifdef CONFIG_PM
+#endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 }
 
 void hci_platform_external_fw_log_pin(void)
