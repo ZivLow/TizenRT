@@ -1578,7 +1578,7 @@ typedef struct {
 #define RTK_BT_LE_EXT_ADV_EVT_BIT_SCAN_RESPONSE     (1 << 3)
 
 /**
- * @struct    rtk_bt_le_ext_adv_report_type_t
+ * @typedef    rtk_bt_le_ext_adv_report_type_t
  * @brief     Bluetooth LE ext adv report event type.
  */
 typedef enum {
@@ -1590,6 +1590,17 @@ typedef enum {
 	RTK_BT_LE_EXT_EVT_LEGACY_SCAN_RSP_TO_ADV_IND =      0x1B,
 	RTK_BT_LE_EXT_EVT_LEGACY_SCAN_RSP_TO_ADV_SCAN_IND = 0x1A,
 } rtk_bt_le_ext_adv_report_type_t;
+
+/**
+  * @typedef  rtk_bt_le_ext_adv_data_status_t
+  * @brief    Definition of data status in LE Extended Advertising Report.
+ */
+typedef enum {
+	RTK_BT_LE_EXT_ADV_DATA_STATUS_COMPLETE  = 0x00, /**< Data status: Complete */
+	RTK_BT_LE_EXT_ADV_DATA_STATUS_MORE      = 0x01, /**< Data status: Incomplete, more data to come */
+	RTK_BT_LE_EXT_ADV_DATA_STATUS_TRUNCATED = 0x02, /**< Data status: Incomplete, data truncated, no more to come */
+	RTK_BT_LE_EXT_ADV_DATA_STATUS_RFU       = 0x03  /**< Data status: Reserved for future use */
+} rtk_bt_le_ext_adv_data_status_t;
 
 /**
  * @struct    rtk_bt_le_ext_scan_res_ind_t
@@ -1605,6 +1616,7 @@ typedef struct {
 	uint8_t adv_sid;
 	int8_t tx_power;
 	uint16_t peri_adv_interval;
+	uint8_t data_status;  /*!< ref @ref rtk_bt_le_ext_adv_data_status_t */
 	uint16_t len;
 	uint8_t *data; /*!< Must be the last member */
 } rtk_bt_le_ext_scan_res_ind_t;
@@ -1995,6 +2007,11 @@ typedef struct {
 #endif /* RTK_BLE_COC_SUPPORT */
 
 /****************** Data structure for API func param pack and unpack ******************/
+typedef struct {
+	rtk_bt_le_rand_addr_type_t type;
+	uint8_t *p_addr;
+} rtk_bt_le_gen_rand_addr_t;
+
 typedef struct {
 	uint16_t conn_handle;
 	int8_t *p_rssi;
@@ -2692,7 +2709,7 @@ uint16_t rtk_bt_le_gap_set_appearance(uint16_t appearance);
 uint16_t rtk_bt_le_gap_set_preferred_conn_param(rtk_bt_le_preferred_conn_param_t *p_preferred_conn_param);
 
 /**
- * @brief     Set random address.
+ * @brief     Set random address to controller. If the address is static random address, also set it as local identity address.
  *            NOTE: This API shall not be excuted when advertising, scanning and initiating are enabled.
  * @param[in] auto_generate: Trigger auto generate address.
  * @param[in] type: Type of auto generated random address, ignore if auto_generate is false.
@@ -2703,6 +2720,30 @@ uint16_t rtk_bt_le_gap_set_preferred_conn_param(rtk_bt_le_preferred_conn_param_t
  *            - Others: Error code
  */
 uint16_t rtk_bt_le_gap_set_rand_addr(bool auto_generate, rtk_bt_le_rand_addr_type_t type, uint8_t *p_addr);
+
+/**
+ * @brief     Generate random address.
+ * @param[in] type: Type of random address to generate.
+ * @param[out] p_addr: Random address generated.
+ * @return
+ *            - 0  : Succeed
+ *            - Others: Error code
+ */
+uint16_t rtk_bt_le_gap_gen_rand_addr(rtk_bt_le_rand_addr_type_t type, uint8_t *p_addr);
+
+/**
+ * @brief     Configure local identity address.
+ *            NOTE: Only when you want to use a static random address as the device's address,
+ *            you'd better set it as local identity address which will be distributed during
+ *            BLE pairing process. For other type of address, we don't suggest to set it.
+ *            If not set, the default local identity address is your device's public address.
+ * @param[in] type: Type of identity address.
+ * @param[in] p_addr: Identity address value.
+ * @return
+ *            - 0  : Succeed
+ *            - Others: Error code
+ */
+uint16_t rtk_bt_le_gap_cfg_local_ident_addr(rtk_bt_le_ident_addr_type_t type, uint8_t *p_addr);
 
 /**
  * @brief     Set BLE GAP advertising data.
