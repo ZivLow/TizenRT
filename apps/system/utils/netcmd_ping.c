@@ -305,12 +305,12 @@ static void ping_recv(int family, int s, struct timespec *ping_time)
 			uint32_t elapsed;
 			struct timespec now;
 
-			clock_gettime(CLOCK_REALTIME, &now);
-			g_ping_recv_counter++;
-			elapsed = (now.tv_sec - ping_time->tv_sec) * 1000 + (now.tv_nsec - ping_time->tv_nsec) / 1000000;
-			NETCMD_LOG(NTAG, " %d bytes from %s: icmp_seq=%d ttl=255 time=%" U32_F "ms\n", len, addr_str, g_ping_seq_num, elapsed);
-
 			if ((iecho->id == PING_ID) && (iecho->seqno == htons(g_ping_seq_num))) {
+				/* QC test fix: fix issue of reporting negative ping loss due to application logic */
+				clock_gettime(CLOCK_REALTIME, &now);
+				g_ping_recv_counter++;
+				elapsed = (now.tv_sec - ping_time->tv_sec) * 1000 + (now.tv_nsec - ping_time->tv_nsec) / 1000000;
+				NETCMD_LOG(NTAG, " %d bytes from %s: icmp_seq=%d ttl=255 time=%" U32_F "ms\n", len, addr_str, g_ping_seq_num, elapsed);
 				/* do some ping result processing */
 				PING_RESULT((ICMPH_TYPE(iecho) == ICMP_ER));
 				free(from);

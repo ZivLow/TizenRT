@@ -26,7 +26,7 @@
 /*
  * Test Authenticate API
  */
-#define HMACSHA256_KEY "ss/01"
+#define HMACSHA256_KEY "ss/33"
 #define ARTIK_CERT "ss/02"
 
 void test_authenticate(void)

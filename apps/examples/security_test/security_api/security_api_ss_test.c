@@ -54,14 +54,15 @@ test_securestorage(void)
 	printf("ok\n");
 	PrintBuffer("input", input.data, input.length);
 
-	printf("  . SEC Get Size of Secure Storage ...\n");
+	// Don't support ss_get_size_secure_storage
+	/*printf("  . SEC Get Size of Secure Storage ...\n");
 
 	if (0 != ss_get_size_secure_storage(hnd, TEST_SS_PATH, &storage_size)) {
 		printf("Fail\n	! ss_get_size_secure_storage\n");
 		goto exit;
 	}
 	printf("ok\n");
-	printf("storage_test size : %d\n", storage_size);
+	printf("storage_test size : %d\n", storage_size);*/
 
 	printf("  . SEC Read Secure Storage ...\n");
 
