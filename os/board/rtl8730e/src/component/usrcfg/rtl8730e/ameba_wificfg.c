@@ -85,6 +85,7 @@ _WEAK void wifi_set_user_config(void)
 	wifi_user_config.ap_sta_num = 12;	/*should not exceed 12 */
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	wifi_user_config.ap_polling_sta = 0;
+	wifi_user_config.ap_bypass_forwarding = 0;
 
 	/* MISC */
 	wifi_user_config.en_mcc = 0;  /* must select ENABLE_MCC in menuconfig when wifi_user_config.en_mcc=1 */
