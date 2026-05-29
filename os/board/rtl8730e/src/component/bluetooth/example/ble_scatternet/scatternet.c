@@ -219,6 +219,7 @@ static void app_server_deinit(void)
 #endif
 }
 
+extern trble_result_e trble_netmgr_fw_reset(void);
 static rtk_bt_evt_cb_ret_t scatternet_gap_app_callback(uint8_t evt_code, void *param, uint32_t len)
 {
 	(void)param;
@@ -301,6 +302,10 @@ static rtk_bt_evt_cb_ret_t scatternet_gap_app_callback(uint8_t evt_code, void *p
 		break;
 	}
 #endif
+	case RTK_BT_GAP_EVT_FW_EXCEPTION_IND: {
+		trble_netmgr_fw_reset();
+		break;
+	}
 	default:
 		BT_LOGE("[APP] Unknown common gap cb evt type: %d\r\n", evt_code);
 		break;
