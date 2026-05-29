@@ -230,6 +230,10 @@
 #define CONFIG_NEON 1
 #define CONFIG_SMP_DUAL_CORE 1
 #define CONFIG_CORE_NUM 2
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
+/* TizenRT also uses the same preprocessor CONFIG_SMP to control SMP, remove it to prevent conflict */
 #define CONFIG_SMP 1
-// #define CONFIG_ENABLE_WPS 1
-// #define CONFIG_ENABLE_WPS_DISCOVERY 1
+/* WPS is currently not used in TizenRT */
+#define CONFIG_ENABLE_WPS 1
+#define CONFIG_ENABLE_WPS_DISCOVERY 1
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
