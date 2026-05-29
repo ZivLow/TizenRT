@@ -334,12 +334,12 @@ trwifi_result_e wifi_netmgr_utils_init(struct netdev *dev)
 		softap_flag = 0;
 #endif //#ifndef CONFIG_ENABLE_HOMELYNK
 		rtos_mutex_create(&scanlistbusy);
+		g_netmgr_init = TRUE;
 	} else if (memcmp(dev->ifname, "wlan1", 5)) {
 		ndbg("Invalid interface %s\n",dev->ifname);
 		return wuret;
 	} 
 
-	g_netmgr_init = TRUE;
 	wuret = TRWIFI_SUCCESS;
 	return wuret;
 }
@@ -350,19 +350,23 @@ trwifi_result_e wifi_netmgr_utils_deinit(struct netdev *dev)
 	int ret = cmd_wifi_off();
 	if (ret == RTK_STATUS_SUCCESS) {
 		wuret = TRWIFI_SUCCESS;
-		rtos_mutex_take(scanlistbusy, MUTEX_WAIT_TIMEOUT);
-		if (scan_timer.timer_hdl != NULL) {
-			rtw_cancel_timer(&(scan_timer));
-			rtw_del_timer(&(scan_timer));
+		/* Deinit actions only need to be done for wlan0, wlan1 deinit will be handled in cmd_wifi_stop_ap() */
+		if (!memcmp(dev->ifname, "wlan0", 5)) {
+			rtos_mutex_take(scanlistbusy, MUTEX_WAIT_TIMEOUT);
+			if (scan_timer.timer_hdl != NULL) {
+				rtw_cancel_timer(&(scan_timer));
+				rtw_del_timer(&(scan_timer));
+			}
+			if (saved_scan_list) {
+				rtos_mem_free((void *)saved_scan_list);
+				saved_scan_list = NULL;
+			}
+			scan_number = 0;
+			rtos_mutex_give(scanlistbusy);
+			rtos_mutex_delete(scanlistbusy);
+			scanlistbusy = NULL;
+			g_netmgr_init = FALSE;
 		}
-		if (saved_scan_list) {
-			rtos_mem_free((void *)saved_scan_list);
-			saved_scan_list = NULL;
-		}
-		scan_number = 0;
-		rtos_mutex_give(scanlistbusy);
-		rtos_mutex_delete(scanlistbusy);
-		g_netmgr_init = FALSE;
 	} else {
 		ndbg("[RTK] Failed to stop STA mode\n");
 	}
