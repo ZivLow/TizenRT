@@ -154,7 +154,11 @@ void rtk_tizenrt_bt_print(uint8_t level, const char *fmt, ...)
 		vsnprintf((char *)tmp_buffer, sizeof(tmp_buffer), fmt, arglist);
 		va_end(arglist);
 
-		dbg_noarg("%s", tmp_buffer);
+		if (osif_task_context_check()) {
+			dbg_noarg("%s", tmp_buffer);
+		} else {
+			lldbg_noarg("%s", tmp_buffer);
+		}
 	}
 }
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
