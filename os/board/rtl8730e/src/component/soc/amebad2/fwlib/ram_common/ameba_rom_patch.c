@@ -528,6 +528,12 @@ pad_count:
 			fmt++;
 			continue;
 		}
+#if defined(CONFIG_PLATFORM_TIZENRT_OS) && defined(CONFIG_WHC_HOST)
+		/* TizenRT customization: convert '\n' to '\r\n' for better print compatibility */
+		if (*fmt == KB_ASCII_LF) {
+			DiagPutChar(KB_ASCII_CR);
+		}
+#endif //#if defined(CONFIG_PLATFORM_TIZENRT_OS) && defined(CONFIG_WHC_HOST)
 		DiagPutChar(*fmt);
 		fmt++;
 		count++;
