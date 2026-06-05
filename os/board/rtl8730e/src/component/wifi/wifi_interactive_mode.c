@@ -401,7 +401,7 @@ int8_t cmd_wifi_disconnect(void)
 			return -1;
 		}
 
-		rtos_time_delay_ms(1);
+		rtos_time_delay_ms(1000);
 		timeout--;
 	}
 }
