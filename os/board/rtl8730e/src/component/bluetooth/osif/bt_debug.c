@@ -138,7 +138,7 @@ void rtk_bt_trace_log_close(void)
 }
 
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
-static uint8_t bt_log_level = BT_LOG_LEVEL_ALWAYS;
+static uint8_t bt_log_level = BT_LOG_LEVEL_ERROR;
 void rtk_tizenrt_bt_log_level(uint8_t level)
 {
 	bt_log_level = level;
