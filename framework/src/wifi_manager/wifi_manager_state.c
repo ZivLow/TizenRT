@@ -581,7 +581,7 @@ wifi_manager_result_e _handler_on_connecting_state(wifimgr_msg_s *msg)
 		wifi_manager_result_e wret;
 		wret = dhcpc_get_ipaddr();
 		if (wret != WIFI_MANAGER_SUCCESS) {
-			WIFIMGR_CHECK_RESULT(_wifimgr_disconnect_ap(), (TAG, "critical error: DHCP failure\n"), WIFI_MANAGER_FAIL);
+			WIFIMGR_CHECK_RESULT_NORET(_wifimgr_disconnect_ap(), (TAG, "critical error: DHCP failure\n"));
 			WIFIMGR_SET_SUBSTATE(WIFIMGR_DISCONN_INTERNAL_ERROR, NULL);
 			WIFIMGR_SET_STATE(WIFIMGR_STA_DISCONNECTING);
 			return wret;
@@ -617,6 +617,12 @@ wifi_manager_result_e _handler_on_connecting_state(wifimgr_msg_s *msg)
 	} else if (msg->event == WIFIMGR_CMD_DEINIT) {
 		WIFIMGR_SET_SUBSTATE(WIFIMGR_DISCONN_DEINIT, msg->signal);
 		WIFIMGR_SET_STATE(WIFIMGR_STA_DISCONNECTING);
+	} else if (msg->event == WIFIMGR_EVT_STA_DISCONNECTED) {
+		/* Driver disconnected while still in CONNECTING state (e.g. DHCP failure +
+		 * disconnect API also failed, so SET_STATE(DISCONNECTING) was never reached).
+		 * Treat as connect failure so waiting callers are unblocked. */
+		wifimgr_call_cb(CB_STA_CONNECT_FAILED, msg->param);
+		WIFIMGR_SET_STATE(WIFIMGR_STA_DISCONNECTED);
 	} else {
 		WIFIADD_ERR_RECORD(ERR_WIFIMGR_INVALID_EVENT);
 		return WIFI_MANAGER_BUSY;
