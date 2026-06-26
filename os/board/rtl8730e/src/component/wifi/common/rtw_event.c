@@ -27,6 +27,11 @@
 #include <wifi_auto_reconnect.h>
 #else
 #include "rtk_wifi_utils.h"
+#include <rtw_timer.h>
+#include <lwip_netconf.h>
+#ifdef CONFIG_PM
+#include <tinyara/pm/pm.h>
+#endif //#ifdef CONFIG_PM
 #endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #include "wpa_lite_intf.h"
 #include "../wpa_supplicant/wps_protocol_handler.h"
@@ -73,6 +78,36 @@ extern rtk_network_link_callback_t g_link_down;
 u8 prev_join_status = 0;
 s32 deauth_reason = 0;
 u32 prev_key_mgmt = WPA_KEY_MGMT_NONE;
+
+#ifdef CONFIG_PM
+#define WAIT_VALID_IP_PM_SUSPEND_POLL_MS    500
+#define WAIT_VALID_IP_PM_SUSPEND_WINDOW_MS  30000
+static _timer wait_valid_ip_timer;
+
+static void rtw_sta_wait_valid_ip_pm_suspend_tmr_hdl(void *arg)
+{
+	UNUSED(arg);
+	struct pm_domain_s *domain = pm_domain_register("WAIT_VALID_IP");
+	unsigned char *ip = LwIP_GetIP(NETIF_WLAN_STA_INDEX);
+	u8 join_status = RTW_JOINSTATUS_UNKNOWN;
+
+	u8 valid_ip = (wifi_get_join_status(&join_status) == RTK_SUCCESS)
+				&& (join_status == RTW_JOINSTATUS_SUCCESS)
+				&& (ip != NULL)
+				&& (*(u32 *)ip != 0xFFFFFFFF)
+				&& (*(u32 *)ip != IP_ADDR_INVALID);
+
+	if (valid_ip || domain == NULL || domain->wdog == NULL) {
+		rtw_del_timer(&wait_valid_ip_timer);
+		if (domain != NULL) {
+			pm_timedsuspend(domain, 0);
+		}
+		return;
+	}
+
+	rtw_set_timer(&wait_valid_ip_timer, WAIT_VALID_IP_PM_SUSPEND_POLL_MS);
+}
+#endif //#ifdef CONFIG_PM
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 void wifi_event_join_status_internal_hdl(u8 *evt_info)
@@ -110,6 +145,16 @@ void wifi_event_join_status_internal_hdl(u8 *evt_info)
 			reason.reason_code = join_status;
 			g_link_up(&reason);
 		}
+#ifdef CONFIG_PM
+		if (wait_valid_ip_timer.timer_hdl == NULL) {
+			struct pm_domain_s *domain = pm_domain_register("WAIT_VALID_IP");
+			if (domain != NULL) {
+				pm_timedsuspend(domain, WAIT_VALID_IP_PM_SUSPEND_WINDOW_MS);
+				rtw_init_timer(&wait_valid_ip_timer, NULL, rtw_sta_wait_valid_ip_pm_suspend_tmr_hdl, NULL, "rtw_sta_wait_valid_ip_pm_suspend");
+				rtw_set_timer(&wait_valid_ip_timer, WAIT_VALID_IP_PM_SUSPEND_POLL_MS);
+			}
+		}
+#endif //#ifdef CONFIG_PM
 #endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 #if defined(CONFIG_LWIP_LAYER) && CONFIG_LWIP_LAYER
@@ -204,6 +249,16 @@ void wifi_event_join_status_internal_hdl(u8 *evt_info)
 			reason.reason_code = join_status;
 			g_link_down(&reason);
 		}
+#ifdef CONFIG_PM
+		if (wait_valid_ip_timer.timer_hdl != NULL) {
+			rtw_cancel_timer(&wait_valid_ip_timer);
+			rtw_del_timer(&wait_valid_ip_timer);
+			struct pm_domain_s *domain = pm_domain_register("WAIT_VALID_IP");
+			if (domain != NULL) {
+				pm_timedsuspend(domain, 0);
+			}
+		}
+#endif //#ifdef CONFIG_PM
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 	}
 
