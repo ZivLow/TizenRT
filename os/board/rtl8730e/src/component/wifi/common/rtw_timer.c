@@ -104,7 +104,7 @@ void init_timer(struct timer_list *timer, const char *name)
 	if (timer->timer_hdl == NULL) {
 		rtos_timer_create_static(&timer->timer_hdl,
 								 (const char *)name,	// Just a text name, not used by the RTOS kernel.
-								 NULL,	// Uniq id used to identify which timer expire..
+								 (uint32_t)NULL,	// Uniq id used to identify which timer expire..
 								 RTOS_MAX_DELAY, // Timer Period, not 0
 								 FALSE, // Whether timer will auto-load themselves when expires
 								 timer_wrapper); // Timer callback
