@@ -79,28 +79,39 @@ int rtos_sema_delete(rtos_sema_t p_handle)
 
 int rtos_sema_take(rtos_sema_t p_handle, uint32_t wait_ms)
 {
-	if (p_handle == NULL) {
-		dbg("p_handle is NULL\n");
+	if (!p_handle) {
+		dbg("p_handle is NULL\r\n");
 		return FAIL;
 	}
 
-	if (wait_ms != 0xFFFFFFFF) {
+	sem_t *sem = (sem_t *)p_handle;
+
+	if (wait_ms != RTOS_SEMA_MAX_COUNT) {
 		struct timespec ts;
-		clock_gettime(CLOCK_REALTIME, &ts);
-		ts.tv_sec += wait_ms / 1000;
-		ts.tv_nsec += (wait_ms % 1000) * 1000 * 1000;
-		if (ts.tv_nsec >= NSEC_PER_SEC) {
-			ts.tv_sec ++;
-			ts.tv_nsec -= NSEC_PER_SEC;
-		}
-		if (sem_timedwait((sem_t *) p_handle, &ts) != OK) {
-			dbg("sema wait 0x%x ms fail\n", wait_ms);
+		if (clock_gettime(CLOCK_REALTIME, &ts) != 0) {
+			dbg("clock_gettime failed errno=%d\r\n", get_errno());
 			return FAIL;
+		}
+
+		ts.tv_sec += wait_ms / MSEC_PER_SEC;
+		ts.tv_nsec += (wait_ms % MSEC_PER_SEC) * NSEC_PER_MSEC;
+		if (ts.tv_nsec >= NSEC_PER_SEC) {
+			ts.tv_sec += ts.tv_nsec / NSEC_PER_SEC;
+			ts.tv_nsec %= NSEC_PER_SEC;
+		}
+
+		while (sem_timedwait(sem, &ts) != OK) {
+			if (get_errno() != EINTR) {
+				dbg("Sema timedwait 0x%x ms failed errno=%d\r\n", wait_ms, get_errno());
+				return FAIL;
+			}
 		}
 	} else {
-		if (sem_wait((sem_t *) p_handle) != OK) {
-			dbg("sema wait fail\n");
-			return FAIL;
+		while (sem_wait(sem) != OK) {
+			if (get_errno() != EINTR) {
+				dbg("Sema wait failed errno=%d\r\n", get_errno());
+				return FAIL;
+			}
 		}
 	}
 
