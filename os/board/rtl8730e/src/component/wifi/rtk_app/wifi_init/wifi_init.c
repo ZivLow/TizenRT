@@ -68,7 +68,7 @@ void wifi_init_thread(void *param)
 	UNUSED(param);
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 #ifdef CONFIG_LWIP_LAYER
-	LwIP_Init();
+	lwip_module_init();
 #endif
 #endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 
@@ -93,7 +93,7 @@ void wifi_init_thread(void *param)
 	UNUSED(param);
 
 #if defined(CONFIG_LWIP_LAYER) && defined(CONFIG_WHC_DEV_TCPIP_KEEPALIVE)
-	LwIP_Init();
+	lwip_module_init();
 #endif
 
 #ifdef CONFIG_WHC_CMD_PATH
@@ -115,7 +115,7 @@ void wifi_init_thread(void *param)
 #endif
 
 #ifdef CONFIG_LWIP_LAYER
-	LwIP_Init();
+	lwip_module_init();
 #endif
 
 	wifi_on(RTW_MODE_STA);

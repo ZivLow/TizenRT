@@ -88,7 +88,7 @@ static void rtw_sta_wait_valid_ip_pm_suspend_tmr_hdl(void *arg)
 {
 	UNUSED(arg);
 	struct pm_domain_s *domain = pm_domain_register("WAIT_VALID_IP");
-	unsigned char *ip = LwIP_GetIP(NETIF_WLAN_STA_INDEX);
+	unsigned char *ip = lwip_get_ip(NETIF_WLAN_STA_INDEX);
 	u8 join_status = RTW_JOINSTATUS_UNKNOWN;
 
 	u8 valid_ip = (wifi_get_join_status(&join_status) == RTK_SUCCESS)
@@ -158,7 +158,7 @@ void wifi_event_join_status_internal_hdl(u8 *evt_info)
 #endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 #if defined(CONFIG_LWIP_LAYER) && CONFIG_LWIP_LAYER
-		LwIP_netif_set_link_up(NETIF_WLAN_STA_INDEX);
+		lwip_netif_set_link_up(NETIF_WLAN_STA_INDEX);
 #endif
 #endif
 
@@ -215,8 +215,8 @@ void wifi_event_join_status_internal_hdl(u8 *evt_info)
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 		at_printf_indicate("wifi disconnected\r\n");
 #if defined(CONFIG_LWIP_LAYER) && CONFIG_LWIP_LAYER
-		LwIP_DHCP_stop(NETIF_WLAN_STA_INDEX);
-		LwIP_netif_set_link_down(NETIF_WLAN_STA_INDEX);
+		lwip_dhcp_stop(NETIF_WLAN_STA_INDEX);
+		lwip_netif_set_link_down(NETIF_WLAN_STA_INDEX);
 #endif
 
 #if (!defined(CONFIG_WHC_DEV) && !(defined(ZEPHYR_WIFI) && defined(CONFIG_WHC_HOST))) || defined(CONFIG_WHC_WPA_SUPPLICANT_OFFLOAD)

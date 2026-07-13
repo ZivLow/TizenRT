@@ -158,19 +158,22 @@
 #define WIFI_RECV_TASKLET_BASIC_SIZE	            1024
 #endif
 
-#define WIFI_LITTLE_TASKLET_BASIC_SIZE		        368
+#define WIFI_LITTLE_TASKLET_BASIC_SIZE		        400
 #define WIFI_INIC_IPC_DEV_API_BASIC_SIZE          1280
 #define WIFI_INIC_MSG_Q_BASIC_SIZE                576
 #define WIFI_INIC_IPC_HST_API_BASIC_SIZE          440
-#define WIFI_INIC_IPC_HST_EVT_API_BASIC_SIZE      1856
+#define WIFI_INIC_IPC_HST_EVT_API_BASIC_SIZE      2272
 #define COEX_IPC_HST_API_BASIC_SIZE               376
 #define COEX_IPC_DEV_API_BASIC_SIZE               632
 
 /*************************** Config for Gen TxPower Tool *******************************/
-/** VERSION 0: only support extending one EXT PWR_LIMIT table
-  * VERSION 1: support more EXT PWR_LIMIT tables, depending on customer configuration
+/** https://wiki.realtek.com/pages/viewpage.action?pageId=1150516670
+  * VERSION 0: only support extending one EXT PWR_LIMIT table
+  * VERSION 1: support more EXT PWR_LIMIT tables, depending on customer configuration(EXTx is defined within ameba_wifi_power_table_usrcfg.c and cannot be accessed by other C files.)
+  * VERSION 2: Supports a fixed set of user-defined extensions: EXT1 ~ EXT10 and RU grouping
   */
-#define GEN_TXPWR_TOOL_VERSION 1
+// #define GEN_TXPWR_TOOL_VERSION 1    /* since 1.1.15 */
+#define GEN_TXPWR_TOOL_VERSION 2    /* since 1.1.17 */
 /*************************** Config for Gen TxPower Tool End **************************/
 
 /*************************** Config for MP_MODE *******************************/

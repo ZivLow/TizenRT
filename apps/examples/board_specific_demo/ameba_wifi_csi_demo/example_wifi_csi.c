@@ -233,7 +233,7 @@ NEXT:
 			goto NEXT;
 
 		}
-		if (LwIP_Check_Connectivity(NETIF_WLAN_STA_INDEX) == CONNECTION_VALID) {
+		if (lwip_check_connectivity(NETIF_WLAN_STA_INDEX) == CONNECTION_VALID) {
 			rtos_time_delay_ms(2000);  /* 2s */
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
 			/* get mac_addr of connected ap */

@@ -58,7 +58,7 @@
 #include "netif/ppp/pppapi.h"
 #include "netif/ppp/pppoe.h"
 
-#include "ethernetif.h"
+#include "netif_adapter.h"
 #else
 #include "ethernetif_tizenrt.h"
 #endif

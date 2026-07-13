@@ -48,12 +48,13 @@
 #define CONFIG_ENABLE_PEAP	1
 #define CONFIG_ENABLE_TLS	1
 #define CONFIG_ENABLE_TTLS	1
+#define CONFIG_ENABLE_FAST	1
 
 // optional feature: whether to verify the cert of radius server
 #define ENABLE_EAP_SSL_VERIFY_SERVER	0
 #endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 
-#if CONFIG_ENABLE_PEAP || CONFIG_ENABLE_TLS || CONFIG_ENABLE_TTLS
+#if CONFIG_ENABLE_PEAP || CONFIG_ENABLE_TLS || CONFIG_ENABLE_TTLS || CONFIG_ENABLE_FAST
 #define CONFIG_ENABLE_EAP
 #endif
 
@@ -67,4 +68,3 @@
 /************************ End of EAP configurations ***************************/
 
 #endif /* #ifndef AUTOCONF_EAP_H */
-

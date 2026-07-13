@@ -23,12 +23,7 @@
 #include "os_wrapper.h"
 #include "rtw_skbuff.h"
 #ifndef ZEPHYR_WIFI
-#ifdef CONFIG_PLATFORM_TIZENRT_OS
-#include "ethernetif_tizenrt.h" //maybe needed to lead to pbuf definition
-#else
-#include "ethernetif.h"
-#endif //CONFIG_PLATFORM_TIZENRT_OS
-// #include "lwip_netconf.h" // need to check if needed, originally used for LwIP_ethernetif_recv_inic() but technically this will not be used in host_trx.c because we need a wrapper for this in tizenrt
+#include "lwip_netconf.h"
 #endif
 #include "rtw_queue.h"
 #include "rtw_atomic.h"

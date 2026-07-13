@@ -249,7 +249,7 @@ int8_t cmd_wifi_ap(trwifi_softap_config_s *softap_config)
 /* MAC address for wlan0 will be set in cmd_wifi_on() */
 #if CONFIG_LWIP_LAYER
 	if (strcmp(CONFIG_WIFIMGR_SOFTAP_IFNAME, "wlan1") == 0) {
-		uint8_t *mac = (uint8_t *)LwIP_GetMAC(SOFTAP_WLAN_INDEX);
+		uint8_t *mac = (uint8_t *)lwip_get_mac(SOFTAP_WLAN_INDEX);
 		nvdbg("\n\r  MAC => %02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 		_netlib_setmacaddr(CONFIG_WIFIMGR_SOFTAP_IFNAME, mac);
 	}
@@ -414,7 +414,7 @@ int8_t cmd_wifi_on(WiFi_InterFace_ID_t interface_id)
 	wifi_get_setting(STA_WLAN_INDEX, &setting);
 
 #if CONFIG_LWIP_LAYER
-	uint8_t *mac = (uint8_t *)LwIP_GetMAC(0);
+	uint8_t *mac = (uint8_t *)lwip_get_mac(0);
 	nvdbg("\n\r  MAC => %02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 	_netlib_setmacaddr(CONFIG_WIFIMGR_STA_IFNAME, mac);
 #endif
