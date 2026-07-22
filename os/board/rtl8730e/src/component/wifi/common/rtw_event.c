@@ -24,8 +24,15 @@
 #if !defined(CONFIG_WHC_DEV)|| defined(CONFIG_WPA_LOCATION_DEV) || defined(CONFIG_WHC_WPA_SUPPLICANT_OFFLOAD)
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 #include "atcmd_service.h"
+#include "wpa_lite_intf.h"
+#ifndef CONFIG_WPA_STD
 #include <wifi_auto_reconnect.h>
+#include "../wpa_supplicant/wps_protocol_handler.h"
+#include "../wpa_supplicant/eap_protocol_handler.h"
+#endif
 #else
+#include "wpa_lite_intf.h"
+#include "common/defs.h"
 #include "rtk_wifi_utils.h"
 #include <rtw_timer.h>
 #include <lwip_netconf.h>
@@ -33,9 +40,6 @@
 #include <tinyara/pm/pm.h>
 #endif //#ifdef CONFIG_PM
 #endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
-#include "wpa_lite_intf.h"
-#include "../wpa_supplicant/wps_protocol_handler.h"
-#include "../wpa_supplicant/eap_protocol_handler.h"
 #endif
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 #if defined (CONFIG_LWIP_LAYER) && CONFIG_LWIP_LAYER
@@ -44,7 +48,7 @@
 #endif
 #endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 #endif
-#include "../../soc/common/diagnose/ameba_diagnose.h"
+#include "ameba_diagnose.h"
 /**********************************************************************************************
  *                                          Globals
  *********************************************************************************************/

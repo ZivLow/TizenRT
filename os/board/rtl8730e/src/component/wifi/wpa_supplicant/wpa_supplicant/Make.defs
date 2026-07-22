@@ -49,8 +49,7 @@
 #
 ############################################################################
 
-CSRCS += wifi_wps_config.c \
-	wifi_p2p_disable.c \
+CSRCS += wifi_p2p_disable.c \
 
 DEPPATH += --dep-path component/wifi/wpa_supplicant/wpa_supplicant
 VPATH += :component/wifi/wpa_supplicant/wpa_supplicant

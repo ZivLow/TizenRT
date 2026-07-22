@@ -166,6 +166,7 @@ CFLAGS += -I$(TARGETDIR)/fwlib/ap_core
 CFLAGS += -I$(TARGETDIR)/app/monitor/include
 CFLAGS += -I$(TARGETDIR)/swlib
 CFLAGS += -I$(TARGETDIR)/misc
+CFLAGS += -I$(COMPONENT_DIR)/soc/common/diagnose
 CFLAGS += -I$(COMPONENT_DIR)/soc/common/include
 CFLAGS += -I$(COMPONENT_DIR)/stdlib
 CFLAGS += -I$(COMPONENT_DIR)/usrcfg/common
