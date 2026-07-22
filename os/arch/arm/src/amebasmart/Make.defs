@@ -306,8 +306,6 @@ ifeq ($(CONFIG_ARCH_FPU),y)
 EXTRA_LIBS += $(TOPDIR)/board/rtl8730e/src/libs/lib_wpa_lite.a
 EXTRA_LIBS += $(TOPDIR)/board/rtl8730e/src/libs/lib_wifi_com_sec.a
 EXTRA_LIBS += $(TOPDIR)/board/rtl8730e/src/libs/lib_wifi_whc_ap.a
-# Currently WPS is not used in TizenRT
-#EXTRA_LIBS += $(TOPDIR)/board/rtl8730e/src/libs/lib_wps.a
 else
 #EXTRA_LIBS += $(TOPDIR)/board/
 endif
