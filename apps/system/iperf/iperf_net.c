@@ -279,6 +279,9 @@ int Nwrite(int fd, const char *buf, size_t count, int prot)
 				return NET_SOFTERROR;
 
 			default:
+				if (prot == SOCK_DGRAM && get_errno() == -1) {
+					return NET_SOFTERROR;
+				}
 				return NET_HARDERROR;
 			}
 		} else if (r == 0) {
