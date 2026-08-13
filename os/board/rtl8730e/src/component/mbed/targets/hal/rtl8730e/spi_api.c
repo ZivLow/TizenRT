@@ -18,6 +18,7 @@
 #include "spi_api.h"
 #include "spi_ex_api.h"
 #include "PinNames.h"
+#define CONFIG_GDMA_EN 1
 
 static const char *const TAG = "SPI";
 
@@ -68,7 +69,7 @@ typedef struct {
 	u32   Role;
 
 	/* mbed var */
-	u32 dma_en;
+	volatile u32 dma_en;
 
 	u32 is_readwrite;
 } HAL_SSI_ADAPTOR, *PHAL_SSI_ADAPTOR;
@@ -289,16 +290,24 @@ static u32 ssi_dma_tx_irq(void *Data)
 	GDMA_ClearINT(GDMA_InitStruct->GDMA_Index, GDMA_InitStruct->GDMA_ChNum);
 	GDMA_Cmd(GDMA_InitStruct->GDMA_Index, GDMA_InitStruct->GDMA_ChNum, DISABLE);
 
-	/*  Call user TX complete callback */
-	if (NULL != ssi_adapter->TxCompCallback && ssi_adapter->is_readwrite) {
-		ssi_adapter->TxCompCallback(ssi_adapter->TxCompCbPara);
-	}
-
 	SSI_SetDmaEnable(ssi_adapter->spi_dev, DISABLE, SPI_BIT_TDMAE);
 	/* we should only free the channel during spi_free */
 	// GDMA_ChnlFree(GDMA_InitStruct->GDMA_Index, GDMA_InitStruct->GDMA_ChNum);
 
-	ssi_adapter->dma_en &= ~SPI_DMA_TX_EN;
+	/* Clear dma_en BEFORE the completion callback: the callback chain ends in
+	 * sem_post(&priv->txsem), which can wake the waiting task on the other
+	 * core immediately. If that task issues the next chunk's DMA before this
+	 * flag is cleared, ssi_dma_send() sees a stale TX_EN bit, silently drops
+	 * the new issue, and the caller blocks forever waiting for a completion
+	 * that will never come
+	 *
+	 */
+	__atomic_fetch_and(&ssi_adapter->dma_en, ~SPI_DMA_TX_EN, __ATOMIC_SEQ_CST);
+
+	/*  Call user TX complete callback */
+	if (NULL != ssi_adapter->TxCompCallback && ssi_adapter->is_readwrite) {
+		ssi_adapter->TxCompCallback(ssi_adapter->TxCompCbPara);
+	}
 
 	return 0;
 }
@@ -321,14 +330,22 @@ static u32 ssi_dma_rx_irq(void *Data)
 	/* Set SSI DMA Disable */
 	SSI_SetDmaEnable(ssi_adapter->spi_dev, DISABLE, SPI_BIT_RDMAE);
 
+	/* we should only free the channel during spi_free */
+	// GDMA_ChnlFree(GDMA_InitStruct->GDMA_Index, GDMA_InitStruct->GDMA_ChNum);
+
+	/* Clear dma_en BEFORE the completion callback: the callback chain ends in
+	 * sem_post(&priv->rxsem), which can wake the waiting task on the other
+	 * core immediately. If that task issues the next chunk's DMA before this
+	 * flag is cleared, ssi_dma_recv() sees a stale RX_EN bit, silently drops
+	 * the new issue, and the caller blocks forever waiting for a completion
+	 * that will never come.
+	 */
+	__atomic_fetch_and(&ssi_adapter->dma_en, ~SPI_DMA_RX_EN, __ATOMIC_SEQ_CST);
+
 	/*  Call user RX complete callback */
 	if (NULL != ssi_adapter->RxCompCallback) {
 		ssi_adapter->RxCompCallback(ssi_adapter->RxCompCbPara);
 	}
-	/* we should only free the channel during spi_free */
-	// GDMA_ChnlFree(GDMA_InitStruct->GDMA_Index, GDMA_InitStruct->GDMA_ChNum);
-
-	ssi_adapter->dma_en &= ~SPI_DMA_RX_EN;
 
 	return 0;
 }
@@ -337,15 +354,25 @@ static u32 ssi_dma_send(void *Adapter, u8 *pTxData, u32 Length)
 {
 	PHAL_SSI_ADAPTOR ssi_adapter = (PHAL_SSI_ADAPTOR) Adapter;
 	u32 ret = TRUE;
+	u32 prev_dma_en;
 
 	assert_param(Length != 0);
 	assert_param(pTxData != NULL);
 
-	if (ssi_adapter->dma_en & SPI_DMA_TX_EN) {
+	/* __atomic_fetch_or() sets the bit AND
+	 * returns the value from just before the OR was applied, in one
+	 * indivisible step - so checking that returned value tells us,
+	 * race-free, whether WE are the one who just transitioned the bit from
+	 * 0 to 1 (prev_dma_en's bit clear) or whether it was already 1 (someone
+	 * else's transfer still in flight). Setting a bit that's already 1 is a
+	 * harmless no-op, so there's no cleanup needed on the "already set"
+	 * path.
+	 */
+	prev_dma_en = __atomic_fetch_or(&ssi_adapter->dma_en, SPI_DMA_TX_EN, __ATOMIC_SEQ_CST);
+	if (prev_dma_en & SPI_DMA_TX_EN) {
 		return FALSE;
 	}
 
-	ssi_adapter->dma_en |= SPI_DMA_TX_EN;
 	ssi_adapter->TxLength = Length;
 	ssi_adapter->TxData = (void *)pTxData;
 
@@ -364,15 +391,17 @@ static u32 ssi_dma_recv(void *Adapter, u8  *pRxData, u32 Length)
 {
 	PHAL_SSI_ADAPTOR ssi_adapter = (PHAL_SSI_ADAPTOR) Adapter;
 	u32 ret = TRUE;
+	u32 prev_dma_en;
 
 	assert_param(Length != 0);
 	assert_param(pRxData != NULL);
 
-	if (ssi_adapter->dma_en & SPI_DMA_RX_EN) {
+	prev_dma_en = __atomic_fetch_or(&ssi_adapter->dma_en, SPI_DMA_RX_EN, __ATOMIC_SEQ_CST);
+	if (prev_dma_en & SPI_DMA_RX_EN) {
 		return FALSE;
 	}
 
-	ssi_adapter->dma_en |= SPI_DMA_RX_EN;
+
 	ssi_adapter->RxLength = Length;
 	ssi_adapter->RxData = (void *)pRxData;
 
@@ -399,8 +428,9 @@ static u32 spi_stop_recv(spi_t *obj)
 
 	SSI_INTConfig(ssi_adapter->spi_dev, (SPI_BIT_RXFIM | SPI_BIT_RXOIM | SPI_BIT_RXUIM), DISABLE);
 
-	if (ssi_adapter->dma_en & SPI_DMA_RX_EN) {
-		DmaMode = 1;
+	DmaMode = (__atomic_load_n(&ssi_adapter->dma_en, __ATOMIC_SEQ_CST) & SPI_DMA_RX_EN) ? 1 : 0;
+
+	if (DmaMode) {
 		/* Set SSI DMA Disable */
 		SSI_SetDmaEnable(ssi_adapter->spi_dev, DISABLE, SPI_BIT_RDMAE);
 
@@ -415,7 +445,7 @@ static u32 spi_stop_recv(spi_t *obj)
 		ssi_adapter->RxLength -= ReceivedCnt;
 		ssi_adapter->RxData = (u8 *)(ssi_adapter->RxData) + ReceivedCnt;
 
-		ssi_adapter->dma_en &= ~SPI_DMA_RX_EN;
+		__atomic_fetch_and(&ssi_adapter->dma_en, ~SPI_DMA_RX_EN, __ATOMIC_SEQ_CST);
 	}
 
 	if (ssi_adapter->RxLength > 0) {
