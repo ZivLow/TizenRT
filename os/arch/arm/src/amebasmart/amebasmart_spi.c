@@ -1410,6 +1410,8 @@ static void amebasmart_spi_bus_initialize(struct amebasmart_spidev_s *priv, uint
 #ifdef CONFIG_AMEBASMART_SPI_DMA
 	sem_init(&priv->rxsem, 0, 0);
 	sem_init(&priv->txsem, 0, 0);
+	sem_setprotocol(&priv->rxsem, SEM_PRIO_NONE);
+	sem_setprotocol(&priv->txsem, SEM_PRIO_NONE);
 #endif
 	gpio_init(&priv->gpio_cs0, priv->spi_cs0);
 	gpio_dir(&priv->gpio_cs0, PIN_OUTPUT);

@@ -627,5 +627,7 @@ struct mipi_dsi_host *amebasmart_mipi_dsi_host_initialize(struct lcd_data *confi
 #endif
 	sem_init(&g_send_cmd_done, 0, 0);
 	sem_init(&g_read_cmd_done, 0, 0);
+	sem_setprotocol(&g_send_cmd_done, SEM_PRIO_NONE);
+	sem_setprotocol(&g_read_cmd_done, SEM_PRIO_NONE);
 	return (struct mipi_dsi_host *)priv;
 }
