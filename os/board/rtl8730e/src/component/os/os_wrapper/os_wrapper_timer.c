@@ -13,7 +13,6 @@ struct os_wrapper_timer_entry {
 };
 
 static _list os_wrapper_timer_table;
-bool os_wrapper_timer_table_init = 0;
 static rtos_mutex_t _rtw_timer_mutex = NULL;
 
 int rtos_timer_create_static(rtos_timer_t *pp_handle, const char *p_timer_name, uint32_t timer_id,
@@ -31,12 +30,22 @@ void os_wrapper_timer_wrapper(void *timer)
 {
 	_list *plist;
 	struct os_wrapper_timer_entry *timer_entry = NULL;
+	struct os_wrapper_timer_list *timer_list = NULL;
+	void (*function)(void *) = NULL;
+	uint32_t reload = 0;
+	uint32_t timeout = 0;
+	struct work_s *work_hdl = NULL;
 
 	rtos_mutex_take(_rtw_timer_mutex, 0xFFFFFFFF);
 	plist = get_next(&os_wrapper_timer_table);
 	while ((rtw_end_of_queue_search(&os_wrapper_timer_table, plist)) == FALSE) {
 		timer_entry = LIST_CONTAINOR(plist, struct os_wrapper_timer_entry, list);
 		if (timer_entry->timer == timer) {
+			function = timer_entry->timer->function;
+			reload = timer_entry->timer->reload;
+			timeout = timer_entry->timer->timeout;
+			work_hdl = timer_entry->timer->work_hdl;
+			timer_list = timer_entry->timer;
 			break;
 		}
 		plist = get_next(plist);
@@ -48,17 +57,17 @@ void os_wrapper_timer_wrapper(void *timer)
 		return;
 	}
 
-	if (timer_entry->timer->reload) {
-		if (work_queue(LPWORK, timer_entry->timer->work_hdl, os_wrapper_timer_wrapper, (void *)(timer_entry->timer), (timer_entry->timer->timeout * TICK_PER_SEC / 1000L)) != OK) {
+	if (reload) {
+		if (work_queue(LPWORK, work_hdl, os_wrapper_timer_wrapper, (void *)(timer_list), (timeout * TICK_PER_SEC / 1000L)) != OK) {
 			dbg("work queue fail\n");
-			timer_entry->timer->live = 0;
+			timer_list->live = 0;
 		}
 	} else {
-		timer_entry->timer->live = 0;
+		timer_list->live = 0;
 	}
 
-	if (timer_entry->timer->function) {
-		timer_entry->timer->function(timer);
+	if (function) {
+		function((void *)timer_list);
 	}
 }
 
@@ -109,14 +118,13 @@ int rtos_timer_create(rtos_timer_t *pp_handle, const char *p_timer_name, uint32_
 
 	*pp_handle = timer;
 
-	if(_rtw_timer_mutex == NULL) {
-		rtos_mutex_create(&_rtw_timer_mutex);
-	}
-	if (!os_wrapper_timer_table_init) {
-		rtos_mutex_take(_rtw_timer_mutex, 0xFFFFFFFF);
-		INIT_LIST_HEAD(&os_wrapper_timer_table);
-		rtos_mutex_give(_rtw_timer_mutex);
-		os_wrapper_timer_table_init = 1;
+	if (_rtw_timer_mutex == NULL) {
+		irqstate_t flags = enter_critical_section();
+		if (_rtw_timer_mutex == NULL) {
+			rtos_mutex_create(&_rtw_timer_mutex);
+			INIT_LIST_HEAD(&os_wrapper_timer_table);
+		}
+		leave_critical_section(flags);
 	}
 
 	timer_entry = (struct os_wrapper_timer_entry *)kmm_zalloc(sizeof(struct os_wrapper_timer_entry));
