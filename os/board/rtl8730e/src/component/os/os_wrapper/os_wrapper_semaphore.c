@@ -49,6 +49,12 @@ int rtos_sema_create(rtos_sema_t *pp_handle, uint32_t init_count, uint32_t max_c
 		dbg("sem init fail\n");
 		return FAIL;
 	}
+#ifdef CONFIG_PRIORITY_INHERITANCE
+	/* Disable priority inheritance for signaling semaphores */
+	if (sem_setprotocol(sem, SEM_PRIO_NONE) != OK) {
+		dbg("sem set protocol fail\n");
+	}
+#endif
 
 	*pp_handle = sem;
 
