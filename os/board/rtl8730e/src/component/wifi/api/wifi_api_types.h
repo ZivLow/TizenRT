@@ -43,10 +43,15 @@ extern "C" {
  * @{
  */
 
-#define STA_WLAN_INDEX	    0
-#define SOFTAP_WLAN_INDEX	1
-#define NAN_WLAN_INDEX	    2
-#define NONE_WLAN_INDEX	    0xFF
+enum rtw_wlan_if_index {
+	STA_WLAN_INDEX = 0,
+	SOFTAP_WLAN_INDEX = 1,
+#ifdef CONFIG_NAN
+	NAN_WLAN_INDEX = 2,
+#endif
+	WLAN_NET_IF_NUM,
+	NONE_WLAN_INDEX	= 0xFF
+};
 
 /** When set to this value, a fast survey is conducted with a scan time of 25 ms on the specified channel.
  *  Otherwise, a normal scan is performed with a duration of 110 ms on the specified channel. */
@@ -706,6 +711,17 @@ enum rtw_conn_step_retries_update_masks {
 	RTW_UPDATE_CONN_PARAM_ALL             = 0xFFFF,
 };
 
+enum rtw_channel_width {
+	RTW_CHANNEL_WIDTH_20        = 0,
+	RTW_CHANNEL_WIDTH_40        = 1,
+	RTW_CHANNEL_WIDTH_80        = 2,
+	RTW_CHANNEL_WIDTH_160       = 3,
+	RTW_CHANNEL_WIDTH_80_80     = 4,
+	RTW_CHANNEL_WIDTH_5         = 5,
+	RTW_CHANNEL_WIDTH_10        = 6,
+	RTW_CHANNEL_WIDTH_MAX       = 7,
+};
+
 /** @} End of WIFI_Exported_Enumeration_Types group*/
 
 /** @addtogroup WIFI_Exported_Structure_Types Structure Type
@@ -1035,6 +1051,7 @@ struct rtw_softap_info {
 struct rtw_client_list {
 	u32    count;         /**< Number of associated clients.    */
 	struct rtw_mac mac_list[MACID_HW_MAX_NUM - 2]; /**< Array of client MAC addresses. */
+	u8 bwmode[MACID_HW_MAX_NUM - 2]; /*per-STA operating channel width, see @ref rtw_channel_width*/
 };
 #endif
 

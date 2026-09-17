@@ -193,6 +193,15 @@ struct rtw_kvr_param_t {
 #endif
 };
 
+/**
+ * @brief  The structure is ethernet hdr format.
+ */
+struct wlan_ethhdr_t {
+	unsigned char		daddr[ETH_ALEN];
+	unsigned char		saddr[ETH_ALEN];
+	unsigned short		type;
+};
+
 // Currently no support for storing Deauth info on TizenRT as it requires a flash region to use
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 struct rtw_event_deauth_info_flash {
@@ -232,6 +241,34 @@ struct rtw_event_report_frame {
 	u8 frame[];
 };
 
+struct rtw_task_size {
+	/* common task size */
+#if defined(CONFIG_WHC_NONE) || defined(CONFIG_WHC_DEV)
+	u16 little_task;
+	u16 single_task;
+#if defined (CONFIG_FW_DRIVER_COEXIST) && CONFIG_FW_DRIVER_COEXIST
+	u16 resume_task;
+#endif
+#endif
+	/* IPC mode task size */
+#if defined(CONFIG_WHC_INTF_IPC)
+#if defined(CONFIG_WHC_HOST)
+	u16 ipc_unblk_api_task;
+	u16 ipc_blk_api_task;
+	u16 ipc_msg_q_task;
+#elif defined(CONFIG_WHC_DEV)
+	u16 ipc_dev_api_task;
+#endif
+	/* Card mode task size */
+#else
+#if defined(CONFIG_WHC_HOST)
+	u16 whc_hst_api_task;
+#elif defined(CONFIG_WHC_DEV)
+	u16 whc_dev_api_task;
+#endif
+#endif
+};
+
 #ifndef CONFIG_FULLMAC
 /**
  * @brief  The structure is join block param.
@@ -260,7 +297,7 @@ struct _Rltk_wlan_t {
 	unsigned char		enable;
 	rtos_sema_t			netif_rx_sema;	/**<  Prevent race condition on .skb in rltk_netif_rx(). */
 };
-extern struct _Rltk_wlan_t rltk_wlan_info[NET_IF_NUM];
+extern struct _Rltk_wlan_t rltk_wlan_info[WLAN_NET_IF_NUM];
 
 #define netdev_priv(dev)		dev->priv
 #define rtw_is_netdev_enable(idx)	(rltk_wlan_info[idx].enable)
@@ -278,7 +315,7 @@ struct _raw_data_desc_t {
 };
 
 #ifdef CONFIG_NAN
-#define MAX_MATCHING_FILTERS           (16)
+#define MAX_MATCHING_FILTERS           (8)
 #define MAX_MATCHING_FILTER_LEN        (32)
 /**
  * @brief Describes a NAN function Rx / Tx filter.
@@ -317,6 +354,17 @@ struct rtw_nan_func_t {
 	u8 instance_id;
 	u64 cookie;
 };
+
+/**
+ * @brief The enumeration lists the NAN cmd type.
+ */
+enum nan_cmd_type {
+	/* NAN cmd type */
+	NAN_CMD_TYPE_NONE 		= 0,
+	NAN_CMD_TYPE_NATIVE_IW 	= 1,
+	NAN_CMD_TYPE_NANDOW 	= 2
+};
+
 #endif
 
 /**
@@ -555,6 +603,10 @@ void wifi_event_init(void);
 void wifi_indication(u32 event, u8 *evt_info, s32 evt_len);
 void wifi_indication_ext(u32 event, u8 *info_buf, s32 info_len, u8 *frame_buf, s32 frame_len);
 int wifi_event_handle(u32 event_cmd, u8 *evt_info);
+void wifi_set_task_size(void);
+
+extern struct rtw_task_size g_rtw_task_size;
+
 #ifdef __cplusplus
 }
 #endif

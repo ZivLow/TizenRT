@@ -496,4 +496,40 @@ void LOGUART_Suspend(void)
 }
 #endif
 
+/**
+ * @brief  Set AGG timeout val.
+ * @param  UARTLOG: LOGUART device.
+ * @param  TimeOut: Timeout Val (unit is one baudrate period of loguart Tx).
+ * @retval None
+ */
+void LOGUART_AGGSetTimeOut(LOGUART_TypeDef *UARTLOG, u32 TimeOut)
+{
+	u32 TempAGGC;
+
+	/*configure AGG timeout value*/
+	TempAGGC = UARTLOG->LOGUART_UART_AGGC;
+	TempAGGC &= ~(LOGUART_MASK_AGG_TO);
+	TempAGGC |= LOGUART_AGG_TO(TimeOut);
+	UARTLOG->LOGUART_UART_AGGC = TempAGGC;
+}
+
+/**
+ * @brief  Set AGG threshold val.
+ * @param  UARTLOG: LOGUART device.
+ * @param  Threshold: Threshold Val.
+ *	This parameter can be a value of @LOGUART_AGG_THRESHOLD_LEVEL_define.
+* @retval None
+*/
+void LOGUART_AGGSetThreshold(LOGUART_TypeDef *UARTLOG, u32 Threshold)
+{
+	u32 TempAGGC;
+
+	assert_param(IS_LOGUART_AGG_THRESHOLD_LEVEL(Threshold));
+
+	/*configure AGG threshold value*/
+	TempAGGC = UARTLOG->LOGUART_UART_AGGC;
+	TempAGGC &= ~(LOGUART_MASK_AGG_TH);
+	TempAGGC |= LOGUART_AGG_TH(Threshold);
+	UARTLOG->LOGUART_UART_AGGC = TempAGGC;
+}
 /******************* (C) COPYRIGHT 2016 Realtek Semiconductor *****END OF FILE****/

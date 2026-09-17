@@ -66,6 +66,7 @@ rtos_task_t wifi_init_task;
 void wifi_init_thread(void *param)
 {
 	UNUSED(param);
+	wifi_set_task_size();
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
 #ifdef CONFIG_LWIP_LAYER
 	lwip_module_init();
@@ -91,7 +92,7 @@ void wifi_init_thread(void *param)
 void wifi_init_thread(void *param)
 {
 	UNUSED(param);
-
+	wifi_set_task_size();
 #if defined(CONFIG_LWIP_LAYER) && defined(CONFIG_WHC_DEV_TCPIP_KEEPALIVE)
 	lwip_module_init();
 #endif
@@ -110,6 +111,7 @@ void wifi_init_thread(void *param)
 void wifi_init_thread(void *param)
 {
 	UNUSED(param);
+	wifi_set_task_size();
 #if defined(CONFIG_ARM_CORE_CM4) && defined(configENABLE_TRUSTZONE) && (configENABLE_TRUSTZONE == 1)
 	rtos_create_secure_context(configMINIMAL_SECURE_STACK_SIZE);
 #endif

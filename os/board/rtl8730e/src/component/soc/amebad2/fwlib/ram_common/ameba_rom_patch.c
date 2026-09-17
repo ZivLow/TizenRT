@@ -569,40 +569,40 @@ u32 DiagPrintfNano(const char *fmt, ...)
 
 	return ret;
 }
-/* support %s %d %x %c, %08x.*/
-int DiagSnPrintf(char *buf, size_t size, const char *fmt, ...)
+
+/* support %s %d %x %c, %08x.
+ * buf=NULL or size=0: dry-run, returns would-be full length (no write).
+ * buf!=NULL, size>0: writes at most size-1 chars + NUL, returns would-be full length. */
+int DiagVSNprintf(char *buf, size_t size, const char *fmt, va_list ap)
 {
-	va_list     ap;
 	char *p, *s, *buf_end = NULL;
 	char padc = ' ';
 	int padn = 0;
+	int count = 0;
 
-	if (buf == NULL) {
-		return 0;
+	s = buf;
+	if (buf != NULL && size > 0) {
+		buf_end = buf + size - 1; /* reserve 1 byte for NUL */
 	}
 
-	va_start(ap, fmt);
-	s = buf;
-	buf_end = size ? (buf + size) : (char *)~0;
 	for (; *fmt != '\0'; ++fmt) {
 		padn = 0;
 		padc = ' ';
 		if (*fmt != '%') {
-			*s++ = *fmt;
-
-			if (s >= buf_end) {
-				goto Exit;
+			count++;
+			if (buf_end != NULL && s < buf_end) {
+				*s++ = *fmt;
 			}
-
 			continue;
 		}
 		if (*++fmt == 's') {
 			p = va_arg(ap, char *);
 			while (*p != '\0') {
-				*s++ = *p++;
-				if (s >= buf_end) {
-					goto Exit;
+				count++;
+				if (buf_end != NULL && s < buf_end) {
+					*s++ = *p;
 				}
+				p++;
 			}
 		} else {	/* Length of item is bounded */
 
@@ -729,21 +729,34 @@ int DiagSnPrintf(char *buf, size_t size, const char *fmt, ...)
 
 			/* now output the saved string */
 			for (p = tmp; p < q; ++p) {
-				*s++ = *p;
-
-				if (s >= buf_end) {
-					goto Exit;
+				count++;
+				if (buf_end != NULL && s < buf_end) {
+					*s++ = *p;
 				}
 			}
 		}
 	}
-Exit:
 
-	if (buf) {
+	if (buf != NULL && size > 0) {
 		*s = '\0';
 	}
+	return count;
+}
+
+/* support %s %d %x %c, %08x.*/
+int DiagSnPrintf(char *buf, size_t size, const char *fmt, ...)
+{
+	va_list ap;
+	int ret;
+
+	if (buf == NULL) {
+		return 0;
+	}
+
+	va_start(ap, fmt);
+	ret = DiagVSNprintf(buf, size, fmt, ap);
 	va_end(ap);
-	return (s - buf);
+	return ret;
 }
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
