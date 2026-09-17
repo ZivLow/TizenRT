@@ -45,6 +45,18 @@
 
 #if defined(RTK_BLE_5_0_USE_EXTENDED_ADV) && RTK_BLE_5_0_USE_EXTENDED_ADV
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
+enum {
+	APP_EADV_STATE_NONE = 0,
+	APP_EADV_STATE_INITIAL_STARTING,
+	APP_EADV_STATE_RESTARTING,
+	APP_EADV_STATE_STARTED,
+	APP_EADV_STATE_STOPPED_BY_CONN,
+};
+
+static uint8_t app_eadv_handle;
+static uint8_t app_eadv_state = APP_EADV_STATE_NONE;
+static uint16_t app_eadv_conn_handle;
+
 static uint8_t ext_adv_data[] = {
 	// Flags
 	0x02,
@@ -348,8 +360,25 @@ static rtk_bt_evt_cb_ret_t ble_scatternet_gap_app_callback(uint8_t evt_code, voi
 		rtk_bt_le_ext_adv_ind_t *ext_adv_ind = (rtk_bt_le_ext_adv_ind_t *)param;
 		if (!ext_adv_ind->err) {
 			if (ext_adv_ind->is_start) {
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
+				if (ext_adv_ind->adv_handle == app_eadv_handle) {
+					if (APP_EADV_STATE_INITIAL_STARTING == app_eadv_state || APP_EADV_STATE_RESTARTING == app_eadv_state) {
+						app_eadv_state = APP_EADV_STATE_STARTED;
+					} else {
+						/* eadv is not start from this APP */
+						app_eadv_state = APP_EADV_STATE_NONE;
+					}
+				}
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 				BT_LOGA("[APP] Ext ADV(%d) started\r\n", ext_adv_ind->adv_handle);
 			} else {
+#ifndef CONFIG_PLATFORM_TIZENRT_OS
+				if (ext_adv_ind->adv_handle == app_eadv_handle && RTK_BT_LE_ADV_STOP_BY_CONN == ext_adv_ind->stop_reason &&
+					APP_EADV_STATE_STARTED == app_eadv_state) {
+					app_eadv_state = APP_EADV_STATE_STOPPED_BY_CONN;
+					app_eadv_conn_handle = ext_adv_ind->conn_handle;
+				}
+#endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
 				BT_LOGA("[APP] Ext ADV(%d) stopped: reason 0x%x \r\n", ext_adv_ind->adv_handle, ext_adv_ind->stop_reason);
 			}
 		} else {
@@ -605,7 +634,14 @@ static rtk_bt_evt_cb_ret_t ble_scatternet_gap_app_callback(uint8_t evt_code, voi
 				ble_tizenrt_dummy_callback();
 			}
 #else
-#if !defined(RTK_BLE_5_0_USE_EXTENDED_ADV) || !RTK_BLE_5_0_USE_EXTENDED_ADV
+#if defined(RTK_BLE_5_0_USE_EXTENDED_ADV) && RTK_BLE_5_0_USE_EXTENDED_ADV
+			if (app_eadv_conn_handle == disconn_ind->conn_handle && APP_EADV_STATE_STOPPED_BY_CONN == app_eadv_state) {
+				app_eadv_state = APP_EADV_STATE_RESTARTING;
+				if (RTK_BT_OK != rtk_bt_le_gap_start_ext_adv(app_eadv_handle, 0, 0)) {
+					app_eadv_state = APP_EADV_STATE_STOPPED_BY_CONN;
+				}
+			}
+#else
 			rtk_bt_le_gap_dev_state_t dev_state;
 			rtk_bt_le_adv_param_t adv_param = {0};
 			if (rtk_bt_le_gap_get_dev_state(&dev_state) == RTK_BT_OK &&
@@ -614,17 +650,18 @@ static rtk_bt_evt_cb_ret_t ble_scatternet_gap_app_callback(uint8_t evt_code, voi
 #if defined(RTK_BLE_PRIVACY_SUPPORT) && RTK_BLE_PRIVACY_SUPPORT
 				if (privacy_enable) {
 					uint8_t bond_size = 0;
-					adv_param.own_addr_type = 2;
-					BT_APP_PROCESS(rtk_bt_le_sm_get_bond_num(&bond_size));
+					adv_param.own_addr_type = RTK_BT_LE_ADDR_TYPE_RPA_PUBLIC;
+					BT_APP_EVT_CB_PROCESS(rtk_bt_le_sm_get_bond_num(&bond_size));
 					if (bond_size != 0) {
 #if defined(PRIVACY_USE_DIR_ADV_WHEN_BONDED) && PRIVACY_USE_DIR_ADV_WHEN_BONDED
-						rtk_bt_le_bond_info_t bond_info = {0};
+						rtk_bt_le_bond_info_t bond_info;
 						uint8_t bond_num = 1;
+						memset(&bond_info, 0, sizeof(bond_info));
 						rtk_bt_le_sm_get_bond_info(&bond_info, &bond_num);
 						adv_param.type = RTK_BT_LE_ADV_TYPE_DIRECT_IND_LOW;
-						adv_param.peer_addr.type = 0;
+						adv_param.peer_addr.type = RTK_BT_LE_ADDR_TYPE_PUBLIC;
 						memcpy(adv_param.peer_addr.addr_val, bond_info.ident_addr.addr_val, RTK_BD_ADDR_LEN);
-						adv_param.own_addr_type = 2;
+						adv_param.own_addr_type = RTK_BT_LE_ADDR_TYPE_RPA_PUBLIC;
 #endif /* PRIVACY_USE_DIR_ADV_WHEN_BONDED */
 						if (privacy_whitelist) {
 							adv_param.filter_policy = RTK_BT_LE_ADV_FILTER_ALLOW_SCAN_WLST_CON_WLST;
@@ -636,7 +673,7 @@ static rtk_bt_evt_cb_ret_t ble_scatternet_gap_app_callback(uint8_t evt_code, voi
 #endif /* RTK_BLE_PRIVACY_SUPPORT */
 				BT_LOGA("[APP] Reconnect ADV starting, adv type:%d,  own_addr_type: %d, filter_policy: %d\r\n"
 						, adv_param.type,  adv_param.own_addr_type, adv_param.filter_policy);
-				BT_APP_PROCESS(rtk_bt_le_gap_start_adv(&adv_param));
+				BT_APP_EVT_CB_PROCESS(rtk_bt_le_gap_start_adv(&adv_param));
 			}
 #endif /* RTK_BLE_5_0_USE_EXTENDED_ADV */
 			/* gatts action */
@@ -704,6 +741,7 @@ static rtk_bt_evt_cb_ret_t ble_scatternet_gap_app_callback(uint8_t evt_code, voi
 		break;
 	}
 
+#if defined(RTK_BLE_4_2_DATA_LEN_EXT_SUPPORT) && RTK_BLE_4_2_DATA_LEN_EXT_SUPPORT
 	case RTK_BT_LE_GAP_EVT_DATA_LEN_CHANGE_IND: {
 		rtk_bt_le_data_len_change_ind_t *data_len_change =
 			(rtk_bt_le_data_len_change_ind_t *)param;
@@ -723,7 +761,9 @@ static rtk_bt_evt_cb_ret_t ble_scatternet_gap_app_callback(uint8_t evt_code, voi
 					data_len_change->max_rx_time);
 		break;
 	}
+#endif
 
+#if defined(RTK_BLE_5_0_SET_PHYS_SUPPORT) && RTK_BLE_5_0_SET_PHYS_SUPPORT
 	case RTK_BT_LE_GAP_EVT_PHY_UPDATE_IND: {
 		rtk_bt_le_phy_update_ind_t *phy_update_ind =
 			(rtk_bt_le_phy_update_ind_t *)param;
@@ -744,6 +784,7 @@ static rtk_bt_evt_cb_ret_t ble_scatternet_gap_app_callback(uint8_t evt_code, voi
 		}
 		break;
 	}
+#endif
 
 	case RTK_BT_LE_GAP_EVT_READ_REMOTE_VERSION_IND: {
 		rtk_bt_le_read_remote_version_ind_t *rmt_ver = (rtk_bt_le_read_remote_version_ind_t *)param;
@@ -1475,9 +1516,7 @@ int ble_scatternet_main(uint8_t enable)
 	char addr_str[30] = {0};
 	char name[30] = {0};
 #ifndef CONFIG_PLATFORM_TIZENRT_OS
-#if defined(RTK_BLE_5_0_USE_EXTENDED_ADV) && RTK_BLE_5_0_USE_EXTENDED_ADV
-	uint8_t adv_handle;
-#else
+#if !defined(RTK_BLE_5_0_USE_EXTENDED_ADV) || !RTK_BLE_5_0_USE_EXTENDED_ADV
 	rtk_bt_le_adv_param_t adv_param = {0};
 #endif
 #endif //#ifndef CONFIG_PLATFORM_TIZENRT_OS
@@ -1500,11 +1539,15 @@ int ble_scatternet_main(uint8_t enable)
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 		bt_app_conf.master_init_mtu_req = true;
 		bt_app_conf.slave_init_mtu_req = false;
+#if defined(RTK_BLE_5_0_SET_PHYS_SUPPORT) && RTK_BLE_5_0_SET_PHYS_SUPPORT
 		bt_app_conf.prefer_all_phy = RTK_BT_LE_PHYS_PREFER_ALL;
 		bt_app_conf.prefer_tx_phy = RTK_BT_LE_PHYS_PREFER_1M | RTK_BT_LE_PHYS_PREFER_2M | RTK_BT_LE_PHYS_PREFER_CODED;
 		bt_app_conf.prefer_rx_phy = RTK_BT_LE_PHYS_PREFER_1M | RTK_BT_LE_PHYS_PREFER_2M | RTK_BT_LE_PHYS_PREFER_CODED;
+#endif
+#if defined(RTK_BLE_4_2_DATA_LEN_EXT_SUPPORT) && RTK_BLE_4_2_DATA_LEN_EXT_SUPPORT
 		bt_app_conf.max_tx_octets = 0x40;
 		bt_app_conf.max_tx_time = 0x200;
+#endif
 #if defined(RTK_BLE_PRIVACY_SUPPORT) && RTK_BLE_PRIVACY_SUPPORT
 		bt_app_conf.irk_auto_gen = true;
 #endif
@@ -1536,18 +1579,19 @@ int ble_scatternet_main(uint8_t enable)
 			BT_APP_PROCESS(rtk_bt_le_gap_privacy_init(privacy_whitelist));
 #if !defined(RTK_BLE_5_0_USE_EXTENDED_ADV) || !RTK_BLE_5_0_USE_EXTENDED_ADV
 			/* If privacy on, default use RPA adv, even not bonded */
-			adv_param.own_addr_type = 2;
+			adv_param.own_addr_type = RTK_BT_LE_ADDR_TYPE_RPA_PUBLIC;
 #endif
 			BT_APP_PROCESS(rtk_bt_le_sm_get_bond_num(&bond_size));
 			if (bond_size != 0) {
 #if (defined(PRIVACY_USE_DIR_ADV_WHEN_BONDED) && PRIVACY_USE_DIR_ADV_WHEN_BONDED) && (!defined(RTK_BLE_5_0_USE_EXTENDED_ADV) || !RTK_BLE_5_0_USE_EXTENDED_ADV)
-				rtk_bt_le_bond_info_t bond_info = {0};
+				rtk_bt_le_bond_info_t bond_info;
 				uint8_t bond_num = 1;
+				memset(&bond_info, 0, sizeof(bond_info));
 				rtk_bt_le_sm_get_bond_info(&bond_info, &bond_num);
 				adv_param.type = RTK_BT_LE_ADV_TYPE_DIRECT_IND_LOW;
-				adv_param.peer_addr.type = 0;
+				adv_param.peer_addr.type = RTK_BT_LE_ADDR_TYPE_PUBLIC;
 				memcpy(adv_param.peer_addr.addr_val, bond_info.ident_addr.addr_val, RTK_BD_ADDR_LEN);
-				adv_param.own_addr_type = 2;
+				adv_param.own_addr_type = RTK_BT_LE_ADDR_TYPE_RPA_PUBLIC;
 #endif
 				if (privacy_whitelist) {
 					adv_filter_whitelist = true;
@@ -1584,13 +1628,15 @@ int ble_scatternet_main(uint8_t enable)
 #if defined(RTK_BLE_5_1_CTE_SUPPORT) && RTK_BLE_5_1_CTE_SUPPORT
 		BT_APP_PROCESS(cte_client_add());
 #endif
+
 #if defined(RTK_BLE_5_0_USE_EXTENDED_ADV) && RTK_BLE_5_0_USE_EXTENDED_ADV
 		if (adv_filter_whitelist) {
 			ext_adv_param.filter_policy = RTK_BT_LE_ADV_FILTER_ALLOW_SCAN_WLST_CON_WLST;
 		}
-		BT_APP_PROCESS(rtk_bt_le_gap_create_ext_adv(&ext_adv_param, &adv_handle));
-		BT_APP_PROCESS(rtk_bt_le_gap_set_ext_adv_data(adv_handle, ext_adv_data, sizeof(ext_adv_data)));
-		BT_APP_PROCESS(rtk_bt_le_gap_start_ext_adv(adv_handle, 0, 0));
+		BT_APP_PROCESS(rtk_bt_le_gap_create_ext_adv(&ext_adv_param, &app_eadv_handle));
+		BT_APP_PROCESS(rtk_bt_le_gap_set_ext_adv_data(app_eadv_handle, ext_adv_data, sizeof(ext_adv_data)));
+		app_eadv_state = APP_EADV_STATE_INITIAL_STARTING;
+		BT_APP_PROCESS(rtk_bt_le_gap_start_ext_adv(app_eadv_handle, 0, 0));
 #else
 		BT_APP_PROCESS(rtk_bt_le_gap_set_adv_data(adv_data, sizeof(adv_data)));
 		BT_APP_PROCESS(rtk_bt_le_gap_set_scan_rsp_data(scan_rsp_data, sizeof(scan_rsp_data)));

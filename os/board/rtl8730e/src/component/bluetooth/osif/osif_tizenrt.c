@@ -49,6 +49,16 @@ uint32_t osif_sys_time_get(void)
 }
 
 /****************************************************************************/
+/* Get system time in ns                                                    */
+/****************************************************************************/
+uint64_t osif_sys_time_get_ns(void)
+{
+	/* TIZEN_RT_NOT_REQUIRED */
+	BT_LOGE("%s not implemented \r\n", __FUNCTION__);
+	return false;
+}
+
+/****************************************************************************/
 /* Start os kernel scheduler                                                */
 /****************************************************************************/
 bool osif_sched_start(void)
