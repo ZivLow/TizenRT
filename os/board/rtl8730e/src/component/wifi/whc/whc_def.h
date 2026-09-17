@@ -92,6 +92,8 @@ enum WHC_WIFI_H2C_API_ID {
 	/* TizenRT customization: scan multiple SSIDs */
 #ifdef CONFIG_PLATFORM_TIZENRT_OS
 	WHC_API_WIFI_SCAN_MULTI_NETWORKS			= BASIC_API_BASE + 19,
+	/* TizenRT customization: wifi reset feature */
+	WHC_API_WIFI_RESET							= BASIC_API_BASE + 20,
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 	/* 0x1001~0x2000 reserved for ext API */

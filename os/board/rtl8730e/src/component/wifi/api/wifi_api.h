@@ -256,6 +256,15 @@ u8 wifi_get_prev_join_status(void);
  * @return Return the key management type used in the previous connected network, eg. WPA_KEY_MGMT_PSK
  */
 u32 wifi_get_prev_key_mgmt(void);
+
+/**
+ * @brief  Resets wifi. API will disconnect STA. Cannot be called when SoftAP is running.
+ * @param  None
+ * @return  RTK_SUCCESS: Successfully reset wifi.
+ * @return  RTK_FAIL: Failed to reset wifi, could be SoftAP is running or failed to call wifi disconnect.
+ * @return  -RTK_ERR_TIMEOUT: Failed to reset wifi, disconnect did not complete or driver was busy within timeout.
+ */
+s32 wifi_reset(void);
 #endif //#ifdef CONFIG_PLATFORM_TIZENRT_OS
 
 /** @} End of Basic_Functions group */
