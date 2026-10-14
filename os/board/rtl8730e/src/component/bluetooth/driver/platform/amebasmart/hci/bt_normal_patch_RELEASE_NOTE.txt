@@ -1,0 +1,7 @@
+/* == "version" + "Realtek git version" + "compile date" + "compile time" == */
+/* TizenRT used bt_normal_patch_disable_br_edr.c in default FreeRTOS */
+
+== version 74938372 2026/09/15-11:06 ==
+1. 1st release for v1.2 SDK
+2. Fix Multi link disconnect issue
+3. Fix when stop ext adv, periodic adv will also be stopped
